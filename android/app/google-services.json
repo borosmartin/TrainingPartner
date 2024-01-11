@@ -7,14 +7,14 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:559695127958:android:9198ca64e84f8b24e769b7",
+        "mobilesdk_app_id": "1:559695127958:android:980201f672b86266e769b7",
         "android_client_info": {
           "package_name": "com.example.training_partner"
         }
       },
       "oauth_client": [
         {
-          "client_id": "559695127958-94thtkfm8e7o7j39tomi0bapgscrrpip.apps.googleusercontent.com",
+          "client_id": "559695127958-pg16pslpbe0hee5gs7ua6i9i5l3gdbd0.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -29,6 +29,13 @@
             {
               "client_id": "559695127958-94thtkfm8e7o7j39tomi0bapgscrrpip.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "559695127958-aab0f1ng14jgbgi1og8dcgbk9v56k1ch.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.trainingPartner"
+              }
             }
           ]
         }
