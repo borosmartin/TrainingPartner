@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:training_partner/features/exercises/models/exercise.dart';
+import 'package:training_partner/features/exercises/models/movement.dart';
 
 class ExerciseState extends Equatable {
   const ExerciseState();
@@ -8,18 +8,18 @@ class ExerciseState extends Equatable {
   List<Object?> get props => [];
 }
 
-class UninitializedExercises extends ExerciseState {}
+class ExercisesUninitialized extends ExerciseState {}
 
-class LoadingExercises extends ExerciseState {}
+class ExercisesLoading extends ExerciseState {}
 
-class LoadedExercises extends ExerciseState {
-  final List<Exercise> exercises;
+class ExercisesLoaded extends ExerciseState {
+  final List<Movement> exercises;
 
-  const LoadedExercises(this.exercises);
+  const ExercisesLoaded(this.exercises);
 }
 
-class ErrorExercises extends ExerciseState {
+class ExercisesError extends ExerciseState {
   final String errorMessage;
 
-  const ErrorExercises(this.errorMessage);
+  const ExercisesError(this.errorMessage);
 }
