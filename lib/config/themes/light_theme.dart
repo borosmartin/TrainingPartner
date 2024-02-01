@@ -7,6 +7,11 @@ import 'package:flutter/material.dart';
 ThemeData lightTheme = ThemeData(
   useMaterial3: true,
   brightness: Brightness.light,
+  textSelectionTheme: const TextSelectionThemeData(
+    cursorColor: Color.fromRGBO(0, 173, 181, 1),
+    selectionColor: Color.fromRGBO(0, 173, 181, 1),
+    selectionHandleColor: Color.fromRGBO(0, 173, 181, 1),
+  ),
   colorScheme: ColorScheme.light(
     background: Colors.grey.shade200,
     primary: Colors.white,

@@ -10,49 +10,46 @@ class ProfileWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(15),
-                child: (user.photoURL == null)
-                    ? Image.asset(
-                        'assets/images/default_profile_picture.jpg',
-                        height: 100,
-                        width: 100,
-                      )
-                    : CachedNetworkImage(
-                        imageUrl: user.photoURL!,
-                        placeholder: (context, url) => const ShimmerContainer(height: 100, width: 100),
-                        errorWidget: (context, url, error) => const Icon(
-                          Icons.error,
-                          color: Colors.red,
-                        ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(15),
+              child: (user.photoURL == null)
+                  ? Image.asset(
+                      'assets/images/default_profile_picture.jpg',
+                      height: 100,
+                      width: 100,
+                    )
+                  : CachedNetworkImage(
+                      imageUrl: user.photoURL!,
+                      placeholder: (context, url) => const ShimmerContainer(height: 100, width: 100),
+                      errorWidget: (context, url, error) => const Icon(
+                        Icons.error,
+                        color: Colors.red,
                       ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              const Icon(Icons.person, size: 20),
-              const SizedBox(width: 10),
-              Text(user.displayName ?? '', style: boldNormalBlack),
-            ],
-          ),
-          Row(
-            children: [
-              const Icon(Icons.email, size: 20),
-              const SizedBox(width: 10),
-              Text(user.email!, style: normalGrey),
-            ],
-          ),
-        ],
-      ),
+                    ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            const Icon(Icons.person, size: 20),
+            const SizedBox(width: 10),
+            Text(user.displayName ?? '', style: boldNormalBlack),
+          ],
+        ),
+        Row(
+          children: [
+            const Icon(Icons.email, size: 20),
+            const SizedBox(width: 10),
+            Text(user.email!, style: normalGrey),
+          ],
+        ),
+      ],
     );
   }
 }

@@ -13,9 +13,9 @@ class ExercisesUninitialized extends ExerciseState {}
 class ExercisesLoading extends ExerciseState {}
 
 class ExercisesLoaded extends ExerciseState {
-  final List<Movement> exercises;
+  final List<Movement> movements;
 
-  const ExercisesLoaded(this.exercises);
+  const ExercisesLoaded(this.movements);
 }
 
 class ExercisesError extends ExerciseState {

@@ -1,14 +1,15 @@
 import 'package:auth_buttons/auth_buttons.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lottie/lottie.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
 import 'package:training_partner/core/globals/component_functions.dart';
-import 'package:training_partner/core/resources/firebase/auth_service.dart';
 import 'package:training_partner/core/resources/widgets/custom_input_field.dart';
 import 'package:training_partner/core/resources/widgets/custom_title_button.dart';
 import 'package:training_partner/core/resources/widgets/divider_with_text.dart';
+import 'package:training_partner/features/login/logic/cubits/login_cubit.dart';
+import 'package:training_partner/features/login/logic/states/login_state.dart';
 
 class SignUpPage extends StatefulWidget {
   final Function()? onTap;
@@ -22,6 +23,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
   final TextEditingController _controllerPasswordConfirm = TextEditingController();
+
   final FocusNode _focusNodeEmail = FocusNode();
   final FocusNode _focusNodePassword = FocusNode();
   final FocusNode _focusNodePasswordConfirm = FocusNode();
@@ -37,6 +39,24 @@ class _SignUpPageState extends State<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
+    return BlocListener<LoginCubit, LoginState>(
+      listener: (context, state) {
+        if (state is LoginFailed) {
+          showErrorToast(toast, state.message);
+        } else if (state is LoginInProgress) {
+          showDialog(
+            context: context,
+            builder: (context) => const Center(child: CircularProgressIndicator()),
+          );
+        } else if (state is LoginSuccessful) {
+          Navigator.of(context).pop();
+        }
+      },
+      child: _getBodyContent(),
+    );
+  }
+
+  Widget _getBodyContent() {
     return SafeArea(
       child: GestureDetector(
         onTap: () {
@@ -132,7 +152,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       GoogleAuthButton(
-                        onPressed: _signInWithGoogle,
+                        onPressed: () async => context.read<LoginCubit>().signInWithGoogle(),
                         style: const AuthButtonStyle(
                           height: 70,
                           width: 70,
@@ -175,7 +195,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       const SizedBox(width: 5),
                       GestureDetector(
                         onTap: widget.onTap,
-                        child: const Text('Sign in', style: smallAccen),
+                        child: const Text('Sign in', style: smallAccent),
                       ),
                     ],
                   ),
@@ -193,51 +213,14 @@ class _SignUpPageState extends State<SignUpPage> {
     _focusNodePassword.unfocus();
     _focusNodePasswordConfirm.unfocus();
 
-    try {
-      if (_controllerEmail.text.isEmpty || _controllerPassword.text.isEmpty || _controllerPasswordConfirm.text.isEmpty) {
-        showErrorToast(toast, 'Please fill all the fields!');
-      } else if (_controllerPassword.text != _controllerPasswordConfirm.text) {
-        showErrorToast(toast, 'Passwords do not match!');
-      } else if (_controllerPassword.text.length < 6) {
-        showErrorToast(toast, 'Password must be at least 6 characters!');
-      } else {
-        showDialog(
-          context: context,
-          builder: (context) => const Center(child: CircularProgressIndicator()),
-        );
-
-        await AuthService().createUserWithEmailAndPassword(
-          email: _controllerEmail.text,
-          password: _controllerPassword.text,
-        );
-
-        Navigator.of(context).pop();
-      }
-    } on FirebaseAuthException catch (error) {
-      if (error.message != null) {
-        showErrorToast(toast, error.message!);
-      }
-
-      Navigator.of(context).pop();
-    }
-  }
-
-  Future<void> _signInWithGoogle() async {
-    try {
-      showDialog(
-        context: context,
-        builder: (context) => const Center(child: CircularProgressIndicator()),
-      );
-
-      await AuthService().signInWithGoogle();
-
-      Navigator.of(context).pop();
-    } on FirebaseAuthException catch (error) {
-      if (error.message != null) {
-        showErrorToast(toast, error.message!);
-      }
-
-      Navigator.of(context).pop();
+    if (_controllerEmail.text.isEmpty || _controllerPassword.text.isEmpty || _controllerPasswordConfirm.text.isEmpty) {
+      showErrorToast(toast, 'Please fill all the fields!');
+    } else if (_controllerPassword.text != _controllerPasswordConfirm.text) {
+      showErrorToast(toast, 'Passwords do not match!');
+    } else if (_controllerPassword.text.length < 6) {
+      showErrorToast(toast, 'Password must be at least 6 characters!');
+    } else {
+      context.read<LoginCubit>().createUserWithEmailAndPassword(_controllerEmail.text, _controllerPassword.text);
     }
   }
 

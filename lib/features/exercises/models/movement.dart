@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:training_partner/core/utils/text_util.dart';
 
 class MovementData extends Equatable {
   final List<Movement> movements;
@@ -74,7 +75,7 @@ class Movement extends Equatable {
   factory Movement.fromJson(Map<String, dynamic> json) {
     String name = json['name'] ?? '';
     if (name.isNotEmpty) {
-      name = name[0].toUpperCase() + name.substring(1);
+      name = TextUtil.firstLetterToUpperCase(name);
     }
 
     return Movement(

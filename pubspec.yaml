@@ -29,13 +29,12 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   build_runner: ^2.4.8
-  encrypt: ^5.0.3
-  flutter_dotenv: ^5.1.0
   flutter_staggered_animations: ^1.1.1
   http: ^1.2.0
   intl: ^0.19.0
   shimmer: ^3.0.0
   cached_network_image: ^3.3.1
+  smooth_page_indicator: ^1.1.0
 
 dev_dependencies:
   flutter_test:
@@ -56,48 +55,49 @@ flutter:
     - assets/images/legs_icon.png
     - assets/images/shoulder_icon.png
     - dotenv.env
+    - assets/images/
 
   fonts:
     - family: Omnes
       fonts:
-        - asset: "assets/fonts/Omnes Thin.ttf"
+        - asset: "assets/fonts/OmnesThin.ttf"
           weight: 100
-        - asset: "assets/fonts/Omnes Thin Italic.ttf"
+        - asset: "assets/fonts/OmnesThinItalic.ttf"
           style: italic
           weight: 100
-        - asset: "assets/fonts/Omnes ExtraLight.ttf"
+        - asset: "assets/fonts/OmnesExtraLight.ttf"
           weight: 200
-        - asset: "assets/fonts/Omnes ExtraLight Italic.ttf"
+        - asset: "assets/fonts/OmnesExtraLightItalic.ttf"
           style: italic
           weight: 200
-        - asset: "assets/fonts/Omnes Light.ttf"
+        - asset: "assets/fonts/OmnesLight.ttf"
           weight: 300
-        - asset: "assets/fonts/Omnes Light Italic.ttf"
+        - asset: "assets/fonts/OmnesLightItalic.ttf"
           style: italic
           weight: 300
-        - asset: "assets/fonts/Omnes Regular.ttf"
+        - asset: "assets/fonts/OmnesRegular.ttf"
           weight: 400
-        - asset: "assets/fonts/Omnes Italic.ttf"
+        - asset: "assets/fonts/OmnesItalic.ttf"
           style: italic
           weight: 400
-        - asset: "assets/fonts/Omnes Medium.ttf"
+        - asset: "assets/fonts/OmnesMedium.ttf"
           weight: 500
-        - asset: "assets/fonts/Omnes Medium Italic.ttf"
+        - asset: "assets/fonts/OmnesMediumItalic.ttf"
           style: italic
           weight: 500
-        - asset: "assets/fonts/Omnes SemiBold.ttf"
+        - asset: "assets/fonts/OmnesSemiBold.ttf"
           weight: 600
-        - asset: "assets/fonts/Omnes SemiBold Italic.ttf"
+        - asset: "assets/fonts/OmnesSemiBoldItalic.ttf"
           style: italic
           weight: 600
-        - asset: "assets/fonts/Omnes Bold.ttf"
+        - asset: "assets/fonts/OmnesBold.ttf"
           weight: 700
-        - asset: "assets/fonts/Omnes Bold Italic.ttf"
+        - asset: "assets/fonts/OmnesBoldItalic.ttf"
           style: italic
           weight: 700
-        - asset: "assets/fonts/Omnes Black.ttf"
+        - asset: "assets/fonts/OmnesBlack.ttf"
           weight: 800
-        - asset: "assets/fonts/Omnes Black Italic.ttf"
+        - asset: "assets/fonts/OmnesBlackItalic.ttf"
           style: italic
           weight: 800
 

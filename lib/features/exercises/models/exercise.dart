@@ -18,6 +18,28 @@ class Exercise extends Equatable {
     this.duration,
   });
 
+  factory Exercise.fromJson(Map<String, dynamic> json) {
+    return Exercise(
+      movement: Movement.fromJson(json['movement']),
+      sets: json['sets'],
+      repetitions: json['repetitions'],
+      weight: json['weight'],
+      distance: json['distance'],
+      duration: json['duration'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'movement': movement.toJson(),
+      'sets': sets,
+      'repetitions': repetitions,
+      'weight': weight,
+      'distance': distance,
+      'duration': duration,
+    };
+  }
+
   @override
   List<Object?> get props => [movement, sets, repetitions, weight, distance, duration];
 }

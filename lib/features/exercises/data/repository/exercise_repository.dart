@@ -13,30 +13,20 @@ class ExerciseRepository {
       MovementData? hiveData = await _exerciseServiceLocal.getMovementDataFromHive();
 
       if (hiveData != null) {
-        DateTime lastUpdated = hiveData.lastUpdated;
         DateTime now = DateTime.now();
+        DateTime todayRefreshTime = DateTime(now.year, now.month, now.day, 19, 0);
 
-        // The movements gif urls reset everyday at 19:00
-        DateTime dailyRefreshTime = DateTime(
-          now.year,
-          now.month,
-          now.day,
-          19,
-          0,
-        );
-
-        if (now.isAfter(dailyRefreshTime) && lastUpdated.isBefore(dailyRefreshTime)) {
-          MovementData apiData = await _exerciseService.fetchMovementList();
-          await _exerciseServiceLocal.saveMovementData(apiData);
-          return apiData;
-        } else {
+        // todo apihívás feltétel
+        if (now.isBefore(todayRefreshTime) && now.difference(hiveData.lastUpdated).inHours < 24) {
           return hiveData;
         }
-      } else {
-        MovementData apiData = await _exerciseService.fetchMovementList();
-        await _exerciseServiceLocal.saveMovementData(apiData);
-        return apiData;
       }
+
+      // todo törölni a cachelt képeket, kell e egyáltalán?
+      // CachedNetworkImage.evictFromCache();
+      MovementData apiData = await _exerciseService.fetchMovementList();
+      _exerciseServiceLocal.saveMovementData(apiData);
+      return apiData;
     } catch (error) {
       try {
         MovementData? hiveData = await _exerciseServiceLocal.getMovementDataFromHive();

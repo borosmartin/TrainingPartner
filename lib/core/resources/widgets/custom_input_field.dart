@@ -4,16 +4,17 @@ import 'package:training_partner/core/constants/component_constants.dart';
 class CustomInputField extends StatelessWidget {
   final TextEditingController inputController;
   final String hintText;
-  final String labelText;
+  final String? labelText;
   final bool? obscureText;
   final TextInputType? keyboardType;
   final Widget? trailing;
   final FocusNode? focusNode;
+
   const CustomInputField({
     Key? key,
     required this.inputController,
     required this.hintText,
-    required this.labelText,
+    this.labelText,
     this.obscureText,
     this.keyboardType,
     this.trailing,
@@ -30,7 +31,7 @@ class CustomInputField extends StatelessWidget {
       obscureText: obscureText ?? false,
       focusNode: focusNode,
       decoration: InputDecoration(
-        label: Text(labelText, style: normalBlack),
+        label: labelText == null ? null : Text(labelText!, style: normalBlack),
         filled: true,
         suffixIcon: trailing,
         contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),

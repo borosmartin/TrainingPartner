@@ -1,34 +1,58 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:training_partner/features/login/data/repository/login_repository.dart';
+import 'package:training_partner/core/resources/firebase/auth_service.dart';
 import 'package:training_partner/features/login/logic/states/login_state.dart';
-import 'package:training_partner/features/login/models/remembered_user.dart';
 
 class LoginCubit extends Cubit<LoginState> {
-  final LoginRepository loginRepository;
+  LoginCubit() : super(LoginUnititialized());
 
-  LoginCubit(this.loginRepository) : super(LoginUnititialized());
-
-  Future<void> rememberUser(RememberedUser user) async {
+  Future<void> signInWithEmailAndPassword(String email, String password) async {
     try {
-      emit(RememberedUserLoading());
+      emit(LoginInProgress());
 
-      await loginRepository.rememberUser(user);
+      await AuthService().signInWithEmailAndPassword(email: email, password: password);
 
-      emit(RememberedUserSaved());
-    } catch (e) {
-      emit(RememberedUserError(e.toString()));
+      emit(LoginSuccessful());
+    } on FirebaseAuthException catch (error) {
+      if (error.code == 'invalid-credential') {
+        emit(LoginFailed(message: 'Invalid credentials, please try again!'));
+      } else if (error.code == 'invalid-email') {
+        emit(LoginFailed(message: 'Incorrect email format, please try again!'));
+      } else if (error.code == 'wrong-password') {
+        emit(LoginFailed(message: 'Incorrect password, please try again!'));
+      } else if (error.code == 'user-not-found') {
+        emit(LoginFailed(message: 'No user found with that email!'));
+      } else {
+        emit(LoginFailed(message: 'An error occurred. Please try again later!'));
+      }
     }
   }
 
-  Future<void> getRememberedUserList() async {
+  Future<void> signInWithGoogle() async {
     try {
-      emit(RememberedUserLoading());
+      emit(LoginInProgress());
 
-      List<RememberedUser> users = await loginRepository.getRememberedUserList();
+      await AuthService().signInWithGoogle();
 
-      emit(RememberedUsersLoaded(users));
-    } catch (e) {
-      emit(RememberedUserError(e.toString()));
+      emit(LoginSuccessful());
+    } on FirebaseAuthException catch (error) {
+      if (error.message != null) {
+        emit(LoginFailed(message: error.message!));
+      }
+    }
+  }
+
+  Future<void> createUserWithEmailAndPassword(String email, String password) async {
+    try {
+      emit(LoginInProgress());
+
+      await AuthService().createUserWithEmailAndPassword(email: email, password: password);
+
+      emit(LoginSuccessful());
+    } on FirebaseAuthException catch (error) {
+      if (error.message != null) {
+        emit(LoginFailed(message: error.message!));
+      }
     }
   }
 }

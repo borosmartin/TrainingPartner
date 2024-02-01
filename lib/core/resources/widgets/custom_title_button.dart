@@ -30,6 +30,7 @@ class CustomTitleButton extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           if (icon != null) Icon(icon, color: Colors.white, size: 30),
+          if (icon != null) const SizedBox(width: 10),
           Text(label, style: boldLargeWhite),
         ],
       ),

@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:training_partner/core/globals/component_functions.dart';
 import 'package:training_partner/core/resources/firebase/auth_service.dart';
 import 'package:training_partner/core/resources/widgets/custom_navigation_bar.dart';
 import 'package:training_partner/features/exercises/components/pages/exercise_type_page.dart';
@@ -8,7 +8,6 @@ import 'package:training_partner/features/home/components/pages/home_page.dart';
 import 'package:training_partner/features/journal/components/pages/journal_page.dart';
 import 'package:training_partner/features/login/components/widgets/login_signup_navigator.dart';
 import 'package:training_partner/features/statistics/components/pages/statistics_page.dart';
-import 'package:training_partner/features/workout/components/pages/workout_page.dart';
 
 class HomePageNavigator extends StatefulWidget {
   const HomePageNavigator({super.key});
@@ -18,28 +17,25 @@ class HomePageNavigator extends StatefulWidget {
 }
 
 class _HomePageNavigatorState extends State<HomePageNavigator> {
-  int _selectedIndex = 2;
+  int _selectedIndex = 0;
   late PageController _pageController;
   var pages = [
-    const ExerciseTypePage(),
-    const WorkoutPage(),
     const HomePage(),
     const StatisticsPage(),
     const JournalPage(),
+    const ExerciseTypePage(),
   ];
 
   @override
   void initState() {
     super.initState();
+
     _pageController = PageController(initialPage: _selectedIndex);
   }
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Theme.of(context).colorScheme.background,
-      statusBarIconBrightness: Brightness.dark,
-    ));
+    colorSafeArea(color: Theme.of(context).colorScheme.background);
 
     return StreamBuilder<User?>(
         stream: AuthService().authStateChanges,

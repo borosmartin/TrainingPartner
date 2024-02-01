@@ -5,6 +5,7 @@ import 'package:training_partner/features/exercises/components/widgets/exercise_
 import 'package:training_partner/features/exercises/logic/cubits/exercise_cubit.dart';
 import 'package:training_partner/features/exercises/logic/states/exercise_state.dart';
 import 'package:training_partner/features/exercises/models/movement.dart';
+import 'package:training_partner/generated/assets.dart';
 
 class ExerciseTypePage extends StatefulWidget {
   const ExerciseTypePage({super.key});
@@ -18,6 +19,7 @@ class _ExerciseTypePageState extends State<ExerciseTypePage> {
   void initState() {
     super.initState();
     context.read<ExerciseCubit>().loadExercises();
+    // todo remove
     // context.read<ExerciseCubit>().loadExercisesFromCsv();
   }
 
@@ -30,7 +32,7 @@ class _ExerciseTypePageState extends State<ExerciseTypePage> {
         } else if (state is ExercisesError) {
           return Center(child: Text('Error: ${state.errorMessage}'));
         } else if (state is ExercisesLoaded) {
-          return _getBodyContent(state.exercises);
+          return _getBodyContent(state.movements);
         }
 
         throw UnimplementedError();
@@ -115,13 +117,13 @@ class _ExerciseTypePageState extends State<ExerciseTypePage> {
             children: [
               ExerciseGroupCard(
                 label: 'Chest',
-                assetLocation: 'assets/images/chest_icon.png',
+                assetLocation: Assets.imagesChestIcon,
                 groupName: 'Chest',
                 movements: _getChestMovements(exercises),
               ),
               ExerciseGroupCard(
                 label: 'Arms',
-                assetLocation: 'assets/images/arms_icon.png',
+                assetLocation: Assets.imagesArmsIcon,
                 groupName: 'Arms',
                 movements: _getArmsMovements(exercises),
               ),
@@ -133,13 +135,13 @@ class _ExerciseTypePageState extends State<ExerciseTypePage> {
             children: [
               ExerciseGroupCard(
                 label: 'Shoulders',
-                assetLocation: 'assets/images/shoulder_icon.png',
+                assetLocation: Assets.imagesShoulderIcon,
                 groupName: 'Shoulders',
                 movements: _getShouldersMovements(exercises),
               ),
               ExerciseGroupCard(
                 label: 'Back',
-                assetLocation: 'assets/images/back_icon.png',
+                assetLocation: Assets.imagesBackIcon,
                 groupName: 'Back',
                 movements: _getBackMovements(exercises),
               ),
@@ -151,13 +153,13 @@ class _ExerciseTypePageState extends State<ExerciseTypePage> {
             children: [
               ExerciseGroupCard(
                 label: 'Core',
-                assetLocation: 'assets/images/core_icon.png',
+                assetLocation: Assets.imagesCoreIcon,
                 groupName: 'Core',
                 movements: _getCoreMovements(exercises),
               ),
               ExerciseGroupCard(
                 label: 'Legs',
-                assetLocation: 'assets/images/legs_icon.png',
+                assetLocation: Assets.imagesLegsIcon,
                 groupName: 'Legs',
                 movements: _getLegMovements(exercises),
               ),
@@ -169,14 +171,14 @@ class _ExerciseTypePageState extends State<ExerciseTypePage> {
             children: [
               ExerciseGroupCard(
                 label: 'Cardio',
-                assetLocation: 'assets/images/cardio_icon.jpg',
+                assetLocation: Assets.imagesCardioIcon,
                 groupName: 'Cardio',
                 movements: _getCardioMovements(exercises),
               ),
               // TODO create all icon (combine all maybe?)
               ExerciseGroupCard(
                 label: 'All',
-                assetLocation: 'assets/images/back_icon.png',
+                assetLocation: Assets.imagesChestIcon,
                 groupName: 'All',
                 movements: exercises,
               ),

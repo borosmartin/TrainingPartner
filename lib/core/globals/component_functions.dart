@@ -1,5 +1,13 @@
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:training_partner/core/resources/widgets/custom_toast.dart';
+
+void colorSafeArea({required Color color}) {
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    statusBarColor: color,
+    statusBarIconBrightness: Brightness.dark,
+  ));
+}
 
 void showErrorToast(FToast toast, String message) {
   toast.showToast(

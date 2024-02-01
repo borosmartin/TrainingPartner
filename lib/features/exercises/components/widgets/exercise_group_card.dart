@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
-import 'package:training_partner/features/exercises/components/pages/grouped_exercises_page.dart';
+import 'package:training_partner/features/exercises/components/pages/exercise_list_page.dart';
 import 'package:training_partner/features/exercises/models/movement.dart';
 
 class ExerciseGroupCard extends StatelessWidget {
@@ -23,7 +23,7 @@ class ExerciseGroupCard extends StatelessWidget {
       child: GestureDetector(
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => GroupedExercisesPage(
+            builder: (context) => ExerciseListPage(
               groupName: groupName,
               movements: movements,
               assetLocation: assetLocation,

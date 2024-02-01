@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
 import 'package:training_partner/core/resources/widgets/divider_with_text.dart';
+import 'package:training_partner/core/utils/text_util.dart';
 
 class WeekViewWidget extends StatelessWidget {
   const WeekViewWidget({super.key});
@@ -9,10 +10,7 @@ class WeekViewWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: DividerWithText(text: _getMonthName(), textStyle: normalGrey),
-        ),
+        DividerWithText(text: _getMonthName(), textStyle: normalGrey),
         const SizedBox(height: 5),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -25,7 +23,7 @@ class WeekViewWidget extends StatelessWidget {
   List<Widget> _getWeekDayWidgets(BuildContext context) {
     List<Widget> days = [];
 
-    for (var date in _getWeekDays()) {
+    for (var date in getThisWeekDays()) {
       days.add(_getDayWidget(context, date));
     }
 
@@ -56,19 +54,41 @@ class WeekViewWidget extends StatelessWidget {
 
     if (isName) {
       if (date.day == now.day) {
-        return boldNormalWhite;
+        return TextUtil.getCustomTextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+          color: Colors.white,
+        );
       } else if (date.isAfter(now)) {
-        return boldNormalBlack;
+        return TextUtil.getCustomTextStyle(
+          fontSize: 16,
+          color: Colors.black,
+        );
       } else if (date.isBefore(now)) {
-        return boldNormalGrey;
+        return TextUtil.getCustomTextStyle(
+          fontSize: 16,
+          color: Colors.black54,
+        );
       }
     } else {
       if (date.day == now.day) {
-        return boldNormalWhite;
+        return TextUtil.getCustomTextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: Colors.white,
+        );
       } else if (date.isAfter(now)) {
-        return normalBlack;
+        return TextUtil.getCustomTextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: Colors.black,
+        );
       } else if (date.isBefore(now)) {
-        return normalGrey;
+        return TextUtil.getCustomTextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: Colors.black54,
+        );
       }
     }
     return boldNormalBlack;
@@ -128,17 +148,15 @@ class WeekViewWidget extends StatelessWidget {
     }
   }
 
-  List<DateTime> _getWeekDays() {
+  List<DateTime> getThisWeekDays() {
     DateTime now = DateTime.now();
+    DateTime monday = now.subtract(Duration(days: now.weekday - 1));
 
-    return [
-      now.add(const Duration(days: -3)),
-      now.add(const Duration(days: -2)),
-      now.add(const Duration(days: -1)),
-      now,
-      now.add(const Duration(days: 1)),
-      now.add(const Duration(days: 2)),
-      now.add(const Duration(days: 3)),
-    ];
+    List<DateTime> weekDays = [];
+    for (int i = 0; i < 7; i++) {
+      weekDays.add(monday.add(Duration(days: i)));
+    }
+
+    return weekDays;
   }
 }

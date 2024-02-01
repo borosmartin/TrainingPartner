@@ -6,13 +6,24 @@ class CustomSmallButton extends StatelessWidget {
   final VoidCallback? onTap;
   final EdgeInsetsGeometry? padding;
   final String? label;
-  const CustomSmallButton({super.key, required this.icon, this.onTap, this.padding, this.label});
+  final double? elevation;
+  final Color? backgroundColor;
+  const CustomSmallButton({
+    super.key,
+    required this.icon,
+    this.onTap,
+    this.padding,
+    this.label,
+    this.elevation,
+    this.backgroundColor,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Card(
       margin: padding ?? EdgeInsets.zero,
-      elevation: 0,
+      elevation: elevation ?? 0,
+      color: backgroundColor ?? Colors.white,
       shape: defaultCornerShape,
       child: InkWell(
         onTap: onTap,

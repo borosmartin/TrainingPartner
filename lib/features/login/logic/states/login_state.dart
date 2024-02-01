@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:training_partner/features/login/models/remembered_user.dart';
 
 class LoginState extends Equatable {
   @override
@@ -8,24 +7,11 @@ class LoginState extends Equatable {
 
 class LoginUnititialized extends LoginState {}
 
-class RememberedUserLoading extends LoginState {}
+class LoginInProgress extends LoginState {}
 
-class RememberedUserSaved extends LoginState {}
+class LoginSuccessful extends LoginState {}
 
-class RememberedUsersLoaded extends LoginState {
-  final List<RememberedUser> rememberedUsers;
-
-  RememberedUsersLoaded(this.rememberedUsers);
-
-  @override
-  List<Object> get props => [rememberedUsers];
-}
-
-class RememberedUserError extends LoginState {
+class LoginFailed extends LoginState {
   final String message;
-
-  RememberedUserError(this.message);
-
-  @override
-  List<Object> get props => [message];
+  LoginFailed({required this.message});
 }
