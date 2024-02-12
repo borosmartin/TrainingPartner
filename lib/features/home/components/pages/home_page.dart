@@ -1,10 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:training_partner/core/resources/firebase/auth_service.dart';
 import 'package:training_partner/core/resources/widgets/custom_small_button.dart';
-import 'package:training_partner/features/home/components/widgets/profile_widget.dart';
-import 'package:training_partner/features/home/components/widgets/week_view_widget.dart';
-import 'package:training_partner/features/home/components/widgets/workout_widget.dart';
+import 'package:training_partner/features/home/components/widgets/home_widgets/profile_widget.dart';
+import 'package:training_partner/features/home/components/widgets/home_widgets/week_view_widget.dart';
+import 'package:training_partner/features/home/components/widgets/home_widgets/workout_widget.dart';
+import 'package:training_partner/features/home/logic/cubits/workout_cubit.dart';
+import 'package:training_partner/features/home/logic/states/workout_states.dart';
 import 'package:training_partner/features/home/models/workout_plan.dart';
 
 class HomePage extends StatefulWidget {
@@ -15,377 +18,18 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // List<WorkoutPlan> mockPlans = [
-  //   const WorkoutPlan(
-  //     name: "Plan 1",
-  //     isActive: true,
-  //     sessions: [
-  //       WorkoutSession(
-  //         name: "Push A",
-  //         exercises: [
-  //           Exercise(
-  //             movement: Movement(
-  //               name: "Benchpress",
-  //               id: '1',
-  //               bodyPart: 'chest',
-  //               target: 'biceps',
-  //               gifUrl: 'http:example.com',
-  //               equipment: 'dumbbel',
-  //               instructions: [
-  //                 "1. Mock mock mock mock",
-  //                 "2. Mock mock mock mock",
-  //                 "3. Mock mock mock mock",
-  //               ],
-  //               secondaryMuscles: [],
-  //             ),
-  //             sets: 3,
-  //             repetitions: 10,
-  //           ),
-  //           Exercise(
-  //             movement: Movement(
-  //               name: "Incline benchpress",
-  //               id: '1',
-  //               bodyPart: 'arms',
-  //               target: 'biceps',
-  //               gifUrl: 'http:example.com',
-  //               equipment: 'dumbbel',
-  //               instructions: [
-  //                 "1. Mock mock mock mock",
-  //                 "2. Mock mock mock mock",
-  //                 "3. Mock mock mock mock",
-  //               ],
-  //               secondaryMuscles: [],
-  //             ),
-  //             sets: 3,
-  //             repetitions: 10,
-  //           ),
-  //           Exercise(
-  //             movement: Movement(
-  //               name: "Tricep pushdown",
-  //               id: '1',
-  //               bodyPart: 'arms',
-  //               target: 'biceps',
-  //               gifUrl: 'http:example.com',
-  //               equipment: 'dumbbel',
-  //               instructions: [
-  //                 "1. Mock mock mock mock",
-  //                 "2. Mock mock mock mock",
-  //                 "3. Mock mock mock mock",
-  //               ],
-  //               secondaryMuscles: [],
-  //             ),
-  //             sets: 3,
-  //             repetitions: 10,
-  //           ),
-  //         ],
-  //       ),
-  //       WorkoutSession(
-  //         name: "Push B",
-  //         exercises: [
-  //           Exercise(
-  //             movement: Movement(
-  //               name: "Curl",
-  //               id: '1',
-  //               bodyPart: 'arms',
-  //               target: 'biceps',
-  //               gifUrl: 'http:example.com',
-  //               equipment: 'dumbbel',
-  //               instructions: [
-  //                 "1. Mock mock mock mock",
-  //                 "2. Mock mock mock mock",
-  //                 "3. Mock mock mock mock",
-  //               ],
-  //               secondaryMuscles: [],
-  //             ),
-  //             sets: 3,
-  //             repetitions: 10,
-  //           ),
-  //           Exercise(
-  //             movement: Movement(
-  //               name: "Pullups",
-  //               id: '1',
-  //               bodyPart: 'arms',
-  //               target: 'biceps',
-  //               gifUrl: 'http:example.com',
-  //               equipment: 'dumbbel',
-  //               instructions: [
-  //                 "1. Mock mock mock mock",
-  //                 "2. Mock mock mock mock",
-  //                 "3. Mock mock mock mock",
-  //               ],
-  //               secondaryMuscles: [],
-  //             ),
-  //             sets: 3,
-  //             repetitions: 10,
-  //           ),
-  //           Exercise(
-  //             movement: Movement(
-  //               name: "Hammer curl",
-  //               id: '1',
-  //               bodyPart: 'arms',
-  //               target: 'biceps',
-  //               gifUrl: 'http:example.com',
-  //               equipment: 'dumbbel',
-  //               instructions: [
-  //                 "1. Mock mock mock mock",
-  //                 "2. Mock mock mock mock",
-  //                 "3. Mock mock mock mock",
-  //               ],
-  //               secondaryMuscles: [],
-  //             ),
-  //             sets: 3,
-  //             repetitions: 10,
-  //           ),
-  //         ],
-  //       ),
-  //       WorkoutSession(
-  //         name: "Pull A",
-  //         exercises: [
-  //           Exercise(
-  //             movement: Movement(
-  //               name: "Curl",
-  //               id: '1',
-  //               bodyPart: 'arms',
-  //               target: 'biceps',
-  //               gifUrl: 'http:example.com',
-  //               equipment: 'dumbbel',
-  //               instructions: [
-  //                 "1. Mock mock mock mock",
-  //                 "2. Mock mock mock mock",
-  //                 "3. Mock mock mock mock",
-  //               ],
-  //               secondaryMuscles: [],
-  //             ),
-  //             sets: 3,
-  //             repetitions: 10,
-  //           ),
-  //           Exercise(
-  //             movement: Movement(
-  //               name: "Curl",
-  //               id: '1',
-  //               bodyPart: 'arms',
-  //               target: 'biceps',
-  //               gifUrl: 'http:example.com',
-  //               equipment: 'dumbbel',
-  //               instructions: [
-  //                 "1. Mock mock mock mock",
-  //                 "2. Mock mock mock mock",
-  //                 "3. Mock mock mock mock",
-  //               ],
-  //               secondaryMuscles: [],
-  //             ),
-  //             sets: 3,
-  //             repetitions: 10,
-  //           ),
-  //           Exercise(
-  //             movement: Movement(
-  //               name: "Curl",
-  //               id: '1',
-  //               bodyPart: 'arms',
-  //               target: 'biceps',
-  //               gifUrl: 'http:example.com',
-  //               equipment: 'dumbbel',
-  //               instructions: [
-  //                 "1. Mock mock mock mock",
-  //                 "2. Mock mock mock mock",
-  //                 "3. Mock mock mock mock",
-  //               ],
-  //               secondaryMuscles: [],
-  //             ),
-  //             sets: 3,
-  //             repetitions: 10,
-  //           ),
-  //         ],
-  //       ),
-  //       WorkoutSession(
-  //         name: "Pull B",
-  //         exercises: [
-  //           Exercise(
-  //             movement: Movement(
-  //               name: "Curl",
-  //               id: '1',
-  //               bodyPart: 'arms',
-  //               target: 'biceps',
-  //               gifUrl: 'http:example.com',
-  //               equipment: 'dumbbel',
-  //               instructions: [
-  //                 "1. Mock mock mock mock",
-  //                 "2. Mock mock mock mock",
-  //                 "3. Mock mock mock mock",
-  //               ],
-  //               secondaryMuscles: [],
-  //             ),
-  //             sets: 3,
-  //             repetitions: 10,
-  //           ),
-  //           Exercise(
-  //             movement: Movement(
-  //               name: "Curl",
-  //               id: '1',
-  //               bodyPart: 'arms',
-  //               target: 'biceps',
-  //               gifUrl: 'http:example.com',
-  //               equipment: 'dumbbel',
-  //               instructions: [
-  //                 "1. Mock mock mock mock",
-  //                 "2. Mock mock mock mock",
-  //                 "3. Mock mock mock mock",
-  //               ],
-  //               secondaryMuscles: [],
-  //             ),
-  //             sets: 3,
-  //             repetitions: 10,
-  //           ),
-  //           Exercise(
-  //             movement: Movement(
-  //               name: "Curl",
-  //               id: '1',
-  //               bodyPart: 'arms',
-  //               target: 'biceps',
-  //               gifUrl: 'http:example.com',
-  //               equipment: 'dumbbel',
-  //               instructions: [
-  //                 "1. Mock mock mock mock",
-  //                 "2. Mock mock mock mock",
-  //                 "3. Mock mock mock mock",
-  //               ],
-  //               secondaryMuscles: [],
-  //             ),
-  //             sets: 3,
-  //             repetitions: 10,
-  //           ),
-  //         ],
-  //       ),
-  //     ],
-  //   ),
-  //   const WorkoutPlan(
-  //     name: "My workoutplan 2",
-  //     isActive: false,
-  //     sessions: [
-  //       WorkoutSession(
-  //         name: "Push",
-  //         exercises: [
-  //           Exercise(
-  //             movement: Movement(
-  //               name: "Curl",
-  //               id: '1',
-  //               bodyPart: 'arms',
-  //               target: 'biceps',
-  //               gifUrl: 'http:example.com',
-  //               equipment: 'dumbbel',
-  //               instructions: [
-  //                 "1. Mock mock mock mock",
-  //                 "2. Mock mock mock mock",
-  //                 "3. Mock mock mock mock",
-  //               ],
-  //               secondaryMuscles: [],
-  //             ),
-  //             sets: 3,
-  //             repetitions: 10,
-  //           ),
-  //           Exercise(
-  //             movement: Movement(
-  //               name: "Curl",
-  //               id: '1',
-  //               bodyPart: 'arms',
-  //               target: 'biceps',
-  //               gifUrl: 'http:example.com',
-  //               equipment: 'dumbbel',
-  //               instructions: [
-  //                 "1. Mock mock mock mock",
-  //                 "2. Mock mock mock mock",
-  //                 "3. Mock mock mock mock",
-  //               ],
-  //               secondaryMuscles: [],
-  //             ),
-  //             sets: 3,
-  //             repetitions: 10,
-  //           ),
-  //           Exercise(
-  //             movement: Movement(
-  //               name: "Curl",
-  //               id: '1',
-  //               bodyPart: 'arms',
-  //               target: 'biceps',
-  //               gifUrl: 'http:example.com',
-  //               equipment: 'dumbbel',
-  //               instructions: [
-  //                 "1. Mock mock mock mock",
-  //                 "2. Mock mock mock mock",
-  //                 "3. Mock mock mock mock",
-  //               ],
-  //               secondaryMuscles: [],
-  //             ),
-  //             sets: 3,
-  //             repetitions: 10,
-  //           ),
-  //         ],
-  //       ),
-  //       WorkoutSession(
-  //         name: "Pull",
-  //         exercises: [
-  //           Exercise(
-  //             movement: Movement(
-  //               name: "Curl",
-  //               id: '1',
-  //               bodyPart: 'arms',
-  //               target: 'biceps',
-  //               gifUrl: 'http:example.com',
-  //               equipment: 'dumbbel',
-  //               instructions: [
-  //                 "1. Mock mock mock mock",
-  //                 "2. Mock mock mock mock",
-  //                 "3. Mock mock mock mock",
-  //               ],
-  //               secondaryMuscles: [],
-  //             ),
-  //             sets: 3,
-  //             repetitions: 10,
-  //           ),
-  //           Exercise(
-  //             movement: Movement(
-  //               name: "Curl",
-  //               id: '1',
-  //               bodyPart: 'arms',
-  //               target: 'biceps',
-  //               gifUrl: 'http:example.com',
-  //               equipment: 'dumbbel',
-  //               instructions: [
-  //                 "1. Mock mock mock mock",
-  //                 "2. Mock mock mock mock",
-  //                 "3. Mock mock mock mock",
-  //               ],
-  //               secondaryMuscles: [],
-  //             ),
-  //             sets: 3,
-  //             repetitions: 10,
-  //           ),
-  //           Exercise(
-  //             movement: Movement(
-  //               name: "Curl",
-  //               id: '1',
-  //               bodyPart: 'arms',
-  //               target: 'biceps',
-  //               gifUrl: 'http:example.com',
-  //               equipment: 'dumbbel',
-  //               instructions: [
-  //                 "1. Mock mock mock mock",
-  //                 "2. Mock mock mock mock",
-  //                 "3. Mock mock mock mock",
-  //               ],
-  //               secondaryMuscles: [],
-  //             ),
-  //             sets: 3,
-  //             repetitions: 10,
-  //           ),
-  //         ],
-  //       ),
-  //     ],
-  //   ),
-  // ];
-
   WorkoutPlan? selectedWorkoutPlan;
   final User _user = AuthService().currentUser!;
+  late WorkoutCubit workoutCubit;
+
+  @override
+  void initState() {
+    super.initState();
+
+    workoutCubit = context.read<WorkoutCubit>();
+
+    workoutCubit.getAllWorkoutPlans();
+  }
 
   // todo singlechildscrollview?
   @override
@@ -421,18 +65,50 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(height: 15),
           const WeekViewWidget(),
           const SizedBox(height: 15),
-          WorkoutWidget(
-            workoutPlans: const [],
-            selectedWorkoutPlan: selectedWorkoutPlan,
-            onSelect: (plan) {
-              setState(() {
-                selectedWorkoutPlan = plan;
-              });
-            },
-          ),
+          _getWorkoutWidget(),
         ],
       ),
     );
+  }
+
+  Widget _getWorkoutWidget() {
+    return BlocConsumer<WorkoutCubit, WorkoutState>(listener: (context, state) {
+      if (state is WorkoutPlanCreationSuccessful || state is WorkoutPlanDeleteSuccessful) {
+        workoutCubit.getAllWorkoutPlans();
+      }
+    }, builder: (context, state) {
+      if (state is WorkoutPlansLoading ||
+          state is WorkoutsUninitialized ||
+          state is WorkoutPlanCreationLoading ||
+          state is WorkoutPlanDeleteLoading) {
+        return const CircularProgressIndicator();
+      }
+      if (state is WorkoutPlansError) {
+        return Center(child: Text(state.message));
+      }
+      if (state is WorkoutPlanCreationError) {
+        return Center(child: Text(state.message));
+      }
+      if (state is WorkoutPlanDeleteError) {
+        return Center(child: Text(state.message));
+      }
+      if (state is WorkoutPlansLoaded) {
+        return WorkoutWidget(
+          workoutPlans: state.workoutPlans,
+          selectedWorkoutPlan: selectedWorkoutPlan ?? state.workoutPlans.firstOrNull,
+          onSelect: (plan) {
+            setState(() {
+              selectedWorkoutPlan = plan;
+            });
+          },
+        );
+      }
+
+      return Container(
+        color: Colors.red,
+        child: Text(state.toString()),
+      );
+    });
   }
 
   Future<void> _signOut() async {

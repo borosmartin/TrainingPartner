@@ -54,7 +54,6 @@ flutter:
     - assets/images/core_icon.png
     - assets/images/legs_icon.png
     - assets/images/shoulder_icon.png
-    - dotenv.env
     - assets/images/
 
   fonts:

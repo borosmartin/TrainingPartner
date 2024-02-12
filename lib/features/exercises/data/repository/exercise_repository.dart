@@ -16,7 +16,7 @@ class ExerciseRepository {
         DateTime now = DateTime.now();
         DateTime todayRefreshTime = DateTime(now.year, now.month, now.day, 19, 0);
 
-        // todo apihívás feltétel
+        // todo apihívás feltétel nem az igazi
         if (now.isBefore(todayRefreshTime) && now.difference(hiveData.lastUpdated).inHours < 24) {
           return hiveData;
         }

@@ -4,17 +4,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
 import 'package:training_partner/core/globals/component_functions.dart';
+import 'package:training_partner/core/resources/widgets/custom_toast.dart';
 import 'package:training_partner/features/exercises/logic/cubits/exercise_cubit.dart';
 import 'package:training_partner/features/exercises/logic/states/exercise_state.dart';
+import 'package:training_partner/features/exercises/models/exercise.dart';
 import 'package:training_partner/features/exercises/models/movement.dart';
+import 'package:training_partner/features/exercises/models/workout_set.dart';
 import 'package:training_partner/features/home/components/widgets/editor_widgets/editor_floating_buttons.dart';
 import 'package:training_partner/features/home/components/widgets/editor_widgets/editor_header.dart';
-import 'package:training_partner/features/home/components/widgets/editor_widgets/session_widget.dart';
+import 'package:training_partner/features/home/components/widgets/editor_widgets/session_header.dart';
+import 'package:training_partner/features/home/components/widgets/editor_widgets/textfield_exercise_card.dart';
+import 'package:training_partner/features/home/logic/cubits/workout_cubit.dart';
+import 'package:training_partner/features/home/logic/states/workout_states.dart';
 import 'package:training_partner/features/home/models/workout_plan.dart';
 import 'package:training_partner/features/home/models/workout_session.dart';
 
 class WorkoutEditorPage extends StatefulWidget {
-  const WorkoutEditorPage({super.key});
+  final WorkoutPlan? workoutPlan;
+
+  const WorkoutEditorPage({super.key, this.workoutPlan});
 
   @override
   State<WorkoutEditorPage> createState() => _WorkoutEditorPageState();
@@ -35,8 +43,9 @@ class _WorkoutEditorPageState extends State<WorkoutEditorPage> {
     super.initState();
     _pageController = PageController(initialPage: _currentPageIndex);
 
-    context.read<ExerciseCubit>().loadExercises();
+    context.read<ExerciseCubit>().loadMovements();
 
+    workoutPlan = widget.workoutPlan;
     if (workoutPlan != null) {
       workoutSessions = workoutPlan!.sessions;
       workoutPlaneNameController.text = workoutPlan!.name;
@@ -59,8 +68,8 @@ class _WorkoutEditorPageState extends State<WorkoutEditorPage> {
             floatingActionButton: EditorFloatingButtons(
               workoutSessions: workoutSessions,
               isLoading: isLoading,
-              onAddTap: addNewWorkoutSession,
-              onRemoveTap: removeWorkoutSession,
+              onAddTap: _addNewWorkoutSession,
+              onRemoveTap: _removeWorkoutSession,
             ),
             body: _getBodyContent(),
           ),
@@ -70,48 +79,77 @@ class _WorkoutEditorPageState extends State<WorkoutEditorPage> {
   }
 
   Widget _getBodyContent() {
-    return BlocConsumer<ExerciseCubit, ExerciseState>(listener: (context, state) {
-      if (state is ExercisesLoaded) {
-        setState(() {
-          isLoading = false;
-        });
-      }
-    }, builder: (context, state) {
-      if (state is ExercisesLoading) {
-        return Column(
-          children: [
-            EditorHeader(
-              workoutSessions: workoutSessions,
-              pageController: _pageController,
-              workoutPlaneNameController: workoutPlaneNameController,
-            ),
-            Expanded(
-              child: Center(
-                child: CircularProgressIndicator(
-                  color: Theme.of(context).colorScheme.tertiary,
+    return BlocListener<WorkoutCubit, WorkoutState>(
+      listener: (context, state) {
+        if (state is WorkoutPlanCreationSuccessful) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            content: CustomToast(message: 'New workout plan created!', type: ToastType.success),
+          ));
+        } else if (state is WorkoutPlanDeleteSuccessful) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            content: CustomToast(message: 'Workout plan deleted!', type: ToastType.success),
+          ));
+        } else if (state is WorkoutPlanDeleteError) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            content: CustomToast(message: 'Error: ${state.message}', type: ToastType.error),
+          ));
+        } else if (state is WorkoutPlanCreationError) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            content: CustomToast(message: 'Error: ${state.message}', type: ToastType.error),
+          ));
+        }
+      },
+      child: BlocConsumer<ExerciseCubit, ExerciseState>(listener: (context, state) {
+        if (state is MovementsLoaded) {
+          setState(() {
+            isLoading = false;
+          });
+        }
+      }, builder: (context, state) {
+        if (state is MovementsLoading) {
+          return Column(
+            children: [
+              EditorHeader(
+                workoutSessions: workoutSessions,
+                pageController: _pageController,
+                workoutPlaneNameController: workoutPlaneNameController,
+              ),
+              Expanded(
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: Theme.of(context).colorScheme.tertiary,
+                  ),
                 ),
               ),
-            ),
-          ],
-        );
-      } else if (state is ExercisesError) {
-        return Center(child: Text('Error: ${state.errorMessage}'));
-      } else if (state is ExercisesLoaded) {
-        return Column(
-          children: [
-            EditorHeader(
-              workoutSessions: workoutSessions,
-              pageController: _pageController,
-              workoutPlaneNameController: workoutPlaneNameController,
-            ),
-            const SizedBox(height: 15),
-            _getSessionPageView(state.movements),
-          ],
-        );
-      }
+            ],
+          );
+        } else if (state is MovementsError) {
+          return Center(child: Text('Error: ${state.errorMessage}'));
+        } else if (state is MovementsLoaded) {
+          return Column(
+            children: [
+              EditorHeader(
+                workoutSessions: workoutSessions,
+                pageController: _pageController,
+                workoutPlaneNameController: workoutPlaneNameController,
+              ),
+              const SizedBox(height: 20),
+              _getSessionPageView(state.movements),
+            ],
+          );
+        }
 
-      throw UnimplementedError();
-    });
+        throw UnimplementedError();
+      }),
+    );
   }
 
   Widget _getSessionPageView(List<Movement> movements) {
@@ -130,14 +168,30 @@ class _WorkoutEditorPageState extends State<WorkoutEditorPage> {
           controller: _pageController,
           itemCount: workoutSessions.length,
           itemBuilder: (context, index) {
-            return SessionWidget(
-              session: workoutSessions[index],
-              movements: movements,
-              onRename: (newName) {
-                setState(() {
-                  workoutSessions[index] = workoutSessions[index].copyWith(name: newName);
-                });
-              },
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SessionHeader(
+                    session: workoutSessions[index],
+                    allMovements: movements,
+                    onRename: (newName) {
+                      setState(() {
+                        workoutSessions[index] = workoutSessions[index].copyWith(name: newName);
+                      });
+                    },
+                    onExercisesChanged: (newExercises) {
+                      setState(() {
+                        workoutSessions[index] = workoutSessions[index].copyWith(exercises: newExercises);
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  _getExerciseList(workoutSessions[index]),
+                  const SizedBox(height: 15),
+                ],
+              ),
             );
           },
           onPageChanged: (int index) {
@@ -150,11 +204,96 @@ class _WorkoutEditorPageState extends State<WorkoutEditorPage> {
     }
   }
 
-  void addNewWorkoutSession() {
+  // todo change order of selected exercies with drag and drop?
+  Widget _getExerciseList(WorkoutSession session) {
+    if (session.exercises.isEmpty) {
+      return const Column(
+        children: [
+          SizedBox(height: 170),
+          Icon(Icons.accessibility_rounded, size: 80, color: Colors.black38),
+          Text('No exercises yet, add a few!', style: boldNormalGrey),
+        ],
+      );
+    } else {
+      return Expanded(
+        child: ListView.builder(
+          itemCount: session.exercises.length,
+          itemBuilder: (context, index) {
+            return Column(
+              children: [
+                // todo a set rep értékek elvesznek ha túlscrollojuk őket
+                // el kell menteni az értékeket szóval kell majd cubit valszeg
+                TextfieldExerciseCard(
+                  index: index,
+                  exercise: session.exercises[index],
+                  isFirst: index == 0,
+                  isLast: index == session.exercises.length - 1,
+                  exerciseList: session.exercises,
+                  onRemoveExercise: () {
+                    setState(() {
+                      session.exercises.removeAt(index);
+                      Navigator.pop(context);
+                    });
+                  },
+                  onChangeType: () {
+                    setState(() {
+                      if (session.exercises[index].type == ExerciseType.setRep) {
+                        session.exercises[index] = session.exercises[index].copyWith(exerciseType: ExerciseType.distanceDuration);
+                      } else {
+                        session.exercises[index] = session.exercises[index].copyWith(exerciseType: ExerciseType.setRep);
+                      }
+
+                      Navigator.pop(context);
+                    });
+                  },
+                  onTextfieldChange: (setNum, repNum) {
+                    setState(() {
+                      session.exercises[index] = session.exercises[index].copyWith(
+                        workoutSets: _createWorkoutSets(session.exercises[index], setNum, repNum),
+                      );
+                    });
+                  },
+                ),
+                if (index == session.exercises.length - 1 && session.exercises.length > 2)
+                  Container(
+                    height: 145,
+                    color: Colors.transparent,
+                  ),
+              ],
+            );
+          },
+        ),
+      );
+    }
+  }
+
+  List<WorkoutSet> _createWorkoutSets(Exercise exercise, int setDistance, int repDuration) {
+    List<WorkoutSet> sets = [];
+
+    if (exercise.type == ExerciseType.setRep) {
+      if (setDistance != 0) {
+        if (repDuration == 0) {
+          for (int i = 0; i < setDistance; i++) {
+            sets.add(const WorkoutSet());
+          }
+        } else {
+          for (int i = 0; i < setDistance; i++) {
+            sets.add(WorkoutSet(repetitions: repDuration));
+          }
+        }
+      }
+    } else {
+      sets.add(WorkoutSet(distance: setDistance, duration: repDuration));
+    }
+
+    return sets;
+  }
+
+  void _addNewWorkoutSession() {
     setState(() {
       int newIndex = workoutSessions.length;
       workoutSessions.add(WorkoutSession(
-        id: generateUniqueId(),
+        id: _generateUniqueId(),
         name: 'New session',
         exercises: const [],
       ));
@@ -171,7 +310,7 @@ class _WorkoutEditorPageState extends State<WorkoutEditorPage> {
     });
   }
 
-  void removeWorkoutSession() {
+  void _removeWorkoutSession() {
     setState(() {
       if (workoutSessions.isNotEmpty) {
         workoutSessions.removeAt(_currentPageIndex);
@@ -182,7 +321,7 @@ class _WorkoutEditorPageState extends State<WorkoutEditorPage> {
     });
   }
 
-  String generateUniqueId() {
+  String _generateUniqueId() {
     Random random = Random();
     bool isUnique = false;
     int newId = 0;

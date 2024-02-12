@@ -51,10 +51,11 @@ class _ExerciseListPageState extends State<ExerciseListPage> {
 
     colorSafeArea(color: Colors.white);
 
-    filterMovements();
+    _filterMovements();
   }
 
   // todo ha nincs filter találat valamit azé tegyünk ki
+  // todo cubit filter, plusz merge shared widgets
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -99,20 +100,20 @@ class _ExerciseListPageState extends State<ExerciseListPage> {
                         children: [
                           CustomSearchBar(
                             hintText: 'Search...',
-                            onChanged: (value) => filterMovements(),
+                            onChanged: (value) => _filterMovements(),
                             textController: _searchController,
                           ),
                           const SizedBox(height: 10),
                           const DividerWithText(text: 'Equipment', textStyle: smallGrey),
                           const SizedBox(height: 10),
                           EquipmentDropdown(
-                            equipments: getEquipments(),
+                            equipments: _getEquipments(),
                             initialItem: 'All',
                             onSelect: (value) {
                               setState(() {
                                 selectedEquipment = value.toLowerCase();
                               });
-                              filterMovements();
+                              _filterMovements();
                             },
                           ),
                           const SizedBox(height: 10),
@@ -156,10 +157,10 @@ class _ExerciseListPageState extends State<ExerciseListPage> {
             setState(() {
               if (!isActive) {
                 _selectedTargets.remove(label);
-                filterMovements();
+                _filterMovements();
               } else {
                 _selectedTargets.add(label);
-                filterMovements();
+                _filterMovements();
               }
             });
           },
@@ -178,7 +179,7 @@ class _ExerciseListPageState extends State<ExerciseListPage> {
         : Container();
   }
 
-  void filterMovements() {
+  void _filterMovements() {
     setState(() {
       _filteredMovements = _movements.where((movement) {
         final containsSearchText = _searchController.text.isEmpty || movement.name.toLowerCase().contains(_searchController.text.toLowerCase());
@@ -192,7 +193,7 @@ class _ExerciseListPageState extends State<ExerciseListPage> {
     });
   }
 
-  List<String> getEquipments() {
+  List<String> _getEquipments() {
     var equipments = _movements.map((movement) => TextUtil.firstLetterToUpperCase(movement.equipment)).toSet().toList();
 
     equipments.add('All');

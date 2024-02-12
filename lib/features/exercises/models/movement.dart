@@ -72,7 +72,7 @@ class Movement extends Equatable {
     required this.instructions,
   });
 
-  factory Movement.fromJson(Map<String, dynamic> json) {
+  factory Movement.fromJson(Map json) {
     String name = json['name'] ?? '';
     if (name.isNotEmpty) {
       name = TextUtil.firstLetterToUpperCase(name);
@@ -91,7 +91,7 @@ class Movement extends Equatable {
   }
 
   Map<String, dynamic> toJson() {
-    return {
+    Map<String, dynamic> json = {
       'id': id,
       'name': name,
       'bodyPart': bodyPart,
@@ -101,6 +101,8 @@ class Movement extends Equatable {
       'secondaryMuscles': secondaryMuscles,
       'instructions': instructions,
     };
+
+    return json;
   }
 
   // todo remove if not needed

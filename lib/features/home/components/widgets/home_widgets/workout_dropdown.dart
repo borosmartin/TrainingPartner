@@ -11,9 +11,11 @@ class WorkoutPlanDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String initalName = workoutPlans.firstWhere((plan) => plan.isActive, orElse: () => workoutPlans.first).name;
+
     return Expanded(
       child: CustomDropdown<String>(
-        initialItem: workoutPlans.firstWhere((plan) => plan.isActive).name,
+        initialItem: initalName,
         items: workoutPlans.map((plan) => plan.name).toList(),
         excludeSelected: true,
         decoration: const CustomDropdownDecoration(

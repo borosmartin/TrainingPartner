@@ -6,12 +6,16 @@ class EquipmentDropdown extends StatelessWidget {
   final List<String> equipments;
   final Function(String) onSelect;
   final String initialItem;
+  final Color? backgroundColor;
+  final Color? iconColor;
 
   const EquipmentDropdown({
     super.key,
     required this.equipments,
     required this.onSelect,
     required this.initialItem,
+    this.backgroundColor,
+    this.iconColor,
   });
 
   @override
@@ -25,7 +29,7 @@ class EquipmentDropdown extends StatelessWidget {
       overlayHeight: 500,
       headerBuilder: (BuildContext context, String label) => Row(
         children: [
-          const Icon(Icons.fitness_center, color: Colors.black45),
+          Icon(Icons.fitness_center, color: iconColor ?? Colors.black45),
           const SizedBox(width: 10),
           Text(label, style: smallGrey),
         ],
@@ -35,8 +39,8 @@ class EquipmentDropdown extends StatelessWidget {
         headerStyle: smallGrey,
         closedBorderRadius: defaultBorderRadius,
         expandedBorderRadius: defaultBorderRadius,
-        expandedFillColor: Colors.grey.shade200,
-        closedFillColor: Colors.grey.shade200,
+        expandedFillColor: backgroundColor ?? Colors.grey.shade200,
+        closedFillColor: backgroundColor ?? Colors.grey.shade200,
       ),
       onChanged: (selectedName) {
         onSelect(selectedName);

@@ -15,21 +15,21 @@ const normalBlack = TextStyle(
 const normalWhite = TextStyle(
   fontFamily: 'Omnes',
   fontSize: 18,
-  fontWeight: FontWeight.w500,
+  fontWeight: FontWeight.w600,
   color: Colors.white,
 );
 
 const normalGrey = TextStyle(
   fontFamily: 'Omnes',
   fontSize: 18,
-  fontWeight: FontWeight.w500,
+  fontWeight: FontWeight.w600,
   color: Colors.black38,
 );
 
 const smallBlack = TextStyle(
   fontFamily: 'Omnes',
   fontSize: 16,
-  fontWeight: FontWeight.w500,
+  fontWeight: FontWeight.w600,
   color: Colors.black,
 );
 

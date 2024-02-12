@@ -1,45 +1,52 @@
 import 'package:equatable/equatable.dart';
 import 'package:training_partner/features/exercises/models/movement.dart';
+import 'package:training_partner/features/exercises/models/workout_set.dart';
+
+enum ExerciseType { setRep, distanceDuration }
 
 class Exercise extends Equatable {
   final Movement movement;
-  final int? sets;
-  final int? repetitions;
-  final double? weight;
-  final double? distance;
-  final DateTime? duration;
+  final ExerciseType type;
+  final List<WorkoutSet> workoutSets;
 
   const Exercise({
     required this.movement,
-    this.sets,
-    this.repetitions,
-    this.weight,
-    this.distance,
-    this.duration,
+    required this.type,
+    required this.workoutSets,
   });
 
-  factory Exercise.fromJson(Map<String, dynamic> json) {
+  Exercise copyWith({
+    Movement? movement,
+    ExerciseType? exerciseType,
+    List<WorkoutSet>? workoutSets,
+  }) {
+    return Exercise(
+      movement: movement ?? this.movement,
+      type: exerciseType ?? type,
+      workoutSets: workoutSets ?? this.workoutSets,
+    );
+  }
+
+  factory Exercise.fromJson(Map json) {
+    List<WorkoutSet> workoutSets = (json['workoutSets'] as List).map((workoutSetJson) => WorkoutSet.fromJson(workoutSetJson)).toList();
+
     return Exercise(
       movement: Movement.fromJson(json['movement']),
-      sets: json['sets'],
-      repetitions: json['repetitions'],
-      weight: json['weight'],
-      distance: json['distance'],
-      duration: json['duration'],
+      type: json['exerciseType'] == 'ExerciseType.setRep' ? ExerciseType.setRep : ExerciseType.distanceDuration,
+      workoutSets: workoutSets,
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
+    Map<String, dynamic> json = {
       'movement': movement.toJson(),
-      'sets': sets,
-      'repetitions': repetitions,
-      'weight': weight,
-      'distance': distance,
-      'duration': duration,
+      'exerciseType': type.toString(),
+      'workoutSets': workoutSets.map((set) => set.toJson()).toList(),
     };
+
+    return json;
   }
 
   @override
-  List<Object?> get props => [movement, sets, repetitions, weight, distance, duration];
+  List<Object?> get props => [movement, type, workoutSets];
 }

@@ -7,34 +7,30 @@ import 'package:training_partner/features/exercises/models/movement.dart';
 
 class SelectableMovementCard extends StatefulWidget {
   final Movement movement;
-  final ValueChanged<bool> onSelectChanged;
+  final bool isSelected;
+  final Function(bool) onSelect;
 
   const SelectableMovementCard({
-    super.key,
+    Key? key,
     required this.movement,
-    required this.onSelectChanged,
-  });
+    required this.isSelected,
+    required this.onSelect,
+  }) : super(key: key);
 
   @override
   State<SelectableMovementCard> createState() => _SelectableMovementCardState();
 }
 
 class _SelectableMovementCardState extends State<SelectableMovementCard> {
-  bool _isSelected = false;
-
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _isSelected = !_isSelected;
-        });
-        widget.onSelectChanged(_isSelected);
-      },
-      child: Card(
-        elevation: 0,
-        color: _isSelected ? Theme.of(context).colorScheme.tertiary : Colors.white,
-        shape: defaultCornerShape,
+    return Card(
+      elevation: 0,
+      color: widget.isSelected ? Theme.of(context).colorScheme.tertiary : Colors.white,
+      shape: defaultCornerShape,
+      child: InkWell(
+        onTap: () => widget.onSelect(!widget.isSelected),
+        borderRadius: defaultBorderRadius,
         child: Padding(
           padding: const EdgeInsets.all(10),
           child: Row(
@@ -65,11 +61,11 @@ class _SelectableMovementCardState extends State<SelectableMovementCard> {
                   children: [
                     Text(
                       widget.movement.name,
-                      style: _isSelected ? boldNormalWhite : boldNormalBlack,
+                      style: widget.isSelected ? boldNormalWhite : boldNormalBlack,
                     ),
                     Text(
                       TextUtil.firstLetterToUpperCase(widget.movement.equipment),
-                      style: _isSelected ? smallWhite : smallGrey,
+                      style: widget.isSelected ? smallWhite : smallGrey,
                     ),
                   ],
                 ),

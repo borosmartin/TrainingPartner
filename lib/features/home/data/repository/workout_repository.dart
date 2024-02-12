@@ -1,20 +1,20 @@
 import 'package:training_partner/features/home/data/service/workout_local_service.dart';
-import 'package:training_partner/features/home/models/workout_session.dart';
+import 'package:training_partner/features/home/models/workout_plan.dart';
 
 class WorkoutRepository {
   final WorkoutServiceLocal _workoutServiceLocal;
 
   WorkoutRepository(this._workoutServiceLocal);
 
-  Future<void> saveWorkoutSession(String email, WorkoutSession session) async {
-    _workoutServiceLocal.saveWorkoutSession(email, session);
+  Future<void> saveWorkoutPlan(String email, WorkoutPlan workoutPlan) async {
+    await _workoutServiceLocal.saveWorkoutPlan(email, workoutPlan);
   }
 
-  Future<List<WorkoutSession>> getAllSessionsFromHive() async {
-    return await _workoutServiceLocal.getAllSessionsFromHive();
+  Future<List<WorkoutPlan>> getAllWorkoutPlansFromHive(String email) async {
+    return await _workoutServiceLocal.getAllWorkoutPlansFromHive(email);
   }
 
-  Future<void> deleteAllSessions() async {
-    _workoutServiceLocal.deleteAllSessions();
+  Future<void> deleteWorkoutPlan(String email, WorkoutPlan workoutPlan) async {
+    await _workoutServiceLocal.deleteWorkoutPlan(email, workoutPlan);
   }
 }

@@ -1,35 +1,47 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:training_partner/core/globals/globals.dart';
 import 'package:training_partner/features/home/data/repository/workout_repository.dart';
 import 'package:training_partner/features/home/logic/states/workout_states.dart';
-import 'package:training_partner/features/home/models/workout_session.dart';
+import 'package:training_partner/features/home/models/workout_plan.dart';
 
 class WorkoutCubit extends Cubit<WorkoutState> {
   final WorkoutRepository _workoutRepository;
 
   WorkoutCubit(this._workoutRepository) : super(WorkoutsUninitialized());
 
-  Future<void> saveWorkoutSession(String email, WorkoutSession session) async {
+  Future<void> saveWorkoutPlan(WorkoutPlan workoutPlan) async {
     try {
-      await _workoutRepository.saveWorkoutSession(email, session);
+      emit(WorkoutPlanCreationLoading());
+
+      await _workoutRepository.saveWorkoutPlan(currentUser.email!, workoutPlan);
+
+      emit(WorkoutPlanCreationSuccessful(workoutPlan: workoutPlan));
     } catch (e) {
-      emit(WorkoutSessionsError(message: e.toString()));
+      emit(WorkoutPlanCreationError(message: e.toString()));
     }
   }
 
-  Future<void> getWorkoutSessions() async {
+  Future<void> getAllWorkoutPlans() async {
     try {
-      emit(WorkoutSessionsLoading());
+      emit(WorkoutPlansLoading());
 
-      final sessions = await _workoutRepository.getAllSessionsFromHive();
+      List<WorkoutPlan> workoutPlans = await _workoutRepository.getAllWorkoutPlansFromHive(currentUser.email!);
 
-      emit(WorkoutSessionsLoaded(workoutSessions: sessions));
+      emit(WorkoutPlansLoaded(workoutPlans: workoutPlans));
     } catch (e) {
-      emit(WorkoutSessionsError(message: e.toString()));
+      emit(WorkoutPlanCreationError(message: e.toString()));
     }
   }
 
-  // todo emailes delete?
-  Future<void> deleteAllWorkoutSession() async {
-    await _workoutRepository.deleteAllSessions();
+  Future<void> deleteWorkoutPlan(WorkoutPlan workoutPlan) async {
+    try {
+      emit(WorkoutPlanDeleteLoading());
+
+      await _workoutRepository.deleteWorkoutPlan(currentUser.email!, workoutPlan);
+
+      emit(WorkoutPlanDeleteSuccessful());
+    } catch (e) {
+      emit(WorkoutPlanCreationError(message: e.toString()));
+    }
   }
 }

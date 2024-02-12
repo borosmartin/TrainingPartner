@@ -5,6 +5,7 @@ class WorkoutSession extends Equatable {
   final String id;
   final String name;
   final List<Exercise> exercises;
+
   const WorkoutSession({
     required this.id,
     required this.name,
@@ -23,20 +24,24 @@ class WorkoutSession extends Equatable {
     );
   }
 
-  factory WorkoutSession.fromJson(Map<String, dynamic> json) {
+  factory WorkoutSession.fromJson(Map json) {
+    List<Exercise> exercises = (json['exercises'] as List).map((exerciseJson) => Exercise.fromJson(exerciseJson)).toList();
+
     return WorkoutSession(
       id: json['id'],
       name: json['name'],
-      exercises: json['exercises'].map<Exercise>((exercise) => Exercise.fromJson(exercise)).toList(),
+      exercises: exercises,
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
+    Map<String, dynamic> json = {
       'id': id,
       'name': name,
       'exercises': exercises.map((exercise) => exercise.toJson()).toList(),
     };
+
+    return json;
   }
 
   @override

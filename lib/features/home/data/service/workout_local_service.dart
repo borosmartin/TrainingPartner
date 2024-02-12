@@ -1,40 +1,38 @@
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:training_partner/features/home/models/workout_session.dart';
+import 'package:training_partner/features/home/models/workout_plan.dart';
 
 class WorkoutServiceLocal {
-  static const String editorBoxKey = 'EditorBoxKey';
-  static const String sessionKey = 'SessionKey';
+  static const String workoutBoxKey = 'WorkoutBoxKey';
 
-  Future<void> saveWorkoutSession(String email, WorkoutSession session) async {
-    final box = await Hive.openBox(editorBoxKey);
+  Future<void> saveWorkoutPlan(String email, WorkoutPlan workoutPlan) async {
+    final box = await Hive.openBox(workoutBoxKey);
 
-    final key = '$sessionKey-$email-${session.id}';
+    final json = workoutPlan.toJson();
+    final key = '$email - ${workoutPlan.name}';
 
-    await box.put(key, session.toJson());
+    await box.put(key, json);
   }
 
-  Future<List<WorkoutSession>> getAllSessionsFromHive() async {
-    final box = await Hive.openBox(editorBoxKey);
+  Future<List<WorkoutPlan>> getAllWorkoutPlansFromHive(String email) async {
+    final box = await Hive.openBox(workoutBoxKey);
 
-    List<WorkoutSession> sessions = [];
+    final jsonList = box.keys.where((key) => key.startsWith(email));
+    final List<WorkoutPlan> plans = [];
 
-    for (var i = 0; i < box.length; i++) {
-      final dynamic key = box.keyAt(i);
-      if (key != null && key.toString().startsWith(sessionKey)) {
-        final sessionJson = box.get(key);
-        if (sessionJson != null) {
-          final session = WorkoutSession.fromJson(sessionJson);
-          sessions.add(session);
-        }
-      }
+    for (var key in jsonList) {
+      final jsonPlan = await box.get(key);
+      final plan = WorkoutPlan.fromJson(jsonPlan);
+      plans.add(plan);
     }
 
-    return sessions;
+    return plans;
   }
 
-  Future<void> deleteAllSessions() async {
-    final box = await Hive.openBox(editorBoxKey);
+  Future<void> deleteWorkoutPlan(String email, WorkoutPlan workoutPlan) async {
+    final box = await Hive.openBox(workoutBoxKey);
 
-    box.clear();
+    final key = '$email - ${workoutPlan.name}';
+
+    await box.delete(key);
   }
 }

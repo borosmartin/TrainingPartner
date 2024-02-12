@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:training_partner/core/resources/widgets/custom_small_button.dart';
+import 'package:training_partner/core/constants/component_constants.dart';
 import 'package:training_partner/features/home/models/workout_session.dart';
 
 class EditorFloatingButtons extends StatelessWidget {
@@ -21,25 +21,26 @@ class EditorFloatingButtons extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         if (workoutSessions.isNotEmpty)
-          CustomSmallButton(
-            elevation: 1,
+          FloatingActionButton(
+            heroTag: 'removeSession',
+            shape: defaultCornerShape,
             backgroundColor: isLoading ? Colors.grey : Colors.red,
-            icon: const Icon(
-              Icons.delete_outline_rounded,
-              color: Colors.white,
-              size: 35,
-            ),
-            onTap: isLoading ? null : onRemoveTap,
+            onPressed: isLoading ? null : onRemoveTap,
+            elevation: 1,
+            tooltip: 'Remove session',
+            child: const Icon(Icons.delete_outline_rounded, color: Colors.white, size: 35),
           ),
         const SizedBox(height: 15),
-        CustomSmallButton(
-          elevation: 1,
+        FloatingActionButton(
+          heroTag: 'addSession',
+          shape: defaultCornerShape,
           backgroundColor: isLoading ? Colors.grey : Theme.of(context).colorScheme.tertiary,
-          icon: const Icon(Icons.post_add_rounded, color: Colors.white, size: 35),
-          onTap: isLoading ? null : onAddTap,
+          onPressed: isLoading ? null : onAddTap,
+          elevation: 1,
+          tooltip: 'Add new session',
+          child: const Icon(Icons.post_add_rounded, color: Colors.white, size: 35),
         ),
       ],
     );

@@ -3,9 +3,9 @@ import 'package:lottie/lottie.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
 import 'package:training_partner/core/resources/widgets/custom_title_button.dart';
 import 'package:training_partner/features/home/components/pages/workout_editor_page.dart';
-import 'package:training_partner/features/home/components/widgets/workout_actions_button.dart';
-import 'package:training_partner/features/home/components/widgets/workout_dropdown.dart';
-import 'package:training_partner/features/home/components/widgets/workout_session_list.dart';
+import 'package:training_partner/features/home/components/widgets/home_widgets/workout_actions_button.dart';
+import 'package:training_partner/features/home/components/widgets/home_widgets/workout_dropdown.dart';
+import 'package:training_partner/features/home/components/widgets/home_widgets/workout_session_list.dart';
 import 'package:training_partner/features/home/models/workout_plan.dart';
 import 'package:training_partner/generated/assets.dart';
 
@@ -14,7 +14,12 @@ class WorkoutWidget extends StatefulWidget {
   final WorkoutPlan? selectedWorkoutPlan;
   final void Function(WorkoutPlan) onSelect;
 
-  const WorkoutWidget({super.key, required this.workoutPlans, this.selectedWorkoutPlan, required this.onSelect});
+  const WorkoutWidget({
+    super.key,
+    required this.workoutPlans,
+    required this.selectedWorkoutPlan,
+    required this.onSelect,
+  });
 
   @override
   State<WorkoutWidget> createState() => _WorkoutWidgetState();

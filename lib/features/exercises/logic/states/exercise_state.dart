@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:training_partner/features/exercises/models/movement.dart';
+import 'package:training_partner/features/home/models/movement_filter.dart';
 
 class ExerciseState extends Equatable {
   const ExerciseState();
@@ -10,16 +11,21 @@ class ExerciseState extends Equatable {
 
 class ExercisesUninitialized extends ExerciseState {}
 
-class ExercisesLoading extends ExerciseState {}
+class MovementsLoading extends ExerciseState {}
 
-class ExercisesLoaded extends ExerciseState {
+class MovementsLoaded extends ExerciseState {
   final List<Movement> movements;
+  final List<Movement>? filteredMovements;
+  final MovementFilter? previousFilter;
 
-  const ExercisesLoaded(this.movements);
+  const MovementsLoaded({required this.movements, this.filteredMovements, this.previousFilter});
+
+  @override
+  List<Object?> get props => [movements, previousFilter];
 }
 
-class ExercisesError extends ExerciseState {
+class MovementsError extends ExerciseState {
   final String errorMessage;
 
-  const ExercisesError(this.errorMessage);
+  const MovementsError(this.errorMessage);
 }

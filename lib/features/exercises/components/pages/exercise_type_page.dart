@@ -18,7 +18,7 @@ class _ExerciseTypePageState extends State<ExerciseTypePage> {
   @override
   void initState() {
     super.initState();
-    context.read<ExerciseCubit>().loadExercises();
+    context.read<ExerciseCubit>().loadMovements();
     // todo remove
     // context.read<ExerciseCubit>().loadExercisesFromCsv();
   }
@@ -27,11 +27,11 @@ class _ExerciseTypePageState extends State<ExerciseTypePage> {
   Widget build(BuildContext context) {
     return BlocBuilder<ExerciseCubit, ExerciseState>(
       builder: (context, state) {
-        if (state is ExercisesLoading) {
+        if (state is MovementsLoading) {
           return _getLoadingBodyContent();
-        } else if (state is ExercisesError) {
+        } else if (state is MovementsError) {
           return Center(child: Text('Error: ${state.errorMessage}'));
-        } else if (state is ExercisesLoaded) {
+        } else if (state is MovementsLoaded) {
           return _getBodyContent(state.movements);
         }
 
