@@ -13,10 +13,10 @@ class ExerciseRepository {
       MovementData? hiveData = await _exerciseServiceLocal.getMovementDataFromHive();
 
       if (hiveData != null) {
-        DateTime now = DateTime.now();
+        // todo csak emul
+        DateTime now = DateTime.now().add(const Duration(hours: 1));
         DateTime todayRefreshTime = DateTime(now.year, now.month, now.day, 19, 0);
 
-        // todo apihívás feltétel nem az igazi
         if (now.isBefore(todayRefreshTime) && now.difference(hiveData.lastUpdated).inHours < 24) {
           return hiveData;
         }

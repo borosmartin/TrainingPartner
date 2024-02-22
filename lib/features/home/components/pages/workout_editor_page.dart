@@ -10,10 +10,10 @@ import 'package:training_partner/features/exercises/logic/states/exercise_state.
 import 'package:training_partner/features/exercises/models/exercise.dart';
 import 'package:training_partner/features/exercises/models/movement.dart';
 import 'package:training_partner/features/exercises/models/workout_set.dart';
+import 'package:training_partner/features/home/components/widgets/editor_widgets/editor_exercise_card.dart';
 import 'package:training_partner/features/home/components/widgets/editor_widgets/editor_floating_buttons.dart';
 import 'package:training_partner/features/home/components/widgets/editor_widgets/editor_header.dart';
 import 'package:training_partner/features/home/components/widgets/editor_widgets/session_header.dart';
-import 'package:training_partner/features/home/components/widgets/editor_widgets/textfield_exercise_card.dart';
 import 'package:training_partner/features/home/logic/cubits/workout_cubit.dart';
 import 'package:training_partner/features/home/logic/states/workout_states.dart';
 import 'package:training_partner/features/home/models/workout_plan.dart';
@@ -82,10 +82,11 @@ class _WorkoutEditorPageState extends State<WorkoutEditorPage> {
     return BlocListener<WorkoutCubit, WorkoutState>(
       listener: (context, state) {
         if (state is WorkoutPlanCreationSuccessful) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             elevation: 0,
             backgroundColor: Colors.transparent,
-            content: CustomToast(message: 'New workout plan created!', type: ToastType.success),
+            content:
+                CustomToast(message: widget.workoutPlan != null ? 'Workout plan updated!' : 'New workout plan created!', type: ToastType.success),
           ));
         } else if (state is WorkoutPlanDeleteSuccessful) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -204,7 +205,7 @@ class _WorkoutEditorPageState extends State<WorkoutEditorPage> {
     }
   }
 
-  // todo change order of selected exercies with drag and drop?
+  // todo change order of selected exercies with drag and drop?, and delete on swipe
   Widget _getExerciseList(WorkoutSession session) {
     if (session.exercises.isEmpty) {
       return const Column(
@@ -221,10 +222,7 @@ class _WorkoutEditorPageState extends State<WorkoutEditorPage> {
           itemBuilder: (context, index) {
             return Column(
               children: [
-                // todo a set rep értékek elvesznek ha túlscrollojuk őket
-                // el kell menteni az értékeket szóval kell majd cubit valszeg
-                TextfieldExerciseCard(
-                  index: index,
+                EditorExerciseCard(
                   exercise: session.exercises[index],
                   isFirst: index == 0,
                   isLast: index == session.exercises.length - 1,
@@ -232,7 +230,6 @@ class _WorkoutEditorPageState extends State<WorkoutEditorPage> {
                   onRemoveExercise: () {
                     setState(() {
                       session.exercises.removeAt(index);
-                      Navigator.pop(context);
                     });
                   },
                   onChangeType: () {
@@ -242,14 +239,12 @@ class _WorkoutEditorPageState extends State<WorkoutEditorPage> {
                       } else {
                         session.exercises[index] = session.exercises[index].copyWith(exerciseType: ExerciseType.setRep);
                       }
-
-                      Navigator.pop(context);
                     });
                   },
-                  onTextfieldChange: (setNum, repNum) {
+                  onSetValuesChange: (setDistance, repDuration) {
                     setState(() {
                       session.exercises[index] = session.exercises[index].copyWith(
-                        workoutSets: _createWorkoutSets(session.exercises[index], setNum, repNum),
+                        workoutSets: _createWorkoutSets(session.exercises[index], setDistance, repDuration),
                       );
                     });
                   },
@@ -341,5 +336,11 @@ class _WorkoutEditorPageState extends State<WorkoutEditorPage> {
     }
 
     return newId.toString();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 }

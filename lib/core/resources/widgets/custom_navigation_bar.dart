@@ -25,6 +25,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
       showSelectedLabels: false,
       showUnselectedLabels: false,
       items: [
+        // todo icons
         BottomNavigationBarItem(
           label: "Home",
           icon: currentIndex == 0 ? const Icon(Icons.home, size: 25) : const Icon(Icons.home_outlined, size: 25),
@@ -33,12 +34,10 @@ class CustomBottomNavigationBar extends StatelessWidget {
           label: "Statistics",
           icon: currentIndex == 1 ? const Icon(Icons.pie_chart, size: 25) : const Icon(Icons.pie_chart_outline, size: 25),
         ),
-        // todo find icon with outline
         BottomNavigationBarItem(
           label: "Journal",
           icon: currentIndex == 2 ? const Icon(Icons.menu_book_rounded, size: 25) : const Icon(Icons.menu_book_outlined, size: 25),
         ),
-        // todo find icon with outline
         BottomNavigationBarItem(
           label: "Exercises",
           icon: currentIndex == 3 ? const Icon(Icons.fitness_center, size: 25) : const Icon(Icons.fitness_center_outlined, size: 25),

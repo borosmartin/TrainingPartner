@@ -37,63 +37,64 @@ class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(15),
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.45,
-        child: Column(
-          children: [
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+    return StatefulBuilder(
+      builder: (BuildContext context, StateSetter setBottomSheetState) {
+        return Padding(
+          padding: const EdgeInsets.all(15),
+          child: SingleChildScrollView(
+            child: Column(
               children: [
-                Card(
-                  elevation: 0,
-                  color: Colors.black26,
-                  child: SizedBox(
-                    height: 5,
-                    width: 80,
-                  ),
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Card(
+                      elevation: 0,
+                      color: Colors.black26,
+                      child: SizedBox(height: 5, width: 80),
+                    ),
+                  ],
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const CustomBackButton(color: Colors.black38),
+                    const Text('Filters', style: boldLargeBlack),
+                    IconButton(
+                      onPressed: () {},
+                      icon: const Icon(
+                        Icons.refresh_rounded,
+                        color: Colors.transparent,
+                      ),
+                    ),
+                  ],
+                ),
+                const DividerWithText(text: 'Equipment', textStyle: smallGrey),
+                const SizedBox(height: 10),
+                // todo mintha ez is néha beakadna?
+                EquipmentDropdown(
+                  equipments: _getEquipments(),
+                  initialItem: _movementFilter.equipment == null ? 'All' : TextUtil.firstLetterToUpperCase(_movementFilter.equipment!),
+                  backgroundColor: Colors.white,
+                  iconColor: Colors.black,
+                  onSelect: (value) {
+                    _exerciseCubit.filterMovements(
+                      widget.allMovements,
+                      _movementFilter.copyWith(equipment: value.toLowerCase()),
+                    );
+                  },
+                ),
+                _buildBodyPartsRow(setBottomSheetState),
+                const SizedBox(height: 10),
+                _buildTargetRow(),
               ],
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const CustomBackButton(color: Colors.black38),
-                const Text('Filters', style: boldLargeBlack),
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.refresh_rounded,
-                    color: Colors.transparent,
-                  ),
-                ),
-              ],
-            ),
-            const DividerWithText(text: 'Equipment', textStyle: smallGrey),
-            const SizedBox(height: 10),
-            EquipmentDropdown(
-              equipments: _getEquipments(),
-              initialItem: _movementFilter.equipment == null ? 'All' : TextUtil.firstLetterToUpperCase(_movementFilter.equipment!),
-              backgroundColor: Colors.white,
-              iconColor: Colors.black,
-              onSelect: (value) {
-                _exerciseCubit.filterMovements(
-                  widget.allMovements,
-                  _movementFilter.copyWith(equipment: value.toLowerCase()),
-                );
-              },
-            ),
-            _buildBodyPartsRow(),
-            const SizedBox(height: 10),
-            _buildTargetRow(),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildBodyPartsRow() {
+  Widget _buildBodyPartsRow(StateSetter setBottomSheetState) {
     List<Widget> bodyPartWidgets = [];
     List<String> bodyParts = _movementFilter.bodyParts ?? [];
 
@@ -103,11 +104,13 @@ class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
         isSelected: bodyParts.contains('chest'),
         assetLocation: Assets.assetsImagesChestIcon,
         onTap: (isActive, label) {
-          if (!isActive) {
-            bodyParts.remove(label);
-          } else {
-            bodyParts.add(label);
-          }
+          setBottomSheetState(() {
+            if (!isActive) {
+              bodyParts.remove(label);
+            } else {
+              bodyParts.add(label);
+            }
+          });
 
           _exerciseCubit.filterMovements(
             widget.allMovements,
@@ -120,11 +123,13 @@ class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
         isSelected: bodyParts.contains('arms'),
         assetLocation: Assets.assetsImagesArmsIcon,
         onTap: (isActive, label) {
-          if (!isActive) {
-            bodyParts.remove(label);
-          } else {
-            bodyParts.add(label);
-          }
+          setBottomSheetState(() {
+            if (!isActive) {
+              bodyParts.remove(label);
+            } else {
+              bodyParts.add(label);
+            }
+          });
 
           _exerciseCubit.filterMovements(
             widget.allMovements,
@@ -137,11 +142,13 @@ class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
         isSelected: bodyParts.contains('shoulders'),
         assetLocation: Assets.assetsImagesShoulderIcon,
         onTap: (isActive, label) {
-          if (!isActive) {
-            bodyParts.remove(label);
-          } else {
-            bodyParts.add(label);
-          }
+          setBottomSheetState(() {
+            if (!isActive) {
+              bodyParts.remove(label);
+            } else {
+              bodyParts.add(label);
+            }
+          });
 
           _exerciseCubit.filterMovements(
             widget.allMovements,
@@ -154,11 +161,13 @@ class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
         isSelected: bodyParts.contains('waist'),
         assetLocation: Assets.assetsImagesCoreIcon,
         onTap: (isActive, label) {
-          if (!isActive) {
-            bodyParts.remove(label);
-          } else {
-            bodyParts.add(label);
-          }
+          setBottomSheetState(() {
+            if (!isActive) {
+              bodyParts.remove(label);
+            } else {
+              bodyParts.add(label);
+            }
+          });
 
           _exerciseCubit.filterMovements(
             widget.allMovements,
@@ -171,11 +180,13 @@ class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
         isSelected: bodyParts.contains('back'),
         assetLocation: Assets.assetsImagesBackIcon,
         onTap: (isActive, label) {
-          if (!isActive) {
-            bodyParts.remove(label);
-          } else {
-            bodyParts.add(label);
-          }
+          setBottomSheetState(() {
+            if (!isActive) {
+              bodyParts.remove(label);
+            } else {
+              bodyParts.add(label);
+            }
+          });
 
           _exerciseCubit.filterMovements(
             widget.allMovements,
@@ -188,11 +199,13 @@ class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
         isSelected: bodyParts.contains('legs'),
         assetLocation: Assets.assetsImagesLegsIcon,
         onTap: (isActive, label) {
-          if (!isActive) {
-            bodyParts.remove(label);
-          } else {
-            bodyParts.add(label);
-          }
+          setBottomSheetState(() {
+            if (!isActive) {
+              bodyParts.remove(label);
+            } else {
+              bodyParts.add(label);
+            }
+          });
 
           _exerciseCubit.filterMovements(
             widget.allMovements,
@@ -205,11 +218,13 @@ class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
         isSelected: bodyParts.contains('cardio'),
         assetLocation: Assets.assetsImagesCardioIcon,
         onTap: (isActive, label) {
-          if (!isActive) {
-            bodyParts.remove(label);
-          } else {
-            bodyParts.add(label);
-          }
+          setBottomSheetState(() {
+            if (!isActive) {
+              bodyParts.remove(label);
+            } else {
+              bodyParts.add(label);
+            }
+          });
 
           _exerciseCubit.filterMovements(
             widget.allMovements,
@@ -235,14 +250,20 @@ class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
     );
   }
 
+  // todo ha bodypartot deselectelem, akkor a target is ürüljön!!
+  // todo első megnyitásra nem nyílik meg a targetok listája csak újramegynitásra
   Widget _buildTargetRow() {
     List<Widget> result = [];
     List<String> targets = _movementFilter.targets ?? [];
 
-    var targetNames = widget.allMovements.map((movement) => movement.target).toSet().toList();
-    targetNames.sort((a, b) => a.compareTo(b));
+    var selectedBodyParts = _movementFilter.bodyParts ?? [];
+    var filteredTargets = widget.allMovements
+        .where((movement) => selectedBodyParts.any((bodyPart) => movement.bodyPart.contains(bodyPart)))
+        .map((movement) => movement.target)
+        .toSet()
+        .toList();
 
-    for (var target in targetNames) {
+    for (var target in filteredTargets) {
       result.add(
         CustomActionChip(
           label: target,
@@ -265,13 +286,17 @@ class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
       );
     }
 
-    return Column(
-      children: [
-        const DividerWithText(text: 'Target', textStyle: smallGrey),
-        const SizedBox(height: 10),
-        SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: result)),
-      ],
-    );
+    if (filteredTargets.isEmpty) {
+      return Container();
+    } else {
+      return Column(
+        children: [
+          const DividerWithText(text: 'Target', textStyle: smallGrey),
+          const SizedBox(height: 10),
+          SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: result)),
+        ],
+      );
+    }
   }
 
   List<String> _getEquipments() {

@@ -8,6 +8,7 @@ class CustomSmallButton extends StatelessWidget {
   final String? label;
   final double? elevation;
   final Color? backgroundColor;
+
   const CustomSmallButton({
     super.key,
     required this.icon,

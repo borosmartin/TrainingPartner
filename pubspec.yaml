@@ -24,7 +24,6 @@ dependencies:
   flutter_snake_navigationbar: ^0.6.1
   fluttertoast: ^8.2.4
   google_sign_in: ^6.2.1
-  popover: ^0.2.9
   lottie: ^3.0.0
   hive: ^2.2.3
   hive_flutter: ^1.1.0
@@ -35,6 +34,8 @@ dependencies:
   shimmer: ^3.0.0
   cached_network_image: ^3.3.1
   smooth_page_indicator: ^1.1.0
+  font_awesome_flutter: ^10.7.0
+  iconsax: ^0.0.8
 
 dev_dependencies:
   flutter_test:

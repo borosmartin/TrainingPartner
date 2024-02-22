@@ -1,10 +1,10 @@
 import 'package:equatable/equatable.dart';
 
 class WorkoutSet extends Equatable {
-  final int? repetitions;
-  final int? weight;
-  final int? distance;
-  final int? duration;
+  final num? repetitions;
+  final num? weight;
+  final num? distance;
+  final num? duration;
 
   const WorkoutSet({
     this.repetitions,
@@ -31,6 +31,20 @@ class WorkoutSet extends Equatable {
     };
 
     return json;
+  }
+
+  WorkoutSet copyWith({
+    num? repetitions,
+    num? weight,
+    num? distance,
+    num? duration,
+  }) {
+    return WorkoutSet(
+      repetitions: repetitions ?? this.repetitions,
+      weight: weight ?? this.weight,
+      distance: distance ?? this.distance,
+      duration: duration ?? this.duration,
+    );
   }
 
   @override

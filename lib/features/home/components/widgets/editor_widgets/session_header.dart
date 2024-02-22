@@ -133,6 +133,7 @@ class _SessionHeaderState extends State<SessionHeader> {
                   TextField(
                     controller: textController,
                     autofocus: true,
+                    style: normalBlack,
                     onChanged: (value) {
                       newName = value;
                     },

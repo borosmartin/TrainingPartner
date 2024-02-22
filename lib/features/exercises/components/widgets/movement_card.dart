@@ -4,6 +4,7 @@ import 'package:training_partner/core/constants/component_constants.dart';
 import 'package:training_partner/core/resources/widgets/custom_divider.dart';
 import 'package:training_partner/core/resources/widgets/shimmer_container.dart';
 import 'package:training_partner/core/utils/text_util.dart';
+import 'package:training_partner/features/exercises/components/pages/exercise_detail_page.dart';
 import 'package:training_partner/features/exercises/models/movement.dart';
 
 class MovementCard extends StatelessWidget {
@@ -14,8 +15,9 @@ class MovementCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      // todo on tap
-      onTap: () {},
+      onTap: () => Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => ExerciseDetailPage(movement: movement),
+      )),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Card(
@@ -56,7 +58,7 @@ class MovementCard extends StatelessWidget {
                         Text(TextUtil.firstLetterToUpperCase(movement.equipment), style: smallGrey),
                         if (isTargetVisible)
                           Text(
-                            TextUtil.firstLetterToUpperCase(movement.target),
+                            '${TextUtil.firstLetterToUpperCase(movement.bodyPart)} - ${TextUtil.firstLetterToUpperCase(movement.target)}',
                             style: smallGrey,
                           ),
                       ],

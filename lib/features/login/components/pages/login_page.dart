@@ -8,7 +8,7 @@ import 'package:training_partner/core/globals/component_functions.dart';
 import 'package:training_partner/core/resources/widgets/custom_input_field.dart';
 import 'package:training_partner/core/resources/widgets/custom_title_button.dart';
 import 'package:training_partner/core/resources/widgets/divider_with_text.dart';
-import 'package:training_partner/features/login/components/widgets/new_password_dialog.dart';
+import 'package:training_partner/features/login/components/widgets/password_reset_dialog.dart';
 import 'package:training_partner/features/login/logic/cubits/login_cubit.dart';
 import 'package:training_partner/features/login/logic/states/login_state.dart';
 
@@ -127,7 +127,7 @@ class _LoginPageState extends State<LoginPage> {
                         onTap: () {
                           showDialog(
                             context: context,
-                            builder: (context) => const NewPasswordDialog(),
+                            builder: (context) => const PasswordResetDialog(),
                           );
                         },
                         child: const Text('Forgot password?', style: smallAccent),

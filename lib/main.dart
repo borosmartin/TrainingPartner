@@ -36,6 +36,7 @@ class TrainingPartner extends StatelessWidget {
         providers: _getBlocProviders(),
         child: MaterialApp(
           theme: lightTheme,
+          debugShowCheckedModeBanner: false,
           home: const HomePageNavigator(),
         ),
       ),

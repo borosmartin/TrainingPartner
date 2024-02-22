@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:training_partner/features/exercises/models/movement.dart';
 import 'package:training_partner/features/exercises/models/workout_set.dart';
 
+// todo setRep, distance, duration és akkor nem kell folyton null ellenőrzéssel megnézni
 enum ExerciseType { setRep, distanceDuration }
 
 class Exercise extends Equatable {

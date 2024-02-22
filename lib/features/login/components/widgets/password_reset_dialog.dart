@@ -7,14 +7,14 @@ import 'package:training_partner/core/resources/firebase/auth_service.dart';
 import 'package:training_partner/core/resources/widgets/custom_input_field.dart';
 import 'package:training_partner/core/resources/widgets/custom_title_button.dart';
 
-class NewPasswordDialog extends StatefulWidget {
-  const NewPasswordDialog({super.key});
+class PasswordResetDialog extends StatefulWidget {
+  const PasswordResetDialog({super.key});
 
   @override
-  State<NewPasswordDialog> createState() => _NewPasswordDialogState();
+  State<PasswordResetDialog> createState() => _PasswordResetDialogState();
 }
 
-class _NewPasswordDialogState extends State<NewPasswordDialog> {
+class _PasswordResetDialogState extends State<PasswordResetDialog> {
   final FocusNode _focusNodeEmail = FocusNode();
 
   final TextEditingController _controllerEmail = TextEditingController();

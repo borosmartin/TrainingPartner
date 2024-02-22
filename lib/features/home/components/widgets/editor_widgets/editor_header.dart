@@ -44,6 +44,7 @@ class _EditorHeaderState extends State<EditorHeader> {
               children: [
                 GestureDetector(
                   onTap: () {
+                    context.read<WorkoutCubit>().getAllWorkoutPlan();
                     Navigator.pop(context);
                   },
                   child: const Text('Cancel', style: boldNormalGrey),
@@ -137,7 +138,9 @@ class _EditorHeaderState extends State<EditorHeader> {
       }
     }
 
-    if (widget.workoutPlaneNameController.text.isEmpty) {
+    if (widget.workoutSessions.isEmpty) {
+      _showErrorToast("Error: Add at least one session!");
+    } else if (widget.workoutPlaneNameController.text.isEmpty) {
       _showErrorToast("Error: Workoutplan name can't be empty!");
     } else if (sessionNameEmptyError) {
       _showErrorToast('Error: One of the sessions has no name!');

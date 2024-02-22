@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 
 class CustomBackButton extends StatelessWidget {
   final Color? color;
-  const CustomBackButton({super.key, this.color});
+  final Widget? dialog;
+
+  const CustomBackButton({super.key, this.color, this.dialog});
 
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      onPressed: () => Navigator.pop(context),
+      onPressed: () => dialog != null ? showDialog(context: context, builder: (context) => dialog!) : Navigator.pop(context),
       icon: _getIcon(),
     );
   }

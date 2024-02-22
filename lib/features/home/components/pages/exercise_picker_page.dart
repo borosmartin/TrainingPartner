@@ -50,44 +50,44 @@ class _ExercisePickerPageState extends State<ExercisePickerPage> {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      // todo not working
-      onPopInvoked: (value) => colorSafeArea(color: Colors.white),
-      child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.background,
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          centerTitle: true,
-          title: const Text('Exercises', style: boldLargeBlack),
-          actions: [
-            IconButton(
-              onPressed: () => _showExerciseFiltersBottomSheet(context),
-              icon: Icon(
-                Icons.filter_alt_rounded,
-                color: Theme.of(context).colorScheme.tertiary,
-              ),
-            )
-          ],
-        ),
-        body: BlocConsumer<ExerciseCubit, ExerciseState>(
-          listener: (BuildContext context, ExerciseState state) {
-            if (state is MovementsError) {
-              showErrorToast(toast, state.errorMessage);
-              Navigator.pop(context);
-            }
-          },
-          builder: (BuildContext context, ExerciseState state) {
-            if (state is MovementsLoading || state is ExercisesUninitialized || state is MovementsError) {
-              return const Expanded(
-                child: Center(
-                  child: CircularProgressIndicator(),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: PopScope(
+        // todo not working, fekete lesz mikor visszalépek
+        onPopInvoked: (value) => colorSafeArea(color: Colors.white),
+        child: Scaffold(
+          backgroundColor: Theme.of(context).colorScheme.background,
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            centerTitle: true,
+            title: const Text('Exercises', style: boldLargeBlack),
+            actions: [
+              IconButton(
+                onPressed: () => _showExerciseFiltersBottomSheet(context),
+                icon: Icon(
+                  Icons.filter_alt_rounded,
+                  color: Theme.of(context).colorScheme.tertiary,
                 ),
-              );
-            } else if (state is MovementsLoaded) {
-              _movementFilter = state.previousFilter;
-              return GestureDetector(
-                onTap: () => FocusScope.of(context).unfocus(),
-                child: Padding(
+              )
+            ],
+          ),
+          body: BlocConsumer<ExerciseCubit, ExerciseState>(
+            listener: (BuildContext context, ExerciseState state) {
+              if (state is MovementsError) {
+                showErrorToast(toast, state.errorMessage);
+                Navigator.pop(context);
+              }
+            },
+            builder: (BuildContext context, ExerciseState state) {
+              if (state is MovementsLoading || state is ExercisesUninitialized || state is MovementsError) {
+                return const Expanded(
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              } else if (state is MovementsLoaded) {
+                _movementFilter = state.previousFilter;
+                return Padding(
                   padding: const EdgeInsets.all(15),
                   child: Column(
                     children: [
@@ -114,17 +114,18 @@ class _ExercisePickerPageState extends State<ExercisePickerPage> {
                       ),
                     ],
                   ),
-                ),
-              );
-            }
+                );
+              }
 
-            throw UnimplementedError();
-          },
+              throw UnimplementedError();
+            },
+          ),
         ),
       ),
     );
   }
 
+  // todo a kiválaszott movements nem elől vannak
   Widget _getMovementList(MovementsLoaded state) {
     if (state.previousFilter != null && state.filteredMovements != null && state.filteredMovements!.isEmpty) {
       return const Expanded(

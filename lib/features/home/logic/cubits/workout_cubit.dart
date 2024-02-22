@@ -21,7 +21,7 @@ class WorkoutCubit extends Cubit<WorkoutState> {
     }
   }
 
-  Future<void> getAllWorkoutPlans() async {
+  Future<void> getAllWorkoutPlan() async {
     try {
       emit(WorkoutPlansLoading());
 

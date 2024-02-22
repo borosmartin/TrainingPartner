@@ -5,7 +5,16 @@ class CustomDivider extends StatelessWidget {
   final bool isVertical;
   final double? thickness;
   final double? height;
-  const CustomDivider({super.key, this.padding, this.thickness, this.isVertical = false, this.height});
+  final Color? color;
+
+  const CustomDivider({
+    super.key,
+    this.padding,
+    this.thickness,
+    this.isVertical = false,
+    this.height,
+    this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -15,14 +24,14 @@ class CustomDivider extends StatelessWidget {
           ? VerticalDivider(
               width: 0,
               thickness: thickness ?? 1.5,
-              color: Colors.grey.shade300,
+              color: color ?? Colors.grey.shade300,
               indent: 5,
               endIndent: 5,
             )
           : Divider(
               height: 0,
               thickness: thickness ?? 1.5,
-              color: Colors.grey.shade300,
+              color: color ?? Colors.grey.shade300,
             ),
     );
   }

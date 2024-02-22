@@ -1,7 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
+import 'package:training_partner/core/resources/firebase/auth_service.dart';
+import 'package:training_partner/core/resources/widgets/custom_small_button.dart';
 import 'package:training_partner/core/resources/widgets/shimmer_container.dart';
 
 class ProfileWidget extends StatelessWidget {
@@ -32,6 +35,18 @@ class ProfileWidget extends StatelessWidget {
                       ),
                     ),
             ),
+            const Spacer(),
+            CustomSmallButton(
+              label: 'Settings',
+              icon: const Icon(Icons.settings_rounded, color: Colors.black38),
+              onTap: () {},
+            ),
+            const SizedBox(width: 10),
+            CustomSmallButton(
+              label: 'Logout',
+              icon: const Icon(Iconsax.logout5, color: Colors.black38),
+              onTap: _signOut,
+            ),
           ],
         ),
         const SizedBox(height: 10),
@@ -51,5 +66,9 @@ class ProfileWidget extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Future<void> _signOut() async {
+    await AuthService().signOut();
   }
 }
