@@ -2,7 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:training_partner/features/exercises/data/repository/exercise_repository.dart';
 import 'package:training_partner/features/exercises/logic/states/exercise_state.dart';
 import 'package:training_partner/features/exercises/models/movement.dart';
-import 'package:training_partner/features/home/models/movement_filter.dart';
+import 'package:training_partner/features/workout_editor/models/movement_filter.dart';
 
 class ExerciseCubit extends Cubit<ExerciseState> {
   final ExerciseRepository _exerciseRepository;

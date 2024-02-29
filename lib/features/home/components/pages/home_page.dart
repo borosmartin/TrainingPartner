@@ -2,12 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:training_partner/core/resources/firebase/auth_service.dart';
-import 'package:training_partner/features/home/components/widgets/home_widgets/profile_widget.dart';
-import 'package:training_partner/features/home/components/widgets/home_widgets/week_view_widget.dart';
-import 'package:training_partner/features/home/components/widgets/home_widgets/workout_widget.dart';
-import 'package:training_partner/features/home/logic/cubits/workout_cubit.dart';
-import 'package:training_partner/features/home/logic/states/workout_states.dart';
-import 'package:training_partner/features/home/models/workout_plan.dart';
+import 'package:training_partner/features/home/components/widgets/profile_widget.dart';
+import 'package:training_partner/features/home/components/widgets/week_view_widget.dart';
+import 'package:training_partner/features/home/components/widgets/workout_widget.dart';
+import 'package:training_partner/features/workout_editor/logic/cubits/workout_plan_cubit.dart';
+import 'package:training_partner/features/workout_editor/logic/states/workout_plan_states.dart';
+import 'package:training_partner/features/workout_editor/models/workout_plan.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,13 +19,13 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   WorkoutPlan? selectedWorkoutPlan;
   final User _user = AuthService().currentUser!;
-  late WorkoutCubit workoutCubit;
+  late WorkoutPlanCubit workoutCubit;
 
   @override
   void initState() {
     super.initState();
 
-    workoutCubit = context.read<WorkoutCubit>();
+    workoutCubit = context.read<WorkoutPlanCubit>();
 
     workoutCubit.getAllWorkoutPlan();
   }
@@ -51,13 +51,13 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _getWorkoutWidget() {
-    return BlocConsumer<WorkoutCubit, WorkoutState>(listener: (context, state) {
+    return BlocConsumer<WorkoutPlanCubit, WorkoutPlanState>(listener: (context, state) {
       if (state is WorkoutPlanCreationSuccessful || state is WorkoutPlanDeleteSuccessful) {
         workoutCubit.getAllWorkoutPlan();
       }
     }, builder: (context, state) {
       if (state is WorkoutPlansLoading ||
-          state is WorkoutsUninitialized ||
+          state is WorkoutPlansUninitialized ||
           state is WorkoutPlanCreationLoading ||
           state is WorkoutPlanDeleteLoading) {
         return const CircularProgressIndicator();

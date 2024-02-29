@@ -26,6 +26,7 @@ class _HomePageNavigatorState extends State<HomePageNavigator> {
     const ExerciseTypePage(),
   ];
 
+  // todo load every data than pass it to the pages
   @override
   void initState() {
     super.initState();

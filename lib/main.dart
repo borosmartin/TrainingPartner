@@ -9,10 +9,13 @@ import 'package:training_partner/features/exercises/data/repository/exercise_rep
 import 'package:training_partner/features/exercises/data/service/exercise_local_service.dart';
 import 'package:training_partner/features/exercises/data/service/exercise_service.dart';
 import 'package:training_partner/features/exercises/logic/cubits/exercise_cubit.dart';
-import 'package:training_partner/features/home/data/repository/workout_repository.dart';
-import 'package:training_partner/features/home/data/service/workout_local_service.dart';
-import 'package:training_partner/features/home/logic/cubits/workout_cubit.dart';
 import 'package:training_partner/features/login/logic/cubits/login_cubit.dart';
+import 'package:training_partner/features/workout/data/repository/workout_repository.dart';
+import 'package:training_partner/features/workout/data/service/workout_service_local.dart';
+import 'package:training_partner/features/workout/logic/cubits/workout_cubit.dart';
+import 'package:training_partner/features/workout_editor/data/repository/workout_plan_repository.dart';
+import 'package:training_partner/features/workout_editor/data/service/workout_plan_local_service.dart';
+import 'package:training_partner/features/workout_editor/logic/cubits/workout_plan_cubit.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -53,6 +56,11 @@ class TrainingPartner extends StatelessWidget {
           RepositoryProvider.of<ExerciseRepository>(context),
         ),
       ),
+      BlocProvider<WorkoutPlanCubit>(
+        create: (context) => WorkoutPlanCubit(
+          RepositoryProvider.of<WorkoutPlanRepository>(context),
+        ),
+      ),
       BlocProvider<WorkoutCubit>(
         create: (context) => WorkoutCubit(
           RepositoryProvider.of<WorkoutRepository>(context),
@@ -67,6 +75,11 @@ class TrainingPartner extends StatelessWidget {
         create: (context) => ExerciseRepository(
           ExerciseService(),
           ExerciseServiceLocal(),
+        ),
+      ),
+      RepositoryProvider<WorkoutPlanRepository>(
+        create: (context) => WorkoutPlanRepository(
+          WorkoutPlanServiceLocal(),
         ),
       ),
       RepositoryProvider<WorkoutRepository>(

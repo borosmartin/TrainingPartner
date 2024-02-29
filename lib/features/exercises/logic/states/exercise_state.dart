@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:training_partner/features/exercises/models/movement.dart';
-import 'package:training_partner/features/home/models/movement_filter.dart';
+import 'package:training_partner/features/workout_editor/models/movement_filter.dart';
 
 class ExerciseState extends Equatable {
   const ExerciseState();

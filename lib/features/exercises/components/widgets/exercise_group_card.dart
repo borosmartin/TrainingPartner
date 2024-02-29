@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
+import 'package:training_partner/core/utils/text_util.dart';
 import 'package:training_partner/features/exercises/components/pages/exercise_list_page.dart';
 import 'package:training_partner/features/exercises/models/movement.dart';
 
@@ -20,28 +21,51 @@ class ExerciseGroupCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: GestureDetector(
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => ExerciseListPage(
-              groupName: groupName,
-              movements: movements,
-              assetLocation: assetLocation,
+      child: Card(
+        shape: defaultCornerShape,
+        elevation: 0,
+        child: InkWell(
+          borderRadius: defaultBorderRadius,
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => ExerciseListPage(
+                groupName: groupName,
+                movements: movements,
+                assetLocation: assetLocation,
+              ),
             ),
           ),
-        ),
-        child: Card(
-          shape: defaultCornerShape,
-          margin: const EdgeInsets.all(10),
-          elevation: 0,
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Image.asset(assetLocation, height: 90, width: 90),
-                const SizedBox(height: 10),
-                Text(label, style: boldNormalBlack),
+                const SizedBox(height: 15),
+                Image.asset(assetLocation, height: 60, width: 60),
+                const SizedBox(height: 15),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.tertiary,
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(10),
+                      bottomRight: Radius.circular(10),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Text(label,
+                            style: TextUtil.getCustomTextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white,
+                            )),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),

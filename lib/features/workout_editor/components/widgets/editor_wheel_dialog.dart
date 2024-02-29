@@ -4,32 +4,32 @@ import 'package:training_partner/core/resources/widgets/custom_divider.dart';
 import 'package:training_partner/core/resources/widgets/custom_title_button.dart';
 import 'package:training_partner/features/exercises/models/exercise.dart';
 
-class WorkoutWheelDialog extends StatefulWidget {
+class EditorWheelDialog extends StatefulWidget {
   final num? firstWheelValue;
   final num? secondWheelValue;
   final ExerciseType exerciseType;
   final Function(num, num) onValuesChange;
 
-  const WorkoutWheelDialog({
+  const EditorWheelDialog({
     super.key,
-    required this.firstWheelValue,
-    required this.secondWheelValue,
+    this.firstWheelValue,
+    this.secondWheelValue,
     required this.onValuesChange,
     required this.exerciseType,
   });
 
   @override
-  State<WorkoutWheelDialog> createState() => _EditorWheelDialogState();
+  State<EditorWheelDialog> createState() => _EditorWheelDialogState();
 }
 
-class _EditorWheelDialogState extends State<WorkoutWheelDialog> {
+class _EditorWheelDialogState extends State<EditorWheelDialog> {
   ExerciseType get exerciseType => widget.exerciseType;
 
   late FixedExtentScrollController firstWheelScrollController;
   late FixedExtentScrollController secondWheelScrollController;
 
-  late num firstWheelValue;
-  late num secondWheelValue;
+  num firstWheelValue = 0;
+  num secondWheelValue = 0;
 
   @override
   void initState() {
@@ -38,7 +38,9 @@ class _EditorWheelDialogState extends State<WorkoutWheelDialog> {
     firstWheelValue = widget.firstWheelValue ?? 0;
     secondWheelValue = widget.secondWheelValue ?? 0;
 
-    firstWheelScrollController = FixedExtentScrollController(initialItem: firstWheelValue.toInt());
+    firstWheelScrollController = FixedExtentScrollController(
+      initialItem: exerciseType == ExerciseType.distance ? (firstWheelValue * 2).toInt() : firstWheelValue.toInt(),
+    );
     secondWheelScrollController = FixedExtentScrollController(initialItem: secondWheelValue.toInt());
   }
 
@@ -48,7 +50,7 @@ class _EditorWheelDialogState extends State<WorkoutWheelDialog> {
       elevation: 0,
       shape: defaultCornerShape,
       child: Padding(
-        padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 15),
+        padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -69,7 +71,10 @@ class _EditorWheelDialogState extends State<WorkoutWheelDialog> {
             CustomTitleButton(
               label: 'Set',
               onTap: () {
-                widget.onValuesChange(firstWheelValue, secondWheelValue);
+                widget.onValuesChange(
+                  exerciseType == ExerciseType.distance ? (firstWheelValue / 2) : firstWheelValue,
+                  secondWheelValue,
+                );
                 Navigator.of(context).pop();
               },
             ),
@@ -85,8 +90,8 @@ class _EditorWheelDialogState extends State<WorkoutWheelDialog> {
         return const Column(children: [
           SizedBox(height: 15),
           Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-            Padding(padding: EdgeInsets.only(right: 15), child: Text('Reps', style: boldLargeGrey)),
-            Padding(padding: EdgeInsets.only(left: 15), child: Text('Weight', style: boldLargeGrey)),
+            Padding(padding: EdgeInsets.only(right: 15), child: Text('Sets', style: boldLargeGrey)),
+            Padding(padding: EdgeInsets.only(left: 15), child: Text('Reps', style: boldLargeGrey)),
           ]),
           CustomDivider(thickness: 2.5, padding: EdgeInsets.symmetric(vertical: 15)),
         ]);
@@ -143,7 +148,7 @@ class _EditorWheelDialogState extends State<WorkoutWheelDialog> {
           }
         },
         childDelegate: ListWheelChildBuilderDelegate(
-          childCount: 100,
+          childCount: 101,
           builder: (context, index) {
             return _getWheelItem(index, isFirstWheel);
           },
@@ -193,7 +198,7 @@ class _EditorWheelDialogState extends State<WorkoutWheelDialog> {
       case ExerciseType.repetitions:
         children = [
           const Padding(padding: EdgeInsets.only(left: 60), child: Text('#', style: smallGrey)),
-          const Padding(padding: EdgeInsets.only(left: 35), child: Text('kg', style: smallGrey)),
+          const Padding(padding: EdgeInsets.only(left: 35), child: Text('#', style: smallGrey)),
         ];
         break;
 
@@ -215,7 +220,10 @@ class _EditorWheelDialogState extends State<WorkoutWheelDialog> {
           borderRadius: defaultBorderRadius,
           color: Colors.white,
         ),
-        child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: children),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: children,
+        ),
       ),
     );
   }

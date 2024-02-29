@@ -6,6 +6,7 @@ class CustomDivider extends StatelessWidget {
   final double? thickness;
   final double? height;
   final Color? color;
+  final double? indents;
 
   const CustomDivider({
     super.key,
@@ -14,6 +15,7 @@ class CustomDivider extends StatelessWidget {
     this.isVertical = false,
     this.height,
     this.color,
+    this.indents,
   });
 
   @override
@@ -25,8 +27,8 @@ class CustomDivider extends StatelessWidget {
               width: 0,
               thickness: thickness ?? 1.5,
               color: color ?? Colors.grey.shade300,
-              indent: 5,
-              endIndent: 5,
+              indent: indents ?? 5,
+              endIndent: indents ?? 5,
             )
           : Divider(
               height: 0,

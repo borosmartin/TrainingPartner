@@ -30,13 +30,11 @@ class _WorkoutExerciseBodyState extends State<WorkoutExerciseBody> {
   Exercise get exercise => widget.exercise;
   PageController get pageController => widget.pageController;
   late int _currentSetNum;
-  late bool _isSetRep;
 
   @override
   void initState() {
     super.initState();
     _currentSetNum = widget.setNum;
-    _isSetRep = exercise.type == ExerciseType.setRep;
   }
 
   @override
@@ -113,67 +111,69 @@ class _WorkoutExerciseBodyState extends State<WorkoutExerciseBody> {
     );
   }
 
-  // todo distance duration
   // todo set num változtató bottom sheet?
   Widget _getSetTable() {
-    if (_isSetRep) {
-      return Table(
-        children: [
-          _getTableRow(
-            ['#', 'Reps', 'Weight', ''],
-            exercise.workoutSets[0],
-            -1,
-          ),
-          for (int i = 0; i < exercise.workoutSets.length; i++)
+    List<TableRow> tableRows = [];
+
+    switch (exercise.type) {
+      case ExerciseType.repetitions:
+        tableRows.add(_getTableRow(workoutSet: exercise.workoutSets[0], cells: ['#', 'Reps', 'Weight', '']));
+
+        for (int i = 0; i < exercise.workoutSets.length; i++) {
+          tableRows.add(
             _getTableRow(
-              [
+              setIndex: i,
+              workoutSet: exercise.workoutSets[i],
+              cells: [
                 (i + 1).toString(),
                 exercise.workoutSets[i].repetitions.toString(),
                 exercise.workoutSets[i].weight == null ? '0 kg' : '${exercise.workoutSets[i].weight.toString()} kg',
                 null,
               ],
-              exercise.workoutSets[i],
-              i,
             ),
-        ],
-      );
-    } else {
-      return Table(
-        children: [
+          );
+        }
+        break;
+
+      case ExerciseType.distance:
+        tableRows.addAll([
+          _getTableRow(workoutSet: exercise.workoutSets[0], cells: ['Distance ( km )', '']),
           _getTableRow(
-            [exercise.workoutSets.first.duration != null || exercise.workoutSets.first.duration != 0 ? 'Duration ( min )' : 'Distance ( km )', ''],
-            exercise.workoutSets[0],
-            -1,
+            setIndex: 0,
+            workoutSet: exercise.workoutSets[0],
+            cells: ['${exercise.workoutSets.first.distance} km', null],
           ),
-          for (int i = 0; i < exercise.workoutSets.length; i++)
-            _getTableRow(
-              [
-                exercise.workoutSets.first.distance == null || exercise.workoutSets.first.distance == 0
-                    ? '${exercise.workoutSets.first.duration} min'
-                    : '${exercise.workoutSets.first.distance} km',
-                null,
-              ],
-              exercise.workoutSets[i],
-              i,
-            ),
-        ],
-      );
+        ]);
+        break;
+
+      case ExerciseType.duration:
+        tableRows.addAll([
+          _getTableRow(workoutSet: exercise.workoutSets[0], cells: ['Duration ( min )', '']),
+          _getTableRow(
+            setIndex: 0,
+            workoutSet: exercise.workoutSets[0],
+            cells: ['${exercise.workoutSets.first.duration} min', null],
+          ),
+        ]);
+        break;
     }
+
+    return Table(children: tableRows);
   }
 
-  TableRow _getTableRow(List<String?> cells, WorkoutSet workoutSet, int setIndex) {
+  TableRow _getTableRow({int? setIndex, required WorkoutSet workoutSet, required List<String?> cells}) {
     List<Widget> rowWidgets = [];
 
     for (int i = 0; i < cells.length; i++) {
-      if (setIndex == -1 || cells[i] == null || setIndex > _currentSetNum) {
-        rowWidgets.add(_getTableCell(cells[i], setIndex, i));
+      if (setIndex == null || cells[i] == null || setIndex > _currentSetNum) {
+        rowWidgets.add(_getTableCell(setIndex: setIndex, label: cells[i], columnIndex: i));
       } else {
         rowWidgets.add(
           GestureDetector(
             onTap: () {
               _showWheelNumberDialog(setIndex, workoutSet);
             },
-            child: _getTableCell(cells[i], setIndex, i),
+            child: _getTableCell(label: cells[i], setIndex: setIndex, columnIndex: i),
           ),
         );
       }
@@ -182,37 +182,40 @@ class _WorkoutExerciseBodyState extends State<WorkoutExerciseBody> {
     return TableRow(children: rowWidgets);
   }
 
-  Widget _getTableCell(String? label, int setIndex, int rowIndex) {
+  Widget _getTableCell({String? label, int? setIndex, required int columnIndex}) {
+    bool isRepetitions = exercise.type == ExerciseType.repetitions;
+
     if (label == null) {
-      if (setIndex == _currentSetNum) {
-        return _buildCheckIcon(false);
-      } else if (_currentSetNum > setIndex) {
-        return _buildCheckIcon(true);
+      if (setIndex != null) {
+        if (setIndex == _currentSetNum) {
+          return _buildCheckIcon(false);
+        } else if (_currentSetNum > setIndex) {
+          return _buildCheckIcon(true);
+        } else {
+          return Container();
+        }
       } else {
         return Container();
       }
-    }
-
-    return Container(
-      decoration: BoxDecoration(
-        color: setIndex == _currentSetNum ? Colors.white : Colors.transparent,
-        borderRadius: BorderRadius.only(
-          topLeft: rowIndex == 0 ? const Radius.circular(10) : Radius.zero,
-          bottomLeft: rowIndex == 0 ? const Radius.circular(10) : Radius.zero,
-          topRight: (_isSetRep && rowIndex == 2 || !_isSetRep && rowIndex == 0) ? const Radius.circular(10) : Radius.zero,
-          bottomRight: (_isSetRep && rowIndex == 2 || !_isSetRep && rowIndex == 0) ? const Radius.circular(10) : Radius.zero,
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(5),
-        child: Center(
-          child: Text(
-            label,
-            style: setIndex == _currentSetNum ? boldNormalBlack : normalGrey,
+    } else {
+      return Container(
+        decoration: BoxDecoration(
+          color: setIndex == _currentSetNum ? Colors.white : Colors.transparent,
+          borderRadius: BorderRadius.only(
+            topLeft: columnIndex == 0 ? const Radius.circular(10) : Radius.zero,
+            bottomLeft: columnIndex == 0 ? const Radius.circular(10) : Radius.zero,
+            topRight: (isRepetitions && columnIndex == 2 || !isRepetitions && columnIndex == 0) ? const Radius.circular(10) : Radius.zero,
+            bottomRight: (isRepetitions && columnIndex == 2 || !isRepetitions && columnIndex == 0) ? const Radius.circular(10) : Radius.zero,
           ),
         ),
-      ),
-    );
+        child: Padding(
+          padding: const EdgeInsets.all(5),
+          child: Center(
+            child: Text(label, style: setIndex == _currentSetNum ? boldNormalBlack : normalGrey),
+          ),
+        ),
+      );
+    }
   }
 
   Widget _buildCheckIcon(bool isDone) {
@@ -222,32 +225,31 @@ class _WorkoutExerciseBodyState extends State<WorkoutExerciseBody> {
         child: Icon(Icons.check, color: Colors.black38, size: 25),
       );
     } else {
-      return Padding(
-        padding: const EdgeInsets.only(left: 15),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.tertiary,
-            borderRadius: const BorderRadius.all(Radius.circular(10)),
-          ),
-          child: GestureDetector(
-            onTap: () {
-              setState(() {
-                _currentSetNum++;
+      return GestureDetector(
+        onTap: () {
+          setState(() {
+            _currentSetNum++;
 
-                widget.onSetValueChange(_currentSetNum);
+            widget.onSetValueChange(_currentSetNum);
 
-                if (_currentSetNum == exercise.workoutSets.length &&
-                    exercise.workoutSets.length > pageController.page!.toInt() &&
-                    widget.pageController.hasClients) {
-                  pageController.animateToPage(
-                    widget.pageController.page!.toInt() + 1,
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.ease,
-                  );
-                }
-              });
-            },
-            // todo icon vékony
+            if (_currentSetNum == exercise.workoutSets.length &&
+                exercise.workoutSets.length > pageController.page!.toInt() &&
+                widget.pageController.hasClients) {
+              pageController.animateToPage(
+                widget.pageController.page!.toInt() + 1,
+                duration: const Duration(milliseconds: 500),
+                curve: Curves.ease,
+              );
+            }
+          });
+        },
+        child: Padding(
+          padding: const EdgeInsets.only(left: 15),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.tertiary,
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
+            ),
             child: const Padding(
               padding: EdgeInsets.all(4.5),
               child: Icon(Icons.check, color: Colors.white, size: 30),
@@ -263,37 +265,54 @@ class _WorkoutExerciseBodyState extends State<WorkoutExerciseBody> {
       context: context,
       builder: (context) {
         return WorkoutWheelDialog(
-          firstValue: workoutSet.repetitions,
-          secondValue: workoutSet.weight,
+          firstWheelValue: _getFirstWheelValue(workoutSet),
+          secondWheelValue: exercise.type == ExerciseType.repetitions ? workoutSet.weight : null,
           exerciseType: widget.exercise.type,
-          onSetValuesChange: (firsValue, secondValue) => _handleWheelDialogOnChange(setIndex, firsValue, secondValue),
+          onValuesChange: (firsWheelValue, secondWheelValue) => _handleWheelDialogOnChange(setIndex, firsWheelValue, secondWheelValue),
         );
       },
     );
   }
 
-  void _handleWheelDialogOnChange(int setIndex, num firsValue, num secondValue) {
-    if (exercise.type == ExerciseType.setRep) {
-      setState(() {
-        exercise.workoutSets[setIndex] = exercise.workoutSets[setIndex].copyWith(
-          repetitions: firsValue,
-          weight: secondValue,
-        );
-      });
-    } else {
-      if (exercise.workoutSets.first.duration != null) {
+  num? _getFirstWheelValue(WorkoutSet workoutSet) {
+    switch (exercise.type) {
+      case ExerciseType.repetitions:
+        return workoutSet.repetitions;
+
+      case ExerciseType.distance:
+        return workoutSet.distance;
+
+      case ExerciseType.duration:
+        return workoutSet.duration;
+    }
+  }
+
+  void _handleWheelDialogOnChange(int setIndex, num firsWheelValue, num secondWheelValue) {
+    switch (exercise.type) {
+      case ExerciseType.repetitions:
         setState(() {
           exercise.workoutSets[setIndex] = exercise.workoutSets[setIndex].copyWith(
-            duration: secondValue,
+            repetitions: firsWheelValue,
+            weight: secondWheelValue,
           );
         });
-      } else if (exercise.workoutSets.first.distance != null) {
+        break;
+
+      case ExerciseType.distance:
         setState(() {
           exercise.workoutSets[setIndex] = exercise.workoutSets[setIndex].copyWith(
-            distance: firsValue,
+            distance: firsWheelValue,
           );
         });
-      }
+        break;
+
+      case ExerciseType.duration:
+        setState(() {
+          exercise.workoutSets[setIndex] = exercise.workoutSets[setIndex].copyWith(
+            duration: secondWheelValue,
+          );
+        });
+        break;
     }
   }
 }

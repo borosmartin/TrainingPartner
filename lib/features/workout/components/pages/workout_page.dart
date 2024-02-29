@@ -1,16 +1,20 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
 import 'package:training_partner/core/globals/component_functions.dart';
 import 'package:training_partner/core/resources/widgets/custom_back_button.dart';
 import 'package:training_partner/core/resources/widgets/custom_button.dart';
-import 'package:training_partner/core/resources/widgets/custom_small_button.dart';
 import 'package:training_partner/core/resources/widgets/custom_title_button.dart';
-import 'package:training_partner/features/home/models/workout_session.dart';
-import 'package:training_partner/features/workout/components/widgets/time_counter_widget.dart';
+import 'package:training_partner/core/utils/text_util.dart';
 import 'package:training_partner/features/workout/components/widgets/time_line_widget.dart';
+import 'package:training_partner/features/workout/components/widgets/timer_widget.dart';
 import 'package:training_partner/features/workout/components/widgets/workout_exercise_body.dart';
+import 'package:training_partner/features/workout/logic/cubits/workout_cubit.dart';
+import 'package:training_partner/features/workout_editor/models/workout_session.dart';
 
 class WorkoutPage extends StatefulWidget {
   final WorkoutSession session;
@@ -28,12 +32,15 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
   Map<String, int> setNumbers = {};
 
+  int _seconds = 0;
+
   @override
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: _currentPageIndex);
 
     colorSafeArea(color: Colors.white);
+    _startTimer();
   }
 
   @override
@@ -43,11 +50,8 @@ class _WorkoutPageState extends State<WorkoutPage> {
         backgroundColor: Theme.of(context).colorScheme.background,
         body: _getBodyContent(),
         floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
-        floatingActionButton: CustomSmallButton(
-          onTap: () {},
-          backgroundColor: Theme.of(context).colorScheme.tertiary,
-          icon: const Icon(Icons.timer_rounded, color: Colors.white),
-        ),
+        // todo fix
+        floatingActionButton: const TimerWidget(),
       ),
     );
   }
@@ -87,8 +91,13 @@ class _WorkoutPageState extends State<WorkoutPage> {
                   child: CustomTitleButton(
                     icon: Iconsax.medal_star5,
                     label: 'Finish Workout',
-                    // todo finish
-                    onTap: () {},
+                    onTap: () {
+                      final sessionWithDuration = session.copyWith(durationInSeconds: _seconds, date: DateTime.now());
+                      context.read<WorkoutCubit>().saveWorkoutSession(sessionWithDuration);
+
+                      Navigator.pop(context);
+                      // Navigator.push(context, MaterialPageRoute(builder: (context) => const TotalWorkoutTimeCounter()));
+                    },
                   ),
                 )
               ],
@@ -115,7 +124,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 CustomBackButton(dialog: _getBackDialog()),
-                const TimeCounterWidget(),
+                Text(TextUtil.formatTimeToDigitalFormat(_seconds), style: boldLargeBlack),
                 const Icon(FontAwesomeIcons.bullseye, color: Colors.transparent, size: 43),
               ],
             ),
@@ -177,6 +186,14 @@ class _WorkoutPageState extends State<WorkoutPage> {
         ),
       ),
     );
+  }
+
+  void _startTimer() {
+    Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+      setState(() {
+        _seconds++;
+      });
+    });
   }
 
   @override

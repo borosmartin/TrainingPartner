@@ -2,8 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:training_partner/features/exercises/models/movement.dart';
 import 'package:training_partner/features/exercises/models/workout_set.dart';
 
-// todo setRep, distance, duration és akkor nem kell folyton null ellenőrzéssel megnézni
-enum ExerciseType { setRep, distanceDuration }
+enum ExerciseType { repetitions, distance, duration }
 
 class Exercise extends Equatable {
   final Movement movement;
@@ -31,9 +30,18 @@ class Exercise extends Equatable {
   factory Exercise.fromJson(Map json) {
     List<WorkoutSet> workoutSets = (json['workoutSets'] as List).map((workoutSetJson) => WorkoutSet.fromJson(workoutSetJson)).toList();
 
+    ExerciseType type;
+    if (json['exerciseType'] == 'ExerciseType.repetitions') {
+      type = ExerciseType.repetitions;
+    } else if (json['exerciseType'] == 'ExerciseType.distance') {
+      type = ExerciseType.distance;
+    } else {
+      type = ExerciseType.duration;
+    }
+
     return Exercise(
       movement: Movement.fromJson(json['movement']),
-      type: json['exerciseType'] == 'ExerciseType.setRep' ? ExerciseType.setRep : ExerciseType.distanceDuration,
+      type: type,
       workoutSets: workoutSets,
     );
   }
