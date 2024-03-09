@@ -14,22 +14,36 @@ class WorkoutCubit extends Cubit<WorkoutState> {
       emit(WorkoutLoading());
 
       await _workoutRepository.saveWorkoutSession(currentUser.email!, workoutSession);
+      List<WorkoutSession> workoutSessions = await _workoutRepository.getAllPreviousWorkouts(currentUser.email!);
 
-      emit(WorkoutSaved(session: workoutSession));
+      emit(WorkoutSaved(sessions: workoutSessions));
     } catch (error, stackTrace) {
-      emit(WorkoutError(message: 'Error: $error, stackTrace: $stackTrace'));
+      emit(WorkoutError(errorMessage: 'Error: $error, stackTrace: $stackTrace'));
     }
   }
 
-  Future<void> getAllWorkoutSession() async {
+  Future<void> deleteWorkoutSession(WorkoutSession workoutSession) async {
     try {
       emit(WorkoutLoading());
 
-      List<WorkoutSession> workoutSessions = await _workoutRepository.getAllWorkoutSession(currentUser.email!);
+      await _workoutRepository.deleteWorkoutSession(currentUser.email!, workoutSession);
+      List<WorkoutSession> workoutSessions = await _workoutRepository.getAllPreviousWorkouts(currentUser.email!);
+
+      emit(WorkoutDeleted(sessions: workoutSessions));
+    } catch (error, stackTrace) {
+      emit(WorkoutError(errorMessage: 'Error: $error, stackTrace: $stackTrace'));
+    }
+  }
+
+  Future<void> getAllPreviousWorkouts() async {
+    try {
+      emit(WorkoutLoading());
+
+      List<WorkoutSession> workoutSessions = await _workoutRepository.getAllPreviousWorkouts(currentUser.email!);
 
       emit(WorkoutSessionsLoaded(sessions: workoutSessions));
     } catch (error, stackTrace) {
-      emit(WorkoutError(message: 'Error: $error, stackTrace: $stackTrace'));
+      emit(WorkoutError(errorMessage: 'Error: $error, stackTrace: $stackTrace'));
     }
   }
 }

@@ -8,8 +8,9 @@ import 'package:training_partner/core/resources/widgets/home_page_navigator.dart
 import 'package:training_partner/features/exercises/data/repository/exercise_repository.dart';
 import 'package:training_partner/features/exercises/data/service/exercise_local_service.dart';
 import 'package:training_partner/features/exercises/data/service/exercise_service.dart';
-import 'package:training_partner/features/exercises/logic/cubits/exercise_cubit.dart';
+import 'package:training_partner/features/exercises/logic/cubits/movement_cubit.dart';
 import 'package:training_partner/features/login/logic/cubits/login_cubit.dart';
+import 'package:training_partner/features/statistics/logic/cubits/chart_builder_cubit.dart';
 import 'package:training_partner/features/workout/data/repository/workout_repository.dart';
 import 'package:training_partner/features/workout/data/service/workout_service_local.dart';
 import 'package:training_partner/features/workout/logic/cubits/workout_cubit.dart';
@@ -51,8 +52,8 @@ class TrainingPartner extends StatelessWidget {
       BlocProvider<LoginCubit>(
         create: (context) => LoginCubit(),
       ),
-      BlocProvider<ExerciseCubit>(
-        create: (context) => ExerciseCubit(
+      BlocProvider<MovementCubit>(
+        create: (context) => MovementCubit(
           RepositoryProvider.of<ExerciseRepository>(context),
         ),
       ),
@@ -65,6 +66,9 @@ class TrainingPartner extends StatelessWidget {
         create: (context) => WorkoutCubit(
           RepositoryProvider.of<WorkoutRepository>(context),
         ),
+      ),
+      BlocProvider<ChartBuilderCubit>(
+        create: (context) => ChartBuilderCubit(),
       ),
     ];
   }

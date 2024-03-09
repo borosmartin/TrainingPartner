@@ -4,14 +4,12 @@ import 'package:training_partner/features/workout_editor/models/workout_session.
 
 class EditorFloatingButtons extends StatelessWidget {
   final List<WorkoutSession> workoutSessions;
-  final bool isLoading;
   final VoidCallback onRemoveTap;
   final VoidCallback onAddTap;
 
   const EditorFloatingButtons({
     super.key,
     required this.workoutSessions,
-    required this.isLoading,
     required this.onAddTap,
     required this.onRemoveTap,
   });
@@ -26,8 +24,8 @@ class EditorFloatingButtons extends StatelessWidget {
           FloatingActionButton(
             heroTag: 'removeSession',
             shape: defaultCornerShape,
-            backgroundColor: isLoading ? Colors.grey : Colors.red,
-            onPressed: isLoading ? null : onRemoveTap,
+            backgroundColor: Colors.red,
+            onPressed: onRemoveTap,
             elevation: 1,
             tooltip: 'Remove session',
             child: const Icon(Icons.delete_outline_rounded, color: Colors.white, size: 35),
@@ -36,8 +34,8 @@ class EditorFloatingButtons extends StatelessWidget {
         FloatingActionButton(
           heroTag: 'addSession',
           shape: defaultCornerShape,
-          backgroundColor: isLoading ? Colors.grey : Theme.of(context).colorScheme.tertiary,
-          onPressed: isLoading ? null : onAddTap,
+          backgroundColor: Theme.of(context).colorScheme.tertiary,
+          onPressed: onAddTap,
           elevation: 1,
           tooltip: 'Add new session',
           child: const Icon(Icons.post_add_rounded, color: Colors.white, size: 35),

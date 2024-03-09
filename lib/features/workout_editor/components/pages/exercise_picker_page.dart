@@ -5,8 +5,9 @@ import 'package:training_partner/core/constants/component_constants.dart';
 import 'package:training_partner/core/globals/component_functions.dart';
 import 'package:training_partner/core/resources/widgets/custom_search_bar.dart';
 import 'package:training_partner/core/resources/widgets/custom_title_button.dart';
-import 'package:training_partner/features/exercises/logic/cubits/exercise_cubit.dart';
-import 'package:training_partner/features/exercises/logic/states/exercise_state.dart';
+import 'package:training_partner/core/resources/widgets/custom_toast.dart';
+import 'package:training_partner/features/exercises/logic/cubits/movement_cubit.dart';
+import 'package:training_partner/features/exercises/logic/states/movement_state.dart';
 import 'package:training_partner/features/exercises/models/exercise.dart';
 import 'package:training_partner/features/exercises/models/movement.dart';
 import 'package:training_partner/features/workout_editor/components/widgets/movement_filter_bottom_sheet.dart';
@@ -71,15 +72,19 @@ class _ExercisePickerPageState extends State<ExercisePickerPage> {
               )
             ],
           ),
-          body: BlocConsumer<ExerciseCubit, ExerciseState>(
-            listener: (BuildContext context, ExerciseState state) {
+          body: BlocConsumer<MovementCubit, MovementState>(
+            listener: (BuildContext context, MovementState state) {
               if (state is MovementsError) {
-                showErrorToast(toast, state.errorMessage);
+                showBottomToast(
+                  context: context,
+                  message: state.errorMessage,
+                  type: ToastType.error,
+                );
                 Navigator.pop(context);
               }
             },
-            builder: (BuildContext context, ExerciseState state) {
-              if (state is MovementsLoading || state is ExercisesUninitialized || state is MovementsError) {
+            builder: (BuildContext context, MovementState state) {
+              if (state is MovementsLoading || state is MovementsUninitialized || state is MovementsError) {
                 return const Expanded(
                   child: Center(
                     child: CircularProgressIndicator(),
@@ -93,7 +98,7 @@ class _ExercisePickerPageState extends State<ExercisePickerPage> {
                     children: [
                       CustomSearchBar(
                         hintText: 'Search...',
-                        onChanged: (value) => context.read<ExerciseCubit>().filterMovements(
+                        onChanged: (value) => context.read<MovementCubit>().filterMovements(
                               widget.allMovements,
                               state.previousFilter != null ? state.previousFilter!.copyWith(searchQuery: value) : MovementFilter(searchQuery: value),
                             ),
@@ -107,7 +112,7 @@ class _ExercisePickerPageState extends State<ExercisePickerPage> {
                       const SizedBox(height: 10),
                       CustomTitleButton(
                         label: 'Select ( ${_selectedExercises.length} )',
-                        onTap: () {
+                        onPressed: () {
                           widget.onExercisesChanged(_selectedExercises);
                           Navigator.of(context).pop();
                         },

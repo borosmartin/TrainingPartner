@@ -6,6 +6,7 @@ import 'package:training_partner/core/globals/component_functions.dart';
 import 'package:training_partner/core/resources/firebase/auth_service.dart';
 import 'package:training_partner/core/resources/widgets/custom_input_field.dart';
 import 'package:training_partner/core/resources/widgets/custom_title_button.dart';
+import 'package:training_partner/core/resources/widgets/custom_toast.dart';
 
 class PasswordResetDialog extends StatefulWidget {
   const PasswordResetDialog({super.key});
@@ -67,11 +68,17 @@ class _PasswordResetDialogState extends State<PasswordResetDialog> {
                 // todo úgy néz ki, hogyha nincs bezárva a bill akkor nem érzékeli hogy van a controllerbe text
                 CustomTitleButton(
                   label: 'Request',
-                  onTap: _controllerEmail.text.isEmpty
+                  onPressed: _controllerEmail.text.isEmpty
                       ? () async {
                           _focusNodeEmail.unfocus();
                           await Future.delayed(const Duration(milliseconds: 200));
-                          showErrorToast(toast, 'Please enter your email!');
+                          if (mounted) {
+                            showBottomToast(
+                              context: context,
+                              message: 'Please enter your email!',
+                              type: ToastType.error,
+                            );
+                          }
                         }
                       : _sendPasswordResetEmail,
                 ),
@@ -97,19 +104,35 @@ class _PasswordResetDialogState extends State<PasswordResetDialog> {
       if (mounted) {
         Navigator.of(context).pop();
         Navigator.of(context).pop();
-      }
 
-      showSuccessToast(toast, 'Password reset email sent!');
+        showBottomToast(
+          context: context,
+          message: 'Password reset email sent!',
+          type: ToastType.success,
+        );
+      }
     } on FirebaseAuthException catch (error) {
-      if (error.code == 'user-not-found') {
-        showErrorToast(toast, 'No user found with that email.');
-      } else if (error.code == 'invalid-email') {
-        showErrorToast(toast, 'Invalid email format.');
-      } else {
-        showErrorToast(toast, 'An error occurred. Please try again later.');
-      }
-
       if (mounted) {
+        if (error.code == 'user-not-found') {
+          showBottomToast(
+            context: context,
+            message: 'No user found with the given email.',
+            type: ToastType.error,
+          );
+        } else if (error.code == 'invalid-email') {
+          showBottomToast(
+            context: context,
+            message: 'Invalid email format.',
+            type: ToastType.error,
+          );
+        } else {
+          showBottomToast(
+            context: context,
+            message: 'An error occurred. Please try again later.',
+            type: ToastType.error,
+          );
+        }
+
         Navigator.of(context).pop();
       }
     }

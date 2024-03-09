@@ -4,13 +4,13 @@ import 'package:training_partner/core/constants/component_constants.dart';
 class CustomTitleButton extends StatelessWidget {
   final IconData? icon;
   final String label;
-  final Function() onTap;
+  final Function()? onPressed;
   final bool? isEnabled;
 
   const CustomTitleButton({
     this.icon,
     required this.label,
-    required this.onTap,
+    this.onPressed,
     this.isEnabled = true,
     Key? key,
   }) : super(key: key);
@@ -25,7 +25,7 @@ class CustomTitleButton extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.tertiary,
         shape: defaultCornerShape,
       ),
-      onPressed: isEnabled! ? onTap : null,
+      onPressed: isEnabled! ? onPressed : null,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

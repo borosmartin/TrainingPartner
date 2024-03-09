@@ -7,6 +7,7 @@ import 'package:training_partner/core/constants/component_constants.dart';
 import 'package:training_partner/core/globals/component_functions.dart';
 import 'package:training_partner/core/resources/widgets/custom_input_field.dart';
 import 'package:training_partner/core/resources/widgets/custom_title_button.dart';
+import 'package:training_partner/core/resources/widgets/custom_toast.dart';
 import 'package:training_partner/core/resources/widgets/divider_with_text.dart';
 import 'package:training_partner/features/login/components/widgets/password_reset_dialog.dart';
 import 'package:training_partner/features/login/logic/cubits/login_cubit.dart';
@@ -42,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
     return BlocListener<LoginCubit, LoginState>(
       listener: (context, state) {
         if (state is LoginFailed) {
-          showErrorToast(toast, state.message);
+          showBottomToast(context: context, message: state.message, type: ToastType.error);
         } else if (state is LoginInProgress) {
           showDialog(
             context: context,
@@ -137,7 +138,7 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 20),
                   CustomTitleButton(
                     label: 'Sign in',
-                    onTap: () => _signInWithEmailAndPassword(),
+                    onPressed: () => _signInWithEmailAndPassword(),
                   ),
                   const SizedBox(height: 50),
                   const DividerWithText(text: 'Continue with', textStyle: smallGrey),
@@ -207,7 +208,11 @@ class _LoginPageState extends State<LoginPage> {
     _passwordFocusNode.unfocus();
 
     if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
-      showErrorToast(toast, 'Please fill your email and password!');
+      showBottomToast(
+        context: context,
+        message: 'Please fill your email and password!',
+        type: ToastType.error,
+      );
     } else {
       context.read<LoginCubit>().signInWithEmailAndPassword(_emailController.text, _passwordController.text);
     }

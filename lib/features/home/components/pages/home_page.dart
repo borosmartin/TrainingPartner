@@ -2,15 +2,24 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:training_partner/core/resources/firebase/auth_service.dart';
+import 'package:training_partner/features/exercises/models/movement.dart';
 import 'package:training_partner/features/home/components/widgets/profile_widget.dart';
 import 'package:training_partner/features/home/components/widgets/week_view_widget.dart';
 import 'package:training_partner/features/home/components/widgets/workout_widget.dart';
 import 'package:training_partner/features/workout_editor/logic/cubits/workout_plan_cubit.dart';
 import 'package:training_partner/features/workout_editor/logic/states/workout_plan_states.dart';
 import 'package:training_partner/features/workout_editor/models/workout_plan.dart';
+import 'package:training_partner/features/workout_editor/models/workout_session.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final List<Movement> movements;
+  final List<WorkoutSession> previousSessions;
+
+  const HomePage({
+    super.key,
+    required this.movements,
+    required this.previousSessions,
+  });
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -74,7 +83,9 @@ class _HomePageState extends State<HomePage> {
       if (state is WorkoutPlansLoaded) {
         return WorkoutWidget(
           workoutPlans: state.workoutPlans,
+          previousSessions: widget.previousSessions,
           selectedWorkoutPlan: selectedWorkoutPlan ?? state.workoutPlans.firstOrNull,
+          movements: widget.movements,
           onSelect: (plan) {
             setState(() {
               selectedWorkoutPlan = plan;

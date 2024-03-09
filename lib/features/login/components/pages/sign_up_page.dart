@@ -7,6 +7,7 @@ import 'package:training_partner/core/constants/component_constants.dart';
 import 'package:training_partner/core/globals/component_functions.dart';
 import 'package:training_partner/core/resources/widgets/custom_input_field.dart';
 import 'package:training_partner/core/resources/widgets/custom_title_button.dart';
+import 'package:training_partner/core/resources/widgets/custom_toast.dart';
 import 'package:training_partner/core/resources/widgets/divider_with_text.dart';
 import 'package:training_partner/features/login/logic/cubits/login_cubit.dart';
 import 'package:training_partner/features/login/logic/states/login_state.dart';
@@ -42,7 +43,11 @@ class _SignUpPageState extends State<SignUpPage> {
     return BlocListener<LoginCubit, LoginState>(
       listener: (context, state) {
         if (state is LoginFailed) {
-          showErrorToast(toast, state.message);
+          showBottomToast(
+            context: context,
+            message: state.message,
+            type: ToastType.error,
+          );
         } else if (state is LoginInProgress) {
           showDialog(
             context: context,
@@ -143,7 +148,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   const SizedBox(height: 40),
                   CustomTitleButton(
                     label: 'Sign up',
-                    onTap: _createUserWithEmailAndPassword,
+                    onPressed: _createUserWithEmailAndPassword,
                   ),
                   const SizedBox(height: 30),
                   const DividerWithText(text: 'Continue with', textStyle: smallGrey),
@@ -208,17 +213,30 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
+  // todo speciális karakterek jelszóhoz
   Future<void> _createUserWithEmailAndPassword() async {
     _focusNodeEmail.unfocus();
     _focusNodePassword.unfocus();
     _focusNodePasswordConfirm.unfocus();
 
     if (_controllerEmail.text.isEmpty || _controllerPassword.text.isEmpty || _controllerPasswordConfirm.text.isEmpty) {
-      showErrorToast(toast, 'Please fill all the fields!');
+      showBottomToast(
+        context: context,
+        message: 'Please fill all the fields!',
+        type: ToastType.error,
+      );
     } else if (_controllerPassword.text != _controllerPasswordConfirm.text) {
-      showErrorToast(toast, 'Passwords do not match!');
+      showBottomToast(
+        context: context,
+        message: 'Passwords do not match!',
+        type: ToastType.error,
+      );
     } else if (_controllerPassword.text.length < 6) {
-      showErrorToast(toast, 'Password must be at least 6 characters!');
+      showBottomToast(
+        context: context,
+        message: 'Password must be at least 6 characters!',
+        type: ToastType.error,
+      );
     } else {
       context.read<LoginCubit>().createUserWithEmailAndPassword(_controllerEmail.text, _controllerPassword.text);
     }

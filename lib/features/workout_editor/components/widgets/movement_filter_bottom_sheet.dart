@@ -6,7 +6,7 @@ import 'package:training_partner/core/resources/widgets/custom_back_button.dart'
 import 'package:training_partner/core/resources/widgets/divider_with_text.dart';
 import 'package:training_partner/core/utils/text_util.dart';
 import 'package:training_partner/features/exercises/components/widgets/equipment_dropdown.dart';
-import 'package:training_partner/features/exercises/logic/cubits/exercise_cubit.dart';
+import 'package:training_partner/features/exercises/logic/cubits/movement_cubit.dart';
 import 'package:training_partner/features/exercises/models/movement.dart';
 import 'package:training_partner/features/workout_editor/components/widgets/body_part_action_chip.dart';
 import 'package:training_partner/features/workout_editor/models/movement_filter.dart';
@@ -24,7 +24,7 @@ class MovementFilterBottomSheet extends StatefulWidget {
 
 class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
   late MovementFilter _movementFilter;
-  late ExerciseCubit _exerciseCubit;
+  late MovementCubit _exerciseCubit;
 
   @override
   void initState() {
@@ -32,7 +32,7 @@ class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
 
     _movementFilter = widget.previousFilter ?? const MovementFilter();
 
-    _exerciseCubit = context.read<ExerciseCubit>();
+    _exerciseCubit = context.read<MovementCubit>();
   }
 
   @override

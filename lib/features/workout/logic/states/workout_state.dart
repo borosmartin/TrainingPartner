@@ -11,12 +11,21 @@ class WorkoutUninitialized extends WorkoutState {}
 class WorkoutLoading extends WorkoutState {}
 
 class WorkoutSaved extends WorkoutState {
-  final WorkoutSession session;
+  final List<WorkoutSession> sessions;
 
-  WorkoutSaved({required this.session});
+  WorkoutSaved({required this.sessions});
 
   @override
-  List<Object?> get props => [session];
+  List<Object?> get props => [sessions];
+}
+
+class WorkoutDeleted extends WorkoutState {
+  final List<WorkoutSession> sessions;
+
+  WorkoutDeleted({required this.sessions});
+
+  @override
+  List<Object?> get props => [sessions];
 }
 
 class WorkoutSessionsLoaded extends WorkoutState {
@@ -29,10 +38,10 @@ class WorkoutSessionsLoaded extends WorkoutState {
 }
 
 class WorkoutError extends WorkoutState {
-  final String message;
+  final String errorMessage;
 
-  WorkoutError({required this.message});
+  WorkoutError({required this.errorMessage});
 
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [errorMessage];
 }

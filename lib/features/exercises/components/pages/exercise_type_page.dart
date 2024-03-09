@@ -1,27 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
-import 'package:training_partner/core/resources/widgets/shimmer_container.dart';
 import 'package:training_partner/features/exercises/components/widgets/exercise_group_card.dart';
-import 'package:training_partner/features/exercises/logic/cubits/exercise_cubit.dart';
-import 'package:training_partner/features/exercises/logic/states/exercise_state.dart';
 import 'package:training_partner/features/exercises/models/movement.dart';
 import 'package:training_partner/generated/assets.dart';
 
-class ExerciseTypePage extends StatefulWidget {
-  const ExerciseTypePage({super.key});
+class ExerciseTypePage extends StatelessWidget {
+  final List<Movement> movements;
 
-  @override
-  State<ExerciseTypePage> createState() => _ExerciseTypePageState();
-}
-
-class _ExerciseTypePageState extends State<ExerciseTypePage> {
-  @override
-  void initState() {
-    super.initState();
-    context.read<ExerciseCubit>().loadMovements();
-  }
+  const ExerciseTypePage({super.key, required this.movements});
 
   @override
   Widget build(BuildContext context) {
@@ -65,151 +52,115 @@ class _ExerciseTypePageState extends State<ExerciseTypePage> {
   }
 
   Widget _getBodyContent() {
-    return BlocBuilder<ExerciseCubit, ExerciseState>(
-      builder: (context, state) {
-        if (state is MovementsLoading) {
-          return _getExerciseCards();
-        } else if (state is MovementsError) {
-          return Center(child: Text('Error: ${state.errorMessage}'));
-        } else if (state is MovementsLoaded) {
-          return _getExerciseCards(movements: state.movements);
-        }
-
-        throw UnimplementedError();
-      },
-    );
-  }
-
-  Widget _getExerciseCards({List<Movement>? movements}) {
-    bool isLoading = movements == null;
-    Widget loadingWidget = const Padding(padding: EdgeInsets.all(10), child: ShimmerContainer(height: 160, width: 160));
-
     return Column(
       children: [
         Row(
           children: [
-            isLoading
-                ? loadingWidget
-                : ExerciseGroupCard(
-                    label: 'C H E S T',
-                    assetLocation: Assets.imagesChestIcon,
-                    groupName: 'Chest',
-                    movements: _getChestMovements(movements),
-                  ),
+            ExerciseGroupCard(
+              label: 'C H E S T',
+              assetLocation: Assets.imagesChestIcon,
+              groupName: 'Chest',
+              movements: _getChestMovements(),
+            ),
             const SizedBox(width: 10),
-            isLoading
-                ? loadingWidget
-                : ExerciseGroupCard(
-                    label: 'A R M S',
-                    assetLocation: Assets.imagesArmsIcon,
-                    groupName: 'Arms',
-                    movements: _getArmsMovements(movements),
-                  ),
+            ExerciseGroupCard(
+              label: 'A R M S',
+              assetLocation: Assets.imagesArmsIcon,
+              groupName: 'Arms',
+              movements: _getArmsMovements(),
+            ),
           ],
         ),
         const SizedBox(height: 10),
         Row(
           children: [
-            isLoading
-                ? loadingWidget
-                : ExerciseGroupCard(
-                    label: 'S H O U L D E R S',
-                    assetLocation: Assets.imagesShoulderIcon,
-                    groupName: 'Shoulders',
-                    movements: _getShouldersMovements(movements),
-                  ),
+            ExerciseGroupCard(
+              label: 'S H O U L D E R S',
+              assetLocation: Assets.imagesShoulderIcon,
+              groupName: 'Shoulders',
+              movements: _getShouldersMovements(),
+            ),
             const SizedBox(width: 10),
-            isLoading
-                ? loadingWidget
-                : ExerciseGroupCard(
-                    label: 'B A C K',
-                    assetLocation: Assets.imagesBackIcon,
-                    groupName: 'Back',
-                    movements: _getBackMovements(movements),
-                  ),
+            ExerciseGroupCard(
+              label: 'B A C K',
+              assetLocation: Assets.imagesBackIcon,
+              groupName: 'Back',
+              movements: _getBackMovements(),
+            ),
           ],
         ),
         const SizedBox(height: 10),
         Row(
           children: [
-            isLoading
-                ? loadingWidget
-                : ExerciseGroupCard(
-                    label: 'C O R E',
-                    assetLocation: Assets.imagesCoreIcon,
-                    groupName: 'Core',
-                    movements: _getCoreMovements(movements),
-                  ),
+            ExerciseGroupCard(
+              label: 'C O R E',
+              assetLocation: Assets.imagesCoreIcon,
+              groupName: 'Core',
+              movements: _getCoreMovements(),
+            ),
             const SizedBox(width: 10),
-            isLoading
-                ? loadingWidget
-                : ExerciseGroupCard(
-                    label: 'L E G S',
-                    assetLocation: Assets.imagesLegsIcon,
-                    groupName: 'Legs',
-                    movements: _getLegMovements(movements),
-                  ),
+            ExerciseGroupCard(
+              label: 'L E G S',
+              assetLocation: Assets.imagesLegsIcon,
+              groupName: 'Legs',
+              movements: _getLegMovements(),
+            ),
           ],
         ),
         const SizedBox(height: 10),
         Row(
           children: [
-            isLoading
-                ? loadingWidget
-                : ExerciseGroupCard(
-                    label: 'C A R D I O',
-                    assetLocation: Assets.imagesCardioIcon,
-                    groupName: 'Cardio',
-                    movements: _getCardioMovements(movements),
-                  ),
+            ExerciseGroupCard(
+              label: 'C A R D I O',
+              assetLocation: Assets.imagesCardioIcon,
+              groupName: 'Cardio',
+              movements: _getCardioMovements(),
+            ),
             const SizedBox(width: 10),
-
             // TODO create all icon (combine all maybe?)
-            isLoading
-                ? loadingWidget
-                : ExerciseGroupCard(
-                    label: 'A L L',
-                    assetLocation: Assets.imagesChestIcon,
-                    groupName: 'All',
-                    movements: movements,
-                  ),
+            ExerciseGroupCard(
+              label: 'A L L',
+              assetLocation: Assets.imagesChestIcon,
+              groupName: 'All',
+              movements: movements,
+            ),
           ],
         ),
       ],
     );
   }
 
-  List<Movement> _getChestMovements(List<Movement> exercises) {
-    var list = exercises.where((movement) => movement.bodyPart == 'chest').toList();
+  List<Movement> _getChestMovements() {
+    var list = movements.where((movement) => movement.bodyPart == 'chest').toList();
     return list;
   }
 
-  List<Movement> _getArmsMovements(List<Movement> exercises) {
-    var list = exercises.where((movement) => movement.bodyPart.contains('arms')).toList();
+  List<Movement> _getArmsMovements() {
+    var list = movements.where((movement) => movement.bodyPart.contains('arms')).toList();
     return list;
   }
 
-  List<Movement> _getShouldersMovements(List<Movement> exercises) {
-    var list = exercises.where((movement) => movement.bodyPart == 'shoulders').toList();
+  List<Movement> _getShouldersMovements() {
+    var list = movements.where((movement) => movement.bodyPart == 'shoulders').toList();
     return list;
   }
 
-  List<Movement> _getBackMovements(List<Movement> exercises) {
-    var list = exercises.where((movement) => movement.bodyPart == 'back').toList();
+  List<Movement> _getBackMovements() {
+    var list = movements.where((movement) => movement.bodyPart == 'back').toList();
     return list;
   }
 
-  List<Movement> _getCoreMovements(List<Movement> exercises) {
-    var list = exercises.where((movement) => movement.bodyPart == 'waist').toList();
+  List<Movement> _getCoreMovements() {
+    var list = movements.where((movement) => movement.bodyPart == 'waist').toList();
     return list;
   }
 
-  List<Movement> _getLegMovements(List<Movement> exercises) {
-    var list = exercises.where((movement) => movement.bodyPart.contains('legs')).toList();
+  List<Movement> _getLegMovements() {
+    var list = movements.where((movement) => movement.bodyPart.contains('legs')).toList();
     return list;
   }
 
-  List<Movement> _getCardioMovements(List<Movement> exercises) {
-    return exercises.where((movement) => movement.bodyPart.contains('cardio')).toList();
+  List<Movement> _getCardioMovements() {
+    return movements.where((movement) => movement.bodyPart.contains('cardio')).toList();
   }
 }

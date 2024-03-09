@@ -9,17 +9,26 @@ import 'package:training_partner/core/globals/component_functions.dart';
 import 'package:training_partner/core/resources/widgets/custom_back_button.dart';
 import 'package:training_partner/core/resources/widgets/custom_button.dart';
 import 'package:training_partner/core/resources/widgets/custom_title_button.dart';
-import 'package:training_partner/core/utils/text_util.dart';
+import 'package:training_partner/core/resources/widgets/custom_toast.dart';
+import 'package:training_partner/core/utils/date_time_util.dart';
+import 'package:training_partner/features/exercises/models/exercise.dart';
+import 'package:training_partner/features/exercises/models/movement.dart';
 import 'package:training_partner/features/workout/components/widgets/time_line_widget.dart';
-import 'package:training_partner/features/workout/components/widgets/timer_widget.dart';
 import 'package:training_partner/features/workout/components/widgets/workout_exercise_body.dart';
 import 'package:training_partner/features/workout/logic/cubits/workout_cubit.dart';
 import 'package:training_partner/features/workout_editor/models/workout_session.dart';
 
 class WorkoutPage extends StatefulWidget {
   final WorkoutSession session;
+  final WorkoutSession? previousSession;
+  final List<Movement> movements;
 
-  const WorkoutPage({super.key, required this.session});
+  const WorkoutPage({
+    super.key,
+    required this.session,
+    this.previousSession,
+    required this.movements,
+  });
 
   @override
   State<WorkoutPage> createState() => _WorkoutPageState();
@@ -28,6 +37,7 @@ class WorkoutPage extends StatefulWidget {
 class _WorkoutPageState extends State<WorkoutPage> {
   WorkoutSession get session => widget.session;
   late PageController _pageController;
+  late Timer timer;
   int _currentPageIndex = 0;
 
   Map<String, int> setNumbers = {};
@@ -41,6 +51,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
     colorSafeArea(color: Colors.white);
     _startTimer();
+    _fillEmptyFields();
   }
 
   @override
@@ -49,14 +60,13 @@ class _WorkoutPageState extends State<WorkoutPage> {
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
         body: _getBodyContent(),
-        floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
-        // todo fix
-        floatingActionButton: const TimerWidget(),
       ),
     );
   }
 
   Widget _getBodyContent() {
+    List<String> errors = _getErrors();
+
     return Column(
       children: [
         _getHeaderWidget(),
@@ -67,11 +77,15 @@ class _WorkoutPageState extends State<WorkoutPage> {
             itemBuilder: (context, index) {
               return WorkoutExerciseBody(
                 exercise: session.exercises[index],
+                previousExercise: _getPreviousExercise(session.exercises[index]),
                 pageController: _pageController,
                 setNum: setNumbers[session.exercises[index].movement.id] ?? 0,
-                onSetValueChange: (setNum) {
-                  setNumbers[session.exercises[index].movement.id] = setNum;
+                onCurrentSetIndexChanged: (setNum) => handleOnCurrentSetIndexChanged(setNum, session.exercises[index]),
+                onExerciseUpdated: (Exercise updatedExercise) {
+                  Exercise updated = updatedExercise;
+                  session.exercises[_currentPageIndex] = updated;
                 },
+                movements: widget.movements,
               );
             },
             onPageChanged: (int index) {
@@ -86,20 +100,20 @@ class _WorkoutPageState extends State<WorkoutPage> {
             padding: const EdgeInsets.only(left: 15, right: 15, bottom: 15),
             child: Row(
               children: [
-                const SizedBox(width: 80),
+                if (errors.isNotEmpty) _getErrorWidget(errors),
                 Flexible(
                   child: CustomTitleButton(
                     icon: Iconsax.medal_star5,
                     label: 'Finish Workout',
-                    onTap: () {
+                    isEnabled: errors.isEmpty,
+                    onPressed: () {
                       final sessionWithDuration = session.copyWith(durationInSeconds: _seconds, date: DateTime.now());
                       context.read<WorkoutCubit>().saveWorkoutSession(sessionWithDuration);
 
                       Navigator.pop(context);
-                      // Navigator.push(context, MaterialPageRoute(builder: (context) => const TotalWorkoutTimeCounter()));
                     },
                   ),
-                )
+                ),
               ],
             ),
           ),
@@ -124,7 +138,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 CustomBackButton(dialog: _getBackDialog()),
-                Text(TextUtil.formatTimeToDigitalFormat(_seconds), style: boldLargeBlack),
+                Text(DateTimeUtil.secondsToDigitalFormat(_seconds), style: boldLargeBlack),
                 const Icon(FontAwesomeIcons.bullseye, color: Colors.transparent, size: 43),
               ],
             ),
@@ -188,17 +202,143 @@ class _WorkoutPageState extends State<WorkoutPage> {
     );
   }
 
+  Exercise? _getPreviousExercise(Exercise currentExercise) {
+    Exercise? previousExercise;
+    if (widget.previousSession != null) {
+      for (var exercise in widget.previousSession!.exercises) {
+        if (exercise.movement.id == currentExercise.movement.id) {
+          previousExercise = exercise;
+        }
+      }
+    }
+
+    return previousExercise;
+  }
+
+  Widget _getErrorWidget(List<String> errors) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 15),
+      child: Card(
+        elevation: 0,
+        margin: const EdgeInsets.all(0),
+        color: Colors.red,
+        child: InkWell(
+          onTap: () => showBottomToast(context: context, message: errors.first, type: ToastType.error),
+          borderRadius: defaultBorderRadius,
+          child: const Padding(
+            padding: EdgeInsets.all(18),
+            child: Icon(Icons.error, color: Colors.white),
+          ),
+        ),
+      ),
+    );
+  }
+
+  List<String> _getErrors() {
+    List<String> errors = [];
+    for (int i = 0; i < session.exercises.length; i++) {
+      for (int j = 0; j < session.exercises[i].workoutSets.length; j++) {
+        if (session.exercises[i].type == ExerciseType.repetitions) {
+          if (session.exercises[i].workoutSets[j].weight == 0 || session.exercises[i].workoutSets[j].repetitions == 0) {
+            errors.add('Error: The exercise "${session.exercises[i].movement.name}" is not yet completed!');
+            break;
+          }
+        } else if (session.exercises[i].type == ExerciseType.distance) {
+          if (session.exercises[i].workoutSets[j].distance == 0) {
+            errors.add('Error: The exercise "${session.exercises[i].movement.name}" is not yet completed!');
+            break;
+          }
+        } else if (session.exercises[i].type == ExerciseType.duration) {
+          if (session.exercises[i].workoutSets[j].duration == 0) {
+            errors.add('Error: The exercise "${session.exercises[i].movement.name}" is not yet completed!');
+            break;
+          }
+        }
+      }
+    }
+
+    for (var exercise in session.exercises) {
+      if (setNumbers.containsKey(exercise.movement.id)) {
+        int completedSets = setNumbers[exercise.movement.id] ?? 0;
+
+        if (completedSets < exercise.workoutSets.length) {
+          errors.add('Error: The exercise "${exercise.movement.name}" is not yet completed!');
+        }
+      } else {
+        errors.add('Error: Exercise "${exercise.movement.name}" has no completed sets!');
+      }
+    }
+
+    return errors;
+  }
+
+  void handleOnCurrentSetIndexChanged(int setNum, Exercise exercise) {
+    setState(() {
+      setNumbers[exercise.movement.id] = setNum;
+
+      int completedExercises = 0;
+      int nextPageIndex = 0;
+
+      for (var exercise in session.exercises) {
+        if (setNumbers.containsKey(exercise.movement.id)) {
+          int completedSets = setNumbers[exercise.movement.id] ?? 0;
+
+          if (completedSets == exercise.workoutSets.length) {
+            completedExercises++;
+            nextPageIndex = session.exercises.indexWhere((exercise) => setNumbers[exercise.movement.id] != exercise.workoutSets.length);
+          } else {
+            nextPageIndex = session.exercises.indexWhere((exercise) => setNumbers[exercise.movement.id] != exercise.workoutSets.length);
+          }
+        }
+      }
+
+      if (completedExercises == session.exercises.length) {
+        nextPageIndex = session.exercises.length + 1;
+      }
+
+      if (setNum == exercise.workoutSets.length && _pageController.hasClients) {
+        _pageController.animateToPage(
+          nextPageIndex,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.ease,
+        );
+      }
+    });
+  }
+
   void _startTimer() {
-    Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+    timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
       setState(() {
         _seconds++;
       });
     });
   }
 
+  void _fillEmptyFields() {
+    for (int i = 0; i < session.exercises.length; i++) {
+      for (int j = 0; j < session.exercises[i].workoutSets.length; j++) {
+        if (session.exercises[i].type == ExerciseType.repetitions) {
+          if (session.exercises[i].workoutSets[j].weight == null) {
+            session.exercises[i].workoutSets[j] = session.exercises[i].workoutSets[j].copyWith(weight: 0);
+          }
+        } else if (session.exercises[i].type == ExerciseType.distance) {
+          if (session.exercises[i].workoutSets[j].distance == null) {
+            session.exercises[i].workoutSets[j] = session.exercises[i].workoutSets[j].copyWith(distance: 0.0);
+          }
+        } else if (session.exercises[i].type == ExerciseType.duration) {
+          if (session.exercises[i].workoutSets[j].duration == null) {
+            session.exercises[i].workoutSets[j] = session.exercises[i].workoutSets[j].copyWith(duration: 0);
+          }
+        }
+      }
+    }
+  }
+
   @override
   void dispose() {
     _pageController.dispose();
+
+    timer.cancel();
 
     super.dispose();
   }

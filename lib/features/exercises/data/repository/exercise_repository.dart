@@ -13,11 +13,12 @@ class ExerciseRepository {
       MovementData? hiveData = await _exerciseServiceLocal.getMovementDataFromHive();
 
       if (hiveData != null) {
-        // todo csak emul
-        DateTime now = DateTime.now().add(const Duration(hours: 1));
+        // todo emulátron 1 órával folyton visszább áll
+        DateTime now = DateTime.now();
         DateTime todayRefreshTime = DateTime(now.year, now.month, now.day, 19, 0);
 
-        if (now.isBefore(todayRefreshTime) && now.difference(hiveData.lastUpdated).inHours < 24) {
+        var difference = now.difference(hiveData.lastUpdated).inHours;
+        if (now.isBefore(todayRefreshTime) && difference < 22) {
           return hiveData;
         }
       }

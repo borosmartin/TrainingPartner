@@ -4,14 +4,16 @@ import 'package:iconsax/iconsax.dart';
 import 'package:quds_popup_menu/quds_popup_menu.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
 import 'package:training_partner/core/utils/text_util.dart';
+import 'package:training_partner/features/exercises/models/movement.dart';
 import 'package:training_partner/features/workout_editor/components/pages/workout_editor_page.dart';
 import 'package:training_partner/features/workout_editor/logic/cubits/workout_plan_cubit.dart';
 import 'package:training_partner/features/workout_editor/models/workout_plan.dart';
 
 class WorkoutPlanActionsButton extends StatelessWidget {
   final WorkoutPlan? workoutPlan;
+  final List<Movement> movements;
 
-  const WorkoutPlanActionsButton({super.key, this.workoutPlan});
+  const WorkoutPlanActionsButton({super.key, this.workoutPlan, required this.movements});
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +32,7 @@ class WorkoutPlanActionsButton extends StatelessWidget {
           ),
           onPressed: () => Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => const WorkoutEditorPage(),
+              builder: (context) => WorkoutEditorPage(movements: movements),
             ),
           ),
         ),
@@ -39,7 +41,7 @@ class WorkoutPlanActionsButton extends StatelessWidget {
           title: const Text('Edit workoutplan', style: normalBlack),
           onPressed: () => Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => WorkoutEditorPage(workoutPlan: workoutPlan),
+              builder: (context) => WorkoutEditorPage(workoutPlan: workoutPlan, movements: movements),
             ),
           ),
         ),

@@ -1,25 +1,33 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
 import 'package:training_partner/core/resources/widgets/shimmer_container.dart';
 import 'package:training_partner/core/utils/text_util.dart';
 import 'package:training_partner/features/exercises/components/pages/exercise_detail_page.dart';
 import 'package:training_partner/features/exercises/models/exercise.dart';
+import 'package:training_partner/features/exercises/models/movement.dart';
 import 'package:training_partner/features/exercises/models/workout_set.dart';
 import 'package:training_partner/features/workout/components/widgets/workout_wheel_dialog.dart';
 
 class WorkoutExerciseBody extends StatefulWidget {
   final Exercise exercise;
+  final Exercise? previousExercise;
   final PageController pageController;
   final int setNum;
-  final Function(int) onSetValueChange;
+  final Function(int) onCurrentSetIndexChanged;
+  final Function(Exercise) onExerciseUpdated;
+  final List<Movement> movements;
 
   const WorkoutExerciseBody({
     super.key,
     required this.exercise,
+    this.previousExercise,
     required this.pageController,
     required this.setNum,
-    required this.onSetValueChange,
+    required this.onCurrentSetIndexChanged,
+    required this.onExerciseUpdated,
+    required this.movements,
   });
 
   @override
@@ -27,7 +35,7 @@ class WorkoutExerciseBody extends StatefulWidget {
 }
 
 class _WorkoutExerciseBodyState extends State<WorkoutExerciseBody> {
-  Exercise get exercise => widget.exercise;
+  late Exercise _exercise;
   PageController get pageController => widget.pageController;
   late int _currentSetNum;
 
@@ -35,6 +43,8 @@ class _WorkoutExerciseBodyState extends State<WorkoutExerciseBody> {
   void initState() {
     super.initState();
     _currentSetNum = widget.setNum;
+
+    _exercise = widget.exercise.copyWith(workoutSets: widget.previousExercise?.workoutSets ?? widget.exercise.workoutSets);
   }
 
   @override
@@ -62,16 +72,16 @@ class _WorkoutExerciseBodyState extends State<WorkoutExerciseBody> {
   }
 
   Widget _getTitleCard() {
-    String subtitle = exercise.workoutSets.any((element) => element.repetitions == null)
-        ? exercise.workoutSets.first.duration != null
-            ? '${TextUtil.firstLetterToUpperCase(exercise.movement.equipment)}'
-                '  -  ${exercise.workoutSets.first.duration} min'
-            : exercise.workoutSets.first.distance != null
-                ? '${TextUtil.firstLetterToUpperCase(exercise.movement.equipment)}'
-                    '  -  ${exercise.workoutSets.first.distance} km'
+    String subtitle = _exercise.workoutSets.any((element) => element.repetitions == null)
+        ? _exercise.workoutSets.first.duration != null
+            ? '${TextUtil.firstLetterToUpperCase(_exercise.movement.equipment)}'
+                '  -  ${_exercise.workoutSets.first.duration} min'
+            : _exercise.workoutSets.first.distance != null
+                ? '${TextUtil.firstLetterToUpperCase(_exercise.movement.equipment)}'
+                    '  -  ${_exercise.workoutSets.first.distance} km'
                 : ''
-        : '${TextUtil.firstLetterToUpperCase(exercise.movement.equipment)}  -  '
-            '${exercise.workoutSets.length} set';
+        : '${TextUtil.firstLetterToUpperCase(_exercise.movement.equipment)}  -  '
+            '${_exercise.workoutSets.length} set';
 
     return Card(
       elevation: 0,
@@ -82,7 +92,7 @@ class _WorkoutExerciseBodyState extends State<WorkoutExerciseBody> {
         child: Row(
           children: [
             CachedNetworkImage(
-              imageUrl: exercise.movement.gifUrl,
+              imageUrl: widget.movements.firstWhere((movement) => movement.id == _exercise.movement.id).gifUrl,
               height: 80,
               width: 80,
               placeholder: (context, url) => const ShimmerContainer(height: 80, width: 80),
@@ -96,10 +106,10 @@ class _WorkoutExerciseBodyState extends State<WorkoutExerciseBody> {
                   GestureDetector(
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => ExerciseDetailPage(movement: exercise.movement),
+                        builder: (context) => ExerciseDetailPage(movement: _exercise.movement),
                       ));
                     },
-                    child: Text(exercise.movement.name, style: boldLargeAccent),
+                    child: Text(_exercise.movement.name, style: boldLargeAccent),
                   ),
                   Text(subtitle, style: normalGrey),
                 ],
@@ -115,19 +125,19 @@ class _WorkoutExerciseBodyState extends State<WorkoutExerciseBody> {
   Widget _getSetTable() {
     List<TableRow> tableRows = [];
 
-    switch (exercise.type) {
+    switch (_exercise.type) {
       case ExerciseType.repetitions:
-        tableRows.add(_getTableRow(workoutSet: exercise.workoutSets[0], cells: ['#', 'Reps', 'Weight', '']));
+        tableRows.add(_getTableRow(workoutSet: _exercise.workoutSets[0], cells: ['#', 'Reps', 'Weight', '']));
 
-        for (int i = 0; i < exercise.workoutSets.length; i++) {
+        for (int i = 0; i < _exercise.workoutSets.length; i++) {
           tableRows.add(
             _getTableRow(
               setIndex: i,
-              workoutSet: exercise.workoutSets[i],
+              workoutSet: _exercise.workoutSets[i],
               cells: [
                 (i + 1).toString(),
-                exercise.workoutSets[i].repetitions.toString(),
-                exercise.workoutSets[i].weight == null ? '0 kg' : '${exercise.workoutSets[i].weight.toString()} kg',
+                _exercise.workoutSets[i].repetitions.toString(),
+                _exercise.workoutSets[i].weight == null ? '0 kg' : '${_exercise.workoutSets[i].weight.toString()} kg',
                 null,
               ],
             ),
@@ -137,22 +147,22 @@ class _WorkoutExerciseBodyState extends State<WorkoutExerciseBody> {
 
       case ExerciseType.distance:
         tableRows.addAll([
-          _getTableRow(workoutSet: exercise.workoutSets[0], cells: ['Distance ( km )', '']),
+          _getTableRow(workoutSet: _exercise.workoutSets[0], cells: ['Distance ( km )', '']),
           _getTableRow(
             setIndex: 0,
-            workoutSet: exercise.workoutSets[0],
-            cells: ['${exercise.workoutSets.first.distance} km', null],
+            workoutSet: _exercise.workoutSets[0],
+            cells: ['${_exercise.workoutSets.first.distance} km', null],
           ),
         ]);
         break;
 
       case ExerciseType.duration:
         tableRows.addAll([
-          _getTableRow(workoutSet: exercise.workoutSets[0], cells: ['Duration ( min )', '']),
+          _getTableRow(workoutSet: _exercise.workoutSets[0], cells: ['Duration ( min )', '']),
           _getTableRow(
             setIndex: 0,
-            workoutSet: exercise.workoutSets[0],
-            cells: ['${exercise.workoutSets.first.duration} min', null],
+            workoutSet: _exercise.workoutSets[0],
+            cells: ['${_exercise.workoutSets.first.duration} min', null],
           ),
         ]);
         break;
@@ -183,7 +193,7 @@ class _WorkoutExerciseBodyState extends State<WorkoutExerciseBody> {
   }
 
   Widget _getTableCell({String? label, int? setIndex, required int columnIndex}) {
-    bool isRepetitions = exercise.type == ExerciseType.repetitions;
+    bool isRepetitions = _exercise.type == ExerciseType.repetitions;
 
     if (label == null) {
       if (setIndex != null) {
@@ -228,19 +238,11 @@ class _WorkoutExerciseBodyState extends State<WorkoutExerciseBody> {
       return GestureDetector(
         onTap: () {
           setState(() {
+            // todo check on non emulator
+            HapticFeedback.vibrate();
             _currentSetNum++;
-
-            widget.onSetValueChange(_currentSetNum);
-
-            if (_currentSetNum == exercise.workoutSets.length &&
-                exercise.workoutSets.length > pageController.page!.toInt() &&
-                widget.pageController.hasClients) {
-              pageController.animateToPage(
-                widget.pageController.page!.toInt() + 1,
-                duration: const Duration(milliseconds: 500),
-                curve: Curves.ease,
-              );
-            }
+            widget.onCurrentSetIndexChanged(_currentSetNum);
+            widget.onExerciseUpdated(_exercise);
           });
         },
         child: Padding(
@@ -266,16 +268,16 @@ class _WorkoutExerciseBodyState extends State<WorkoutExerciseBody> {
       builder: (context) {
         return WorkoutWheelDialog(
           firstWheelValue: _getFirstWheelValue(workoutSet),
-          secondWheelValue: exercise.type == ExerciseType.repetitions ? workoutSet.weight : null,
+          secondWheelValue: _exercise.type == ExerciseType.repetitions ? workoutSet.weight : null,
           exerciseType: widget.exercise.type,
-          onValuesChange: (firsWheelValue, secondWheelValue) => _handleWheelDialogOnChange(setIndex, firsWheelValue, secondWheelValue),
+          onSetButtonPressed: (firsWheelValue, secondWheelValue) => _handleWheelDialogOnChange(setIndex, firsWheelValue, secondWheelValue),
         );
       },
     );
   }
 
   num? _getFirstWheelValue(WorkoutSet workoutSet) {
-    switch (exercise.type) {
+    switch (_exercise.type) {
       case ExerciseType.repetitions:
         return workoutSet.repetitions;
 
@@ -288,10 +290,10 @@ class _WorkoutExerciseBodyState extends State<WorkoutExerciseBody> {
   }
 
   void _handleWheelDialogOnChange(int setIndex, num firsWheelValue, num secondWheelValue) {
-    switch (exercise.type) {
+    switch (_exercise.type) {
       case ExerciseType.repetitions:
         setState(() {
-          exercise.workoutSets[setIndex] = exercise.workoutSets[setIndex].copyWith(
+          _exercise.workoutSets[setIndex] = _exercise.workoutSets[setIndex].copyWith(
             repetitions: firsWheelValue,
             weight: secondWheelValue,
           );
@@ -300,7 +302,7 @@ class _WorkoutExerciseBodyState extends State<WorkoutExerciseBody> {
 
       case ExerciseType.distance:
         setState(() {
-          exercise.workoutSets[setIndex] = exercise.workoutSets[setIndex].copyWith(
+          _exercise.workoutSets[setIndex] = _exercise.workoutSets[setIndex].copyWith(
             distance: firsWheelValue,
           );
         });
@@ -308,11 +310,13 @@ class _WorkoutExerciseBodyState extends State<WorkoutExerciseBody> {
 
       case ExerciseType.duration:
         setState(() {
-          exercise.workoutSets[setIndex] = exercise.workoutSets[setIndex].copyWith(
+          _exercise.workoutSets[setIndex] = _exercise.workoutSets[setIndex].copyWith(
             duration: secondWheelValue,
           );
         });
         break;
     }
+
+    widget.onExerciseUpdated(_exercise);
   }
 }

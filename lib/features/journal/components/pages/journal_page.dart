@@ -1,26 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
 import 'package:training_partner/core/resources/widgets/custom_divider.dart';
-import 'package:training_partner/core/utils/text_util.dart';
-import 'package:training_partner/features/workout/logic/cubits/workout_cubit.dart';
-import 'package:training_partner/features/workout/logic/states/workout_state.dart';
+import 'package:training_partner/core/resources/widgets/custom_title_button.dart';
+import 'package:training_partner/core/utils/date_time_util.dart';
+import 'package:training_partner/features/exercises/models/movement.dart';
+import 'package:training_partner/features/journal/components/pages/journal_entry_page.dart';
 import 'package:training_partner/features/workout_editor/models/workout_session.dart';
 
-class JournalPage extends StatefulWidget {
-  const JournalPage({super.key});
+class JournalPage extends StatelessWidget {
+  final List<Movement> movements;
+  final List<WorkoutSession> sessions;
+  final PageController pageController;
 
-  @override
-  State<JournalPage> createState() => _JournalPageState();
-}
-
-class _JournalPageState extends State<JournalPage> {
-  @override
-  void initState() {
-    super.initState();
-    context.read<WorkoutCubit>().getAllWorkoutSession();
-  }
+  const JournalPage({
+    super.key,
+    required this.movements,
+    required this.sessions,
+    required this.pageController,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -31,69 +30,72 @@ class _JournalPageState extends State<JournalPage> {
           const SizedBox(height: 10),
           _getHeader(),
           const SizedBox(height: 20),
-          _getBodyContent(),
+          _getBodyContent(context),
         ],
       ),
     );
   }
 
-  Widget _getBodyContent() {
-    return BlocBuilder<WorkoutCubit, WorkoutState>(
-      builder: (context, state) {
-        if (state is WorkoutLoading || state is WorkoutUninitialized) {
-          return const Expanded(
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        } else if (state is WorkoutError) {
-          return Expanded(
-            child: Center(
-              child: Text(state.message),
-            ),
-          );
-        } else if (state is WorkoutSessionsLoaded) {
-          var sessions = state.sessions;
+  // todo no entry layout egységesítés
+  Widget _getBodyContent(BuildContext context) {
+    if (sessions.isEmpty) {
+      return Expanded(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(FontAwesomeIcons.personRunning, size: 85, color: Colors.black38),
+              const SizedBox(height: 10),
+              const Text("You haven't completed any workout yet, let's start one!", style: boldNormalGrey),
+              const SizedBox(height: 20),
+              CustomTitleButton(
+                icon: FontAwesomeIcons.play,
+                label: 'Start a new workout',
+                onPressed: () {
+                  if (pageController.hasClients) {
+                    pageController.animateToPage(0, duration: const Duration(milliseconds: 750), curve: Curves.ease);
+                  }
+                },
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
-          sessions.sort((a, b) => b.date!.compareTo(a.date!));
-
-          return Expanded(
-            child: ListView.builder(
-              itemCount: sessions.length,
-              itemBuilder: (context, index) {
-                return Stack(
-                  children: [
-                    if (index != sessions.length - 1)
-                      Positioned(
-                        left: 112.5,
-                        top: 50,
-                        child: Container(height: 80, width: 4, decoration: BoxDecoration(color: Theme.of(context).colorScheme.tertiary)),
-                      ),
-                    if (index != 0)
-                      Positioned(
-                        left: 112.5,
-                        bottom: 50,
-                        child: Container(height: 80, width: 4, decoration: BoxDecoration(color: Theme.of(context).colorScheme.tertiary)),
-                      ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        _getDateWidget(sessions[index]),
-                        const SizedBox(width: 20),
-                        _getTimeLineNode(),
-                        const SizedBox(width: 20),
-                        _getJournalEntry(sessions[index]),
-                      ],
-                    ),
-                  ],
-                );
-              },
-            ),
+    sessions.sort((a, b) => b.date!.compareTo(a.date!));
+    return Expanded(
+      child: ListView.builder(
+        itemCount: sessions.length,
+        itemBuilder: (context, index) {
+          return Stack(
+            children: [
+              if (index != sessions.length - 1)
+                Positioned(
+                  left: 122.5,
+                  top: 50,
+                  child: Container(height: 80, width: 4, decoration: BoxDecoration(color: Theme.of(context).colorScheme.tertiary)),
+                ),
+              if (index != 0)
+                Positioned(
+                  left: 122.5,
+                  bottom: 50,
+                  child: Container(height: 80, width: 4, decoration: BoxDecoration(color: Theme.of(context).colorScheme.tertiary)),
+                ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _getDateWidget(sessions[index]),
+                  const SizedBox(width: 15),
+                  _getTimeLineNode(context),
+                  const SizedBox(width: 20),
+                  _getJournalEntry(context, sessions, sessions[index]),
+                ],
+              ),
+            ],
           );
-        }
-
-        throw UnimplementedError();
-      },
+        },
+      ),
     );
   }
 
@@ -119,12 +121,14 @@ class _JournalPageState extends State<JournalPage> {
     String day = session.date!.day.toString().padLeft(2, '0');
 
     return SizedBox(
-      width: 85,
+      width: 100,
       child: Row(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Icon(Iconsax.calendar5, color: Colors.black38),
-          const SizedBox(width: 10),
+          const SizedBox(width: 15),
           Column(
             children: [
               Text('${session.date!.year}.', style: smallGrey),
@@ -136,7 +140,7 @@ class _JournalPageState extends State<JournalPage> {
     );
   }
 
-  Widget _getTimeLineNode() {
+  Widget _getTimeLineNode(BuildContext context) {
     return Container(
       height: 20,
       width: 20,
@@ -150,10 +154,10 @@ class _JournalPageState extends State<JournalPage> {
     );
   }
 
-  Widget _getJournalEntry(WorkoutSession session) {
+  Widget _getJournalEntry(BuildContext context, List<WorkoutSession> sessions, WorkoutSession session) {
     return Expanded(
       child: SizedBox(
-        height: 95,
+        height: 100,
         child: Padding(
           padding: const EdgeInsets.only(bottom: 20),
           child: Card(
@@ -161,8 +165,16 @@ class _JournalPageState extends State<JournalPage> {
             shape: defaultCornerShape,
             margin: EdgeInsets.zero,
             child: InkWell(
-              //todo
-              onTap: () {},
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => JournalEntryPage(
+                    currentSession: session,
+                    previousSession: _getPreviousSession(sessions, session),
+                    movements: movements,
+                    pageController: pageController,
+                  ),
+                ),
+              ),
               borderRadius: defaultBorderRadius,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -209,7 +221,7 @@ class _JournalPageState extends State<JournalPage> {
                                 children: [
                                   const Icon(Iconsax.clock5, color: Colors.white, size: 20),
                                   const SizedBox(width: 5),
-                                  Text(TextUtil.formatTimeToDigitalFormat(session.durationInSeconds!.toInt()), style: smallWhite),
+                                  Text(DateTimeUtil.secondsToDigitalFormat(session.durationInSeconds!.toInt()), style: smallWhite),
                                 ],
                               ),
                             ),
@@ -256,5 +268,19 @@ class _JournalPageState extends State<JournalPage> {
       default:
         return '';
     }
+  }
+
+  WorkoutSession? _getPreviousSession(List<WorkoutSession> sessions, WorkoutSession currentSession) {
+    WorkoutSession? previousSession;
+
+    for (var session in sessions) {
+      if (session.id == currentSession.id && session.date!.isBefore(currentSession.date!)) {
+        if (previousSession == null || session.date!.isAfter(previousSession.date!)) {
+          previousSession = session;
+        }
+      }
+    }
+
+    return previousSession;
   }
 }

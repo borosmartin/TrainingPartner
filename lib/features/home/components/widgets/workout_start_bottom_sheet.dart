@@ -6,18 +6,23 @@ import 'package:training_partner/core/resources/widgets/custom_title_button.dart
 import 'package:training_partner/core/resources/widgets/shimmer_container.dart';
 import 'package:training_partner/core/utils/text_util.dart';
 import 'package:training_partner/features/exercises/models/exercise.dart';
+import 'package:training_partner/features/exercises/models/movement.dart';
 import 'package:training_partner/features/exercises/models/workout_set.dart';
 import 'package:training_partner/features/workout/components/pages/workout_page.dart';
 import 'package:training_partner/features/workout_editor/models/workout_session.dart';
 
 class WorkoutStartBottomSheet extends StatefulWidget {
   final WorkoutSession session;
+  final List<WorkoutSession> previousSessions;
   final String workoutPlanName;
+  final List<Movement> movements;
 
   const WorkoutStartBottomSheet({
     super.key,
     required this.session,
+    required this.previousSessions,
     required this.workoutPlanName,
+    required this.movements,
   });
 
   @override
@@ -73,11 +78,15 @@ class _WorkoutStartBottomSheetState extends State<WorkoutStartBottomSheet> {
           CustomTitleButton(
             icon: Iconsax.play5,
             label: 'Start workout',
-            onTap: () {
+            onPressed: () {
               Navigator.of(context).pop();
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => WorkoutPage(session: workoutSession),
+                  builder: (context) => WorkoutPage(
+                    session: workoutSession,
+                    previousSession: _getPreviousSession(widget.previousSessions, workoutSession),
+                    movements: widget.movements,
+                  ),
                 ),
               );
             },
@@ -151,7 +160,7 @@ class _WorkoutStartBottomSheetState extends State<WorkoutStartBottomSheet> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   CachedNetworkImage(
-                    imageUrl: exercise.movement.gifUrl,
+                    imageUrl: widget.movements.firstWhere((movement) => movement.id == exercise.movement.id).gifUrl,
                     height: 80,
                     width: 80,
                     imageBuilder: (context, imageProvider) => Container(
@@ -207,5 +216,19 @@ class _WorkoutStartBottomSheetState extends State<WorkoutStartBottomSheet> {
     }
 
     return int.parse((avarageReps / exercise.workoutSets.length).toStringAsFixed(0)).toString();
+  }
+
+  WorkoutSession? _getPreviousSession(List<WorkoutSession> sessions, WorkoutSession currentSession) {
+    WorkoutSession? previousSession;
+
+    for (var session in sessions) {
+      if (session.id == currentSession.id) {
+        if (previousSession == null || session.date!.isAfter(previousSession.date!)) {
+          previousSession = session;
+        }
+      }
+    }
+
+    return previousSession;
   }
 }

@@ -156,7 +156,7 @@ class _SessionHeaderState extends State<SessionHeader> {
                   const SizedBox(height: 20),
                   CustomTitleButton(
                     label: 'Rename',
-                    onTap: () {
+                    onPressed: () {
                       if (newName.isNotEmpty) {
                         widget.onRename(newName);
                       }

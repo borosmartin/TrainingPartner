@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
+import 'package:training_partner/core/globals/component_functions.dart';
 import 'package:training_partner/core/resources/widgets/custom_toast.dart';
 import 'package:training_partner/features/exercises/models/exercise.dart';
 import 'package:training_partner/features/workout_editor/logic/cubits/workout_plan_cubit.dart';
@@ -161,35 +162,27 @@ class _EditorHeaderState extends State<EditorHeader> {
     }
 
     if (sessions.isEmpty) {
-      _showErrorToast("Error: Add at least one session!");
+      showBottomToast(context: context, message: "Error: Add at least one session!", type: ToastType.error);
     } else if (widget.workoutPlaneNameController.text.isEmpty) {
-      _showErrorToast("Error: Workoutplan name can't be empty!");
+      showBottomToast(context: context, message: "Error: Workoutplan name can't be empty!", type: ToastType.error);
     } else if (sessionNameEmptyError) {
-      _showErrorToast('Error: One of the sessions has no name!');
+      showBottomToast(context: context, message: 'Error: One of the sessions has no name!', type: ToastType.error);
     } else if (sameNameSessionsError) {
-      _showErrorToast('Error: Two sessions has the same name!');
+      showBottomToast(context: context, message: 'Error: Two sessions has the same name!', type: ToastType.error);
     } else if (exerciseEmptyError) {
-      _showErrorToast('Error: One of the sessions has no exercises');
+      showBottomToast(context: context, message: 'Error: One of the sessions has no exercises', type: ToastType.error);
     } else if (setNumEmptyError) {
-      _showErrorToast('Error: One of the exercises has no sets');
+      showBottomToast(context: context, message: 'Error: One of the exercises has no sets', type: ToastType.error);
     } else if (repNumEmptyError) {
-      _showErrorToast('Error: One of the exercises has no repetition number!');
+      showBottomToast(context: context, message: 'Error: One of the exercises has no repetition number!', type: ToastType.error);
     } else if (distanceEmptyError) {
-      _showErrorToast('Error: One of the exercises has no distance set!');
+      showBottomToast(context: context, message: 'Error: One of the exercises has no distance set!', type: ToastType.error);
     } else if (durationEmptyError) {
-      _showErrorToast('Error: One of the exercises has no duration set!');
+      showBottomToast(context: context, message: 'Error: One of the exercises has no duration set!', type: ToastType.error);
     } else {
       context.read<WorkoutPlanCubit>().saveWorkoutPlan(WorkoutPlan(name: widget.workoutPlaneNameController.text, sessions: sessions));
 
       Navigator.pop(context);
     }
-  }
-
-  void _showErrorToast(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      elevation: 0,
-      backgroundColor: Colors.transparent,
-      content: CustomToast(message: message, type: ToastType.error),
-    ));
   }
 }

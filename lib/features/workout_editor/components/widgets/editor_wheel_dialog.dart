@@ -70,7 +70,7 @@ class _EditorWheelDialogState extends State<EditorWheelDialog> {
             const SizedBox(height: 10),
             CustomTitleButton(
               label: 'Set',
-              onTap: () {
+              onPressed: () {
                 widget.onValuesChange(
                   exerciseType == ExerciseType.distance ? (firstWheelValue / 2) : firstWheelValue,
                   secondWheelValue,

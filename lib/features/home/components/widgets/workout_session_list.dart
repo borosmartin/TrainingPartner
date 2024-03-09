@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
 import 'package:training_partner/core/resources/widgets/custom_divider.dart';
+import 'package:training_partner/features/exercises/models/movement.dart';
 import 'package:training_partner/features/home/components/widgets/workout_start_bottom_sheet.dart';
 import 'package:training_partner/features/workout_editor/models/workout_plan.dart';
 import 'package:training_partner/features/workout_editor/models/workout_session.dart';
@@ -8,10 +9,14 @@ import 'package:training_partner/generated/assets.dart';
 
 class WorkoutSessionList extends StatelessWidget {
   final WorkoutPlan workoutPlan;
+  final List<WorkoutSession> previousSessions;
+  final List<Movement> movements;
 
   const WorkoutSessionList({
     super.key,
     required this.workoutPlan,
+    required this.previousSessions,
+    required this.movements,
   });
 
   List<WorkoutSession> get sessions => workoutPlan.sessions;
@@ -158,7 +163,12 @@ class WorkoutSessionList extends StatelessWidget {
       isScrollControlled: true,
       backgroundColor: Theme.of(context).colorScheme.background,
       builder: (BuildContext context) {
-        return WorkoutStartBottomSheet(session: session, workoutPlanName: workoutPlan.name);
+        return WorkoutStartBottomSheet(
+          session: session,
+          previousSessions: previousSessions,
+          workoutPlanName: workoutPlan.name,
+          movements: movements,
+        );
       },
     );
   }

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
+import 'package:training_partner/core/utils/date_time_util.dart';
 import 'package:training_partner/core/utils/text_util.dart';
 
 class TimerWidget extends StatefulWidget {
@@ -38,7 +39,7 @@ class _TimerWidgetState extends State<TimerWidget> {
         child: Padding(
           padding: const EdgeInsets.all(18),
           child: _isTimerRunning || _isPaused
-              ? Text(TextUtil.formatTimeToDigitalFormat(_restSeconds), style: boldNormalWhite)
+              ? Text(DateTimeUtil.secondsToDigitalFormat(_restSeconds), style: boldNormalWhite)
               : const Icon(Icons.timer_rounded, color: Colors.white),
         ),
       ),
@@ -100,7 +101,7 @@ class _TimerWidgetState extends State<TimerWidget> {
                       ),
                       const SizedBox(width: 30),
                       Text(
-                        TextUtil.formatTimeToDigitalFormat(_restSeconds),
+                        DateTimeUtil.secondsToDigitalFormat(_restSeconds),
                         style: TextUtil.getCustomTextStyle(fontSize: 45, fontWeight: FontWeight.w500, color: Colors.black),
                       ),
                       const SizedBox(width: 30),

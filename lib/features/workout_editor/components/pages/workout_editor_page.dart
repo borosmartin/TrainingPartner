@@ -5,8 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
 import 'package:training_partner/core/globals/component_functions.dart';
 import 'package:training_partner/core/resources/widgets/custom_toast.dart';
-import 'package:training_partner/features/exercises/logic/cubits/exercise_cubit.dart';
-import 'package:training_partner/features/exercises/logic/states/exercise_state.dart';
 import 'package:training_partner/features/exercises/models/exercise.dart';
 import 'package:training_partner/features/exercises/models/movement.dart';
 import 'package:training_partner/features/exercises/models/workout_set.dart';
@@ -21,14 +19,17 @@ import 'package:training_partner/features/workout_editor/models/workout_session.
 
 class WorkoutEditorPage extends StatefulWidget {
   final WorkoutPlan? workoutPlan;
+  final List<Movement> movements;
 
-  const WorkoutEditorPage({super.key, this.workoutPlan});
+  const WorkoutEditorPage({super.key, this.workoutPlan, required this.movements});
 
   @override
   State<WorkoutEditorPage> createState() => _WorkoutEditorPageState();
 }
 
 class _WorkoutEditorPageState extends State<WorkoutEditorPage> {
+  List<Movement> get movements => widget.movements;
+
   late PageController _pageController;
   int _currentPageIndex = 0;
 
@@ -36,14 +37,10 @@ class _WorkoutEditorPageState extends State<WorkoutEditorPage> {
   TextEditingController workoutPlaneNameController = TextEditingController();
   List<WorkoutSession> workoutSessions = [];
 
-  bool isLoading = true;
-
   @override
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: _currentPageIndex);
-
-    context.read<ExerciseCubit>().loadMovements();
 
     workoutPlan = widget.workoutPlan;
     if (workoutPlan != null) {
@@ -67,7 +64,6 @@ class _WorkoutEditorPageState extends State<WorkoutEditorPage> {
             backgroundColor: Theme.of(context).colorScheme.background,
             floatingActionButton: EditorFloatingButtons(
               workoutSessions: workoutSessions,
-              isLoading: isLoading,
               onAddTap: _addNewWorkoutSession,
               onRemoveTap: _removeWorkoutSession,
             ),
@@ -82,74 +78,42 @@ class _WorkoutEditorPageState extends State<WorkoutEditorPage> {
     return BlocListener<WorkoutPlanCubit, WorkoutPlanState>(
       listener: (context, state) {
         if (state is WorkoutPlanCreationSuccessful) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            elevation: 0,
-            backgroundColor: Colors.transparent,
-            content:
-                CustomToast(message: widget.workoutPlan != null ? 'Workout plan updated!' : 'New workout plan created!', type: ToastType.success),
-          ));
+          showBottomToast(
+            context: context,
+            message: widget.workoutPlan != null ? 'Workout plan updated!' : 'New workout plan created!',
+            type: ToastType.success,
+          );
         } else if (state is WorkoutPlanDeleteSuccessful) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            elevation: 0,
-            backgroundColor: Colors.transparent,
-            content: CustomToast(message: 'Workout plan deleted!', type: ToastType.success),
-          ));
+          showBottomToast(
+            context: context,
+            message: 'Workout plan deleted!',
+            type: ToastType.success,
+          );
         } else if (state is WorkoutPlanDeleteError) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            elevation: 0,
-            backgroundColor: Colors.transparent,
-            content: CustomToast(message: 'Error: ${state.message}', type: ToastType.error),
-          ));
+          showBottomToast(
+            context: context,
+            message: 'Error: ${state.message}',
+            type: ToastType.error,
+          );
         } else if (state is WorkoutPlanCreationError) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            elevation: 0,
-            backgroundColor: Colors.transparent,
-            content: CustomToast(message: 'Error: ${state.message}', type: ToastType.error),
-          ));
+          showBottomToast(
+            context: context,
+            message: 'Error: ${state.message}',
+            type: ToastType.error,
+          );
         }
       },
-      child: BlocConsumer<ExerciseCubit, ExerciseState>(listener: (context, state) {
-        if (state is MovementsLoaded) {
-          setState(() {
-            isLoading = false;
-          });
-        }
-      }, builder: (context, state) {
-        if (state is MovementsLoading) {
-          return Column(
-            children: [
-              EditorHeader(
-                workoutSessions: workoutSessions,
-                pageController: _pageController,
-                workoutPlaneNameController: workoutPlaneNameController,
-              ),
-              Expanded(
-                child: Center(
-                  child: CircularProgressIndicator(
-                    color: Theme.of(context).colorScheme.tertiary,
-                  ),
-                ),
-              ),
-            ],
-          );
-        } else if (state is MovementsError) {
-          return Center(child: Text('Error: ${state.errorMessage}'));
-        } else if (state is MovementsLoaded) {
-          return Column(
-            children: [
-              EditorHeader(
-                workoutSessions: workoutSessions,
-                pageController: _pageController,
-                workoutPlaneNameController: workoutPlaneNameController,
-              ),
-              const SizedBox(height: 20),
-              _getSessionPageView(state.movements),
-            ],
-          );
-        }
-
-        throw UnimplementedError();
-      }),
+      child: Column(
+        children: [
+          EditorHeader(
+            workoutSessions: workoutSessions,
+            pageController: _pageController,
+            workoutPlaneNameController: workoutPlaneNameController,
+          ),
+          const SizedBox(height: 20),
+          _getSessionPageView(movements),
+        ],
+      ),
     );
   }
 
@@ -224,6 +188,7 @@ class _WorkoutEditorPageState extends State<WorkoutEditorPage> {
               children: [
                 EditorExerciseCard(
                   exercise: session.exercises[index],
+                  movements: movements,
                   isFirst: index == 0,
                   isLast: index == session.exercises.length - 1,
                   onRemoveExercise: () {

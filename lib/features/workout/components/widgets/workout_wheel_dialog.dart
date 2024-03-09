@@ -8,13 +8,13 @@ class WorkoutWheelDialog extends StatefulWidget {
   final num? firstWheelValue;
   final num? secondWheelValue;
   final ExerciseType exerciseType;
-  final Function(num, num) onValuesChange;
+  final Function(num, num) onSetButtonPressed;
 
   const WorkoutWheelDialog({
     super.key,
     required this.firstWheelValue,
     required this.secondWheelValue,
-    required this.onValuesChange,
+    required this.onSetButtonPressed,
     required this.exerciseType,
   });
 
@@ -68,8 +68,8 @@ class _EditorWheelDialogState extends State<WorkoutWheelDialog> {
             const SizedBox(height: 10),
             CustomTitleButton(
               label: 'Set',
-              onTap: () {
-                widget.onValuesChange(firstWheelValue, secondWheelValue);
+              onPressed: () {
+                widget.onSetButtonPressed(firstWheelValue, secondWheelValue);
                 Navigator.of(context).pop();
               },
             ),

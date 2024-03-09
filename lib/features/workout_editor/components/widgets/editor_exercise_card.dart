@@ -7,10 +7,12 @@ import 'package:training_partner/core/resources/widgets/shimmer_container.dart';
 import 'package:training_partner/core/utils/text_util.dart';
 import 'package:training_partner/features/exercises/components/pages/exercise_detail_page.dart';
 import 'package:training_partner/features/exercises/models/exercise.dart';
+import 'package:training_partner/features/exercises/models/movement.dart';
 import 'package:training_partner/features/workout_editor/components/widgets/editor_wheel_dialog.dart';
 
 class EditorExerciseCard extends StatefulWidget {
   final Exercise exercise;
+  final List<Movement> movements;
   final bool isFirst;
   final bool isLast;
   final Function(num, num) onValuesChange;
@@ -20,6 +22,7 @@ class EditorExerciseCard extends StatefulWidget {
   const EditorExerciseCard({
     super.key,
     required this.exercise,
+    required this.movements,
     required this.onValuesChange,
     required this.isFirst,
     required this.isLast,
@@ -78,7 +81,7 @@ class _EditorExerciseCardState extends State<EditorExerciseCard> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   CachedNetworkImage(
-                    imageUrl: exercise.movement.gifUrl,
+                    imageUrl: widget.movements.firstWhere((movement) => movement.id == exercise.movement.id).gifUrl,
                     height: 100,
                     width: 100,
                     imageBuilder: (context, imageProvider) => Container(

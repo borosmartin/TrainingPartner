@@ -36,6 +36,7 @@ dependencies:
   smooth_page_indicator: ^1.1.0
   font_awesome_flutter: ^10.7.0
   iconsax: ^0.0.8
+  fl_chart: ^0.66.2
 
 dev_dependencies:
   flutter_test:

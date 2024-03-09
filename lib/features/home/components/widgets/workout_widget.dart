@@ -4,33 +4,34 @@ import 'package:training_partner/core/constants/component_constants.dart';
 import 'package:training_partner/core/resources/widgets/custom_divider.dart';
 import 'package:training_partner/core/resources/widgets/custom_title_button.dart';
 import 'package:training_partner/core/resources/widgets/divider_with_text.dart';
+import 'package:training_partner/features/exercises/models/movement.dart';
 import 'package:training_partner/features/home/components/widgets/workout_actions_button.dart';
 import 'package:training_partner/features/home/components/widgets/workout_dropdown.dart';
 import 'package:training_partner/features/home/components/widgets/workout_session_list.dart';
 import 'package:training_partner/features/workout_editor/components/pages/workout_editor_page.dart';
 import 'package:training_partner/features/workout_editor/models/workout_plan.dart';
+import 'package:training_partner/features/workout_editor/models/workout_session.dart';
 
-class WorkoutWidget extends StatefulWidget {
+class WorkoutWidget extends StatelessWidget {
   final List<WorkoutPlan>? workoutPlans;
+  final List<WorkoutSession> previousSessions;
   final WorkoutPlan? selectedWorkoutPlan;
   final void Function(WorkoutPlan) onSelect;
+  final List<Movement> movements;
 
   const WorkoutWidget({
     super.key,
     required this.workoutPlans,
+    required this.previousSessions,
     required this.selectedWorkoutPlan,
     required this.onSelect,
+    required this.movements,
   });
 
   @override
-  State<WorkoutWidget> createState() => _WorkoutWidgetState();
-}
-
-class _WorkoutWidgetState extends State<WorkoutWidget> {
-  @override
   Widget build(BuildContext context) {
     // todo finish this
-    if (widget.workoutPlans == null || widget.workoutPlans!.isEmpty) {
+    if (workoutPlans == null || workoutPlans!.isEmpty) {
       return Column(
         children: [
           const DividerWithText(text: 'Workout plan', textStyle: normalGrey),
@@ -40,9 +41,9 @@ class _WorkoutWidgetState extends State<WorkoutWidget> {
           const SizedBox(height: 20),
           CustomTitleButton(
             label: 'Create',
-            onTap: () => Navigator.of(context).push(
+            onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (context) => const WorkoutEditorPage(),
+                builder: (context) => WorkoutEditorPage(movements: movements),
               ),
             ),
           ),
@@ -74,19 +75,23 @@ class _WorkoutWidgetState extends State<WorkoutWidget> {
                   const Icon(Iconsax.note_215, size: 30, color: Colors.white),
                   const SizedBox(width: 5),
                   WorkoutPlanDropdown(
-                    workoutPlans: widget.workoutPlans!,
-                    onSelect: widget.onSelect,
+                    workoutPlans: workoutPlans!,
+                    onSelect: onSelect,
                   ),
                   const SizedBox(width: 5),
                   const CustomDivider(isVertical: true, color: Colors.white),
                   const SizedBox(width: 5),
-                  WorkoutPlanActionsButton(workoutPlan: widget.selectedWorkoutPlan),
+                  WorkoutPlanActionsButton(workoutPlan: selectedWorkoutPlan, movements: movements),
                   const SizedBox(width: 5),
                 ],
               ),
             ),
           ),
-          WorkoutSessionList(workoutPlan: widget.selectedWorkoutPlan!),
+          WorkoutSessionList(
+            workoutPlan: selectedWorkoutPlan!,
+            previousSessions: previousSessions,
+            movements: movements,
+          ),
         ],
       ),
     );

@@ -1,5 +1,4 @@
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:training_partner/core/utils/date_time_util.dart';
 import 'package:training_partner/features/workout_editor/models/workout_session.dart';
 
 class WorkoutServiceLocal {
@@ -8,14 +7,20 @@ class WorkoutServiceLocal {
   Future<void> saveWorkoutSession(String email, WorkoutSession workoutSession) async {
     final box = await Hive.openBox(workoutBoxKey);
 
-    final String key = '$email-${workoutSession.id}-${DateTimeUtil.dateToStringWithHour(DateTime.now())}';
+    final String key = '$email-${workoutSession.id}-${workoutSession.date}';
     await box.put(key, workoutSession.toJson());
   }
 
-  Future<List<WorkoutSession>> getAllWorkoutSession(String email) async {
+  Future<void> deleteWorkoutSession(String email, WorkoutSession workoutSession) async {
     final box = await Hive.openBox(workoutBoxKey);
-    // todo remove
-    // box.clear();
+
+    final String key = '$email-${workoutSession.id}-${workoutSession.date}';
+
+    await box.delete(key);
+  }
+
+  Future<List<WorkoutSession>> getAllPreviousWorkouts(String email) async {
+    final box = await Hive.openBox(workoutBoxKey);
 
     final jsonList = box.keys.where((key) => key.startsWith(email));
     final List<WorkoutSession> sessions = [];

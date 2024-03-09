@@ -10,7 +10,11 @@ class WorkoutRepository {
     await _workoutServiceLocal.saveWorkoutSession(email, workoutSession);
   }
 
-  Future<List<WorkoutSession>> getAllWorkoutSession(String email) async {
-    return await _workoutServiceLocal.getAllWorkoutSession(email);
+  Future<void> deleteWorkoutSession(String email, WorkoutSession workoutSession) async {
+    await _workoutServiceLocal.deleteWorkoutSession(email, workoutSession);
+  }
+
+  Future<List<WorkoutSession>> getAllPreviousWorkouts(String email) async {
+    return await _workoutServiceLocal.getAllPreviousWorkouts(email);
   }
 }

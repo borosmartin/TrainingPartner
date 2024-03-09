@@ -32,35 +32,35 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
-        body: _getBodyContent(),
+        body: Column(
+          children: [
+            _getHeaderWidget(),
+            _getBodyContent(),
+          ],
+        ),
       ),
     );
   }
 
   Widget _getBodyContent() {
-    return Column(
-      children: [
-        _getHeaderWidget(),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const SizedBox(height: 10),
-                  _getTitleWidget(),
-                  const SizedBox(height: 15),
-                  _getInstructionsWidget(),
-                  const SizedBox(height: 15),
-                  _getSecondayMusclesWidget(),
-                  const SizedBox(height: 15),
-                ],
-              ),
-            ),
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 10),
+              _getTitleCard(),
+              const SizedBox(height: 15),
+              _getInstructionsCard(),
+              const SizedBox(height: 15),
+              _getSecondayMusclesCard(),
+              const SizedBox(height: 15),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 
@@ -91,7 +91,8 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
     );
   }
 
-  Widget _getTitleWidget() {
+  // todo ilyen spaceres megoldás mint a journal entryknél? ne legyen ennyire baloldalt minden
+  Widget _getTitleCard() {
     return Card(
       elevation: 0,
       shape: defaultCornerShape,
@@ -179,7 +180,7 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
     );
   }
 
-  Widget _getInstructionsWidget() {
+  Widget _getInstructionsCard() {
     return Card(
       elevation: 0,
       margin: EdgeInsets.zero,
@@ -221,7 +222,7 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
     );
   }
 
-  Widget _getSecondayMusclesWidget() {
+  Widget _getSecondayMusclesCard() {
     return Card(
       elevation: 0,
       margin: EdgeInsets.zero,
