@@ -1,10 +1,9 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
 import 'package:training_partner/core/globals/component_functions.dart';
 import 'package:training_partner/core/resources/widgets/custom_toast.dart';
+import 'package:training_partner/core/utils/text_util.dart';
 import 'package:training_partner/features/exercises/models/exercise.dart';
 import 'package:training_partner/features/exercises/models/movement.dart';
 import 'package:training_partner/features/exercises/models/workout_set.dart';
@@ -261,10 +260,15 @@ class _WorkoutEditorPageState extends State<WorkoutEditorPage> {
   }
 
   void _addNewWorkoutSession() {
+    List<String> existingIds = [];
+    for (var session in workoutSessions) {
+      existingIds.add(session.id);
+    }
+
     setState(() {
       int newIndex = workoutSessions.length;
       workoutSessions.add(WorkoutSession(
-        id: _generateUniqueId(),
+        id: TextUtil.generateUniqueId(existingIds),
         name: 'New session',
         exercises: const [],
       ));
@@ -290,28 +294,6 @@ class _WorkoutEditorPageState extends State<WorkoutEditorPage> {
         }
       }
     });
-  }
-
-  String _generateUniqueId() {
-    Random random = Random();
-    bool isUnique = false;
-    int newId = 0;
-
-    List<String> existingIds = [];
-    for (var session in workoutSessions) {
-      existingIds.add(session.id);
-    }
-
-    while (!isUnique) {
-      newId = 100 + random.nextInt(900);
-      String newIdString = newId.toString();
-
-      if (!existingIds.contains(newIdString)) {
-        isUnique = true;
-      }
-    }
-
-    return newId.toString();
   }
 
   @override

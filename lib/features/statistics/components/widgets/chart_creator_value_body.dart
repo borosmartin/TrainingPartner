@@ -1,19 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
+import 'package:training_partner/core/resources/widgets/custom_search_bar.dart';
 import 'package:training_partner/core/utils/text_util.dart';
+import 'package:training_partner/features/exercises/logic/cubits/movement_cubit.dart';
+import 'package:training_partner/features/exercises/logic/states/movement_state.dart';
 import 'package:training_partner/features/exercises/models/movement.dart';
-import 'package:training_partner/features/statistics/logic/states/chart_builder_state.dart';
+import 'package:training_partner/features/statistics/models/chart.dart';
+import 'package:training_partner/features/workout_editor/components/widgets/selectable_movement_card.dart';
+import 'package:training_partner/features/workout_editor/models/movement_filter.dart';
 
 class ChartCreatorValueBody extends StatefulWidget {
   final ChartBuilderChartType type;
   final List<Movement> movements;
-  final Function(String?) onMuscleSelected;
+  final Function(String?) onValueSelected;
 
   const ChartCreatorValueBody({
     Key? key,
     required this.type,
     required this.movements,
-    required this.onMuscleSelected,
+    required this.onValueSelected,
   }) : super(key: key);
 
   @override
@@ -21,30 +27,139 @@ class ChartCreatorValueBody extends StatefulWidget {
 }
 
 class _ChartCreatorValueBodyState extends State<ChartCreatorValueBody> {
+  final TextEditingController _searchController = TextEditingController();
   List<Movement> get movements => widget.movements;
-  int? selectedIndex;
+  String? selectedExerciseId;
+  int? selectedMuscleIndex;
 
   @override
   Widget build(BuildContext context) {
-    Map<int, String> muscles = _getMuscles();
+    return _getBodyContent();
+  }
 
-    List<Widget> muscleWidgets = [];
-    for (var entry in muscles.entries) {
-      muscleWidgets.add(_getMuscleCard(index: entry.key, name: entry.value));
+  Widget _getBodyContent() {
+    if (widget.type == ChartBuilderChartType.muscle) {
+      Map<int, String> muscles = _getMuscles();
+
+      List<Widget> muscleWidgets = [];
+      for (var entry in muscles.entries) {
+        muscleWidgets.add(_getMuscleCard(index: entry.key, name: entry.value));
+      }
+
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Column(
+            children: muscleWidgets.sublist(0, muscleWidgets.length ~/ 2),
+          ),
+          Column(
+            children: muscleWidgets.sublist(muscleWidgets.length ~/ 2),
+          ),
+        ],
+      );
+    } else {
+      return BlocBuilder<MovementCubit, MovementState>(
+        builder: (BuildContext context, MovementState state) {
+          if (state is MovementsLoading || state is MovementsUninitialized || state is MovementsError) {
+            return const Expanded(
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          } else if (state is MovementsLoaded) {
+            double height = (MediaQuery.of(context).size.height + 200) / 2;
+
+            return Column(
+              children: [
+                CustomSearchBar(
+                  hintText: 'Search...',
+                  onChanged: (value) => context.read<MovementCubit>().filterMovements(
+                        widget.movements,
+                        state.previousFilter != null ? state.previousFilter!.copyWith(searchQuery: value) : MovementFilter(searchQuery: value),
+                      ),
+                  textController: _searchController,
+                  backgroundColor: Colors.white,
+                  iconColor: Colors.black,
+                  textStyle: smallBlack,
+                ),
+                const SizedBox(height: 10),
+                SizedBox(height: height, child: _getMovementList(state)),
+              ],
+            );
+          }
+
+          throw UnimplementedError();
+        },
+      );
     }
+  }
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Column(
-          children: muscleWidgets.sublist(0, muscleWidgets.length ~/ 2),
+  Widget _getMovementList(MovementsLoaded state) {
+    if (state.previousFilter != null && state.filteredMovements != null && state.filteredMovements!.isEmpty) {
+      return const Expanded(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.search_off_rounded, size: 30, color: Colors.black38),
+            SizedBox(width: 5),
+            Text('No exercise found', style: boldNormalGrey),
+          ],
         ),
-        Column(
-          children: muscleWidgets.sublist(muscleWidgets.length ~/ 2),
+      );
+    } else if (state.previousFilter != null && state.filteredMovements != null) {
+      return Expanded(
+        child: ListView.builder(
+          itemCount: state.filteredMovements!.length,
+          itemBuilder: (context, index) {
+            final movement = state.filteredMovements![index];
+            final isSelected = selectedExerciseId != null && selectedExerciseId == movement.id;
+
+            return SelectableMovementCard(
+              movement: movement,
+              isSelected: isSelected,
+              onSelect: (isSelected) {
+                setState(() {
+                  if (isSelected) {
+                    selectedExerciseId = movement.id;
+                    widget.onValueSelected(selectedExerciseId);
+                  } else {
+                    selectedExerciseId = null;
+                    widget.onValueSelected(null);
+                  }
+                });
+              },
+            );
+          },
         ),
-      ],
-    );
+      );
+    } else {
+      return Expanded(
+        child: ListView.builder(
+          itemCount: state.movements.length,
+          itemBuilder: (context, index) {
+            final movement = state.movements[index];
+            final isSelected = selectedExerciseId != null && selectedExerciseId == movement.id;
+
+            return SelectableMovementCard(
+              movement: movement,
+              isSelected: isSelected,
+              onSelect: (isSelected) {
+                setState(() {
+                  if (isSelected) {
+                    selectedExerciseId = movement.id;
+                    widget.onValueSelected(selectedExerciseId);
+                  } else {
+                    selectedExerciseId = null;
+                    widget.onValueSelected(null);
+                  }
+                });
+              },
+            );
+          },
+        ),
+      );
+    }
   }
 
   Widget _getMuscleCard({required int index, required String name}) {
@@ -53,13 +168,13 @@ class _ChartCreatorValueBodyState extends State<ChartCreatorValueBody> {
     return GestureDetector(
       onTap: () {
         setState(() {
-          if (selectedIndex == index) {
-            selectedIndex = null;
+          if (selectedMuscleIndex == index) {
+            selectedMuscleIndex = null;
           } else {
-            selectedIndex = index;
+            selectedMuscleIndex = index;
           }
 
-          widget.onMuscleSelected(selectedIndex != null ? name : null);
+          widget.onValueSelected(selectedMuscleIndex != null ? name : null);
         });
       },
       child: Padding(
@@ -71,14 +186,14 @@ class _ChartCreatorValueBodyState extends State<ChartCreatorValueBody> {
             margin: EdgeInsets.zero,
             shape: RoundedRectangleBorder(
               borderRadius: defaultBorderRadius,
-              side: BorderSide(color: selectedIndex == index ? Theme.of(context).colorScheme.tertiary : Colors.transparent, width: 2.5),
+              side: BorderSide(color: selectedMuscleIndex == index ? Theme.of(context).colorScheme.tertiary : Colors.transparent, width: 2.5),
             ),
             child: Padding(
               padding: const EdgeInsets.all(5),
               child: Center(
                 child: Text(
                   name,
-                  style: selectedIndex == index ? boldNormalAccent : boldNormalGrey,
+                  style: selectedMuscleIndex == index ? boldNormalAccent : boldNormalGrey,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),

@@ -36,6 +36,13 @@ const normalGrey = TextStyle(
   color: Colors.black38,
 );
 
+const normalAccent = TextStyle(
+  fontFamily: 'Omnes',
+  fontSize: 18,
+  fontWeight: FontWeight.w600,
+  color: Color.fromRGBO(0, 173, 181, 1),
+);
+
 const smallBlack = TextStyle(
   fontFamily: 'Omnes',
   fontSize: 16,

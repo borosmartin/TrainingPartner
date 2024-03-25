@@ -68,7 +68,7 @@ class _EditorWheelDialogState extends State<WorkoutWheelDialog> {
             const SizedBox(height: 10),
             CustomTitleButton(
               label: 'Set',
-              onPressed: () {
+              onTap: () {
                 widget.onSetButtonPressed(firstWheelValue, secondWheelValue);
                 Navigator.of(context).pop();
               },

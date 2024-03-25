@@ -3,12 +3,15 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
+import 'package:training_partner/core/utils/text_util.dart';
 import 'package:training_partner/features/exercises/models/movement.dart';
-import 'package:training_partner/features/statistics/components/widgets/chart_creator_detail_body.dart';
+import 'package:training_partner/features/statistics/components/widgets/chart_creator_options_body.dart';
 import 'package:training_partner/features/statistics/components/widgets/chart_creator_type_body.dart';
 import 'package:training_partner/features/statistics/components/widgets/chart_creator_value_body.dart';
 import 'package:training_partner/features/statistics/logic/cubits/chart_builder_cubit.dart';
+import 'package:training_partner/features/statistics/logic/cubits/statistics_cubit.dart';
 import 'package:training_partner/features/statistics/logic/states/chart_builder_state.dart';
+import 'package:training_partner/features/statistics/models/chart.dart';
 
 class ChartCreatorBottomSheet extends StatefulWidget {
   final List<Movement> movements;
@@ -22,24 +25,32 @@ class ChartCreatorBottomSheet extends StatefulWidget {
 class _ChartCreatorBottomSheetState extends State<ChartCreatorBottomSheet> {
   ChartBuilderCubit get _cubit => context.read<ChartBuilderCubit>();
 
-  ChartBuilderChartType? selectedType;
-  String? selectedMuscle;
+  late Chart chart;
+
+  @override
+  void initState() {
+    super.initState();
+
+    chart = Chart(id: _getRandomId());
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Card(
-            elevation: 0,
-            color: Colors.black26,
-            child: SizedBox(height: 5, width: 80),
-          ),
-          _getBodyContent(),
-          const SizedBox(height: 20),
-        ],
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Card(
+              elevation: 0,
+              color: Colors.black26,
+              child: SizedBox(height: 5, width: 80),
+            ),
+            _getBodyContent(),
+          ],
+        ),
       ),
     );
   }
@@ -52,7 +63,7 @@ class _ChartCreatorBottomSheetState extends State<ChartCreatorBottomSheet> {
       } else if (state is ChartBuilderTypeSelected) {
         return _getValuePicker();
       } else if (state is ChartBuilderValueSelected) {
-        return _getDetailPicker(state);
+        return _getOptionsPicker(state);
       }
 
       throw UnimplementedError();
@@ -65,37 +76,33 @@ class _ChartCreatorBottomSheetState extends State<ChartCreatorBottomSheet> {
         const SizedBox(height: 15),
         _getBottomSheetHeader(1, 'New chart'),
         const SizedBox(height: 5),
-        const Text("Select the type of information you'd like to visualize on a chart.", style: normalGrey),
+        const Text("Select the type of information you'd like to visualize on a chart:", style: normalGrey),
         const SizedBox(height: 15),
         ChartCreatorTypeBody(
           onChartTypeSelected: (type) {
             setState(() {
-              selectedType = type;
+              chart.type = type;
             });
           },
         ),
+        const SizedBox(height: 15),
       ],
     );
   }
 
   Widget _getValuePicker() {
     String title = '';
-    if (selectedType == ChartBuilderChartType.workout) {
-      title = 'Workout';
-    } else if (selectedType == ChartBuilderChartType.exercise) {
+    if (chart.type == ChartBuilderChartType.exercise) {
       title = 'Exercise';
-    } else if (selectedType == ChartBuilderChartType.muscle) {
+    } else if (chart.type == ChartBuilderChartType.muscle) {
       title = 'Muscle';
     }
 
-    // todo
     String subtitle = '';
-    if (selectedType == ChartBuilderChartType.workout) {
-      subtitle = 'Workout';
-    } else if (selectedType == ChartBuilderChartType.exercise) {
-      subtitle = 'Exercise';
-    } else if (selectedType == ChartBuilderChartType.muscle) {
-      subtitle = 'Select which target muscle you want to visualize!';
+    if (chart.type == ChartBuilderChartType.exercise) {
+      subtitle = 'Select which exercise you want to visualize:';
+    } else if (chart.type == ChartBuilderChartType.muscle) {
+      subtitle = 'Select which target muscle you want to visualize:';
     }
 
     return Column(
@@ -106,11 +113,15 @@ class _ChartCreatorBottomSheetState extends State<ChartCreatorBottomSheet> {
         Text(subtitle, style: normalGrey),
         const SizedBox(height: 10),
         ChartCreatorValueBody(
-          type: selectedType!,
+          type: chart.type!,
           movements: widget.movements,
-          onMuscleSelected: (muscle) {
+          onValueSelected: (value) {
             setState(() {
-              selectedMuscle = muscle;
+              if (chart.type == ChartBuilderChartType.exercise) {
+                chart.exerciseId = value;
+              } else if (chart.type == ChartBuilderChartType.muscle) {
+                chart.muscleTarget = value;
+              }
             });
           },
         ),
@@ -118,25 +129,44 @@ class _ChartCreatorBottomSheetState extends State<ChartCreatorBottomSheet> {
     );
   }
 
-  Widget _getDetailPicker(ChartBuilderValueSelected state) {
+  Widget _getOptionsPicker(ChartBuilderValueSelected state) {
     return Column(
       children: [
         const SizedBox(height: 15),
-        _getBottomSheetHeader(3, state.muscle!),
-        const SizedBox(height: 10),
-        ChartCreatorDetailBody(type: selectedType!),
+        _getBottomSheetHeader(3, 'Options'),
+        const SizedBox(height: 5),
+        const Text('Here you can fine tune the options for your chart:', style: normalGrey),
+        const SizedBox(height: 15),
+        ChartCreatorOptionsBody(
+          type: chart.type!,
+          muscle: chart.muscleTarget,
+          exerciseId: chart.exerciseId,
+          movements: widget.movements,
+          onOptionsChanged: (options) {
+            setState(() {
+              chart.chartOptions = options;
+            });
+          },
+          onExerciseMuscleOnTap: () {
+            if (chart.type == ChartBuilderChartType.exercise) {
+              chart.exerciseId = null;
+              _cubit.toSecondStage();
+            } else if (chart.type == ChartBuilderChartType.muscle) {
+              chart.muscleTarget = null;
+              _cubit.toSecondStage();
+            }
+          },
+          onAddButtonTap: () => context.read<StatisticsCubit>().saveChart(chart),
+        ),
       ],
     );
   }
 
   Widget _getBottomSheetHeader(int stage, String title) {
     bool isNextStageEnabled = false;
-    if (stage == 1 && selectedType != null) {
+    if (stage == 1 && chart.type != null) {
       isNextStageEnabled = true;
-    } else if (stage == 2 && selectedMuscle != null) {
-      isNextStageEnabled = true;
-    } else if (stage == 3) {
-      // todo
+    } else if (stage == 2 && (chart.muscleTarget != null || chart.exerciseId != null)) {
       isNextStageEnabled = true;
     }
 
@@ -148,39 +178,63 @@ class _ChartCreatorBottomSheetState extends State<ChartCreatorBottomSheet> {
           child: Icon(Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back, color: Colors.black38),
         ),
         Text(title, style: boldLargeBlack),
-        GestureDetector(
-          onTap: isNextStageEnabled ? () => onForward(stage) : null,
-          child: Icon(
-            Platform.isIOS ? Icons.arrow_forward_ios : Icons.arrow_forward,
-            color: isNextStageEnabled ? Theme.of(context).colorScheme.tertiary : Colors.black38,
-          ),
-        ),
+        stage == 3
+            ? const Icon(Icons.arrow_forward, color: Colors.transparent)
+            : GestureDetector(
+                onTap: isNextStageEnabled ? () => onForward(stage) : null,
+                child: Icon(
+                  Platform.isIOS ? Icons.arrow_forward_ios : Icons.arrow_forward,
+                  color: isNextStageEnabled ? Theme.of(context).colorScheme.tertiary : Colors.black38,
+                ),
+              ),
       ],
     );
   }
 
   void onBack(int stage) {
     if (stage == 1) {
-      selectedType = null;
-      selectedMuscle = null;
       Navigator.pop(context);
     } else if (stage == 2) {
-      selectedType = null;
-      selectedMuscle = null;
+      chart.type = null;
+      chart.muscleTarget = null;
+      chart.exerciseId = null;
+
       _cubit.toFirstStage();
     } else if (stage == 3) {
-      selectedMuscle = null;
-      _cubit.toSecondStage(selectedType!);
+      if (chart.type == ChartBuilderChartType.workout) {
+        chart.type = null;
+
+        _cubit.toFirstStage();
+        return;
+      }
+
+      chart.muscleTarget = null;
+      chart.exerciseId = null;
+
+      _cubit.toSecondStage();
     }
   }
 
   void onForward(int stage) {
     if (stage == 1) {
-      _cubit.toSecondStage(selectedType!);
+      if (chart.type == ChartBuilderChartType.workout) {
+        _cubit.toThirdStage();
+        return;
+      }
+
+      _cubit.toSecondStage();
     } else if (stage == 2) {
-      _cubit.toThirdStage(muscle: selectedMuscle);
-    } else if (stage == 3) {
-      // todo
+      _cubit.toThirdStage();
     }
+  }
+
+  // todo get loadedstate items.ids
+  String _getRandomId() {
+    List<String> existingIds = [];
+    // for (var i = 0; i < widget.workoutPlans.length; i++) {
+    //   ids.add(widget.workoutPlans[i].id);
+    // }
+
+    return TextUtil.generateUniqueId(existingIds);
   }
 }

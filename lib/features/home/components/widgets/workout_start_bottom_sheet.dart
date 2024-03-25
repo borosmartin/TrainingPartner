@@ -78,7 +78,7 @@ class _WorkoutStartBottomSheetState extends State<WorkoutStartBottomSheet> {
           CustomTitleButton(
             icon: Iconsax.play5,
             label: 'Start workout',
-            onPressed: () {
+            onTap: () {
               Navigator.of(context).pop();
               Navigator.of(context).push(
                 MaterialPageRoute(

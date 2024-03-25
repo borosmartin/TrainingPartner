@@ -51,7 +51,7 @@ class JournalPage extends StatelessWidget {
               CustomTitleButton(
                 icon: FontAwesomeIcons.play,
                 label: 'Start a new workout',
-                onPressed: () {
+                onTap: () {
                   if (pageController.hasClients) {
                     pageController.animateToPage(0, duration: const Duration(milliseconds: 750), curve: Curves.ease);
                   }
@@ -72,13 +72,13 @@ class JournalPage extends StatelessWidget {
             children: [
               if (index != sessions.length - 1)
                 Positioned(
-                  left: 122.5,
+                  left: 132.5,
                   top: 50,
                   child: Container(height: 80, width: 4, decoration: BoxDecoration(color: Theme.of(context).colorScheme.tertiary)),
                 ),
               if (index != 0)
                 Positioned(
-                  left: 122.5,
+                  left: 132.5,
                   bottom: 50,
                   child: Container(height: 80, width: 4, decoration: BoxDecoration(color: Theme.of(context).colorScheme.tertiary)),
                 ),
@@ -121,7 +121,7 @@ class JournalPage extends StatelessWidget {
     String day = session.date!.day.toString().padLeft(2, '0');
 
     return SizedBox(
-      width: 100,
+      width: 110,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,

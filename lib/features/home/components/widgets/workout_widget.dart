@@ -41,7 +41,7 @@ class WorkoutWidget extends StatelessWidget {
           const SizedBox(height: 20),
           CustomTitleButton(
             label: 'Create',
-            onPressed: () => Navigator.of(context).push(
+            onTap: () => Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => WorkoutEditorPage(movements: movements),
               ),

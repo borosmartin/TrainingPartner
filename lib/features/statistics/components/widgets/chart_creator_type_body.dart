@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
-import 'package:training_partner/features/statistics/logic/states/chart_builder_state.dart';
+import 'package:training_partner/features/statistics/models/chart.dart';
 
 class ChartCreatorTypeBody extends StatefulWidget {
   final Function(ChartBuilderChartType? type) onChartTypeSelected;
@@ -66,7 +66,7 @@ class _ChartCreatorTypeBodyState extends State<ChartCreatorTypeBody> {
             side: BorderSide(color: selectedIndex == index ? Theme.of(context).colorScheme.tertiary : Colors.transparent, width: 2.5),
           ),
           child: Padding(
-            padding: const EdgeInsets.all(15),
+            padding: const EdgeInsets.all(10),
             child: Column(
               children: [
                 Icon(iconData, size: 30, color: selectedIndex == index ? Theme.of(context).colorScheme.tertiary : Colors.black),

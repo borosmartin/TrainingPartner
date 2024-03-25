@@ -68,7 +68,7 @@ class _PasswordResetDialogState extends State<PasswordResetDialog> {
                 // todo úgy néz ki, hogyha nincs bezárva a bill akkor nem érzékeli hogy van a controllerbe text
                 CustomTitleButton(
                   label: 'Request',
-                  onPressed: _controllerEmail.text.isEmpty
+                  onTap: _controllerEmail.text.isEmpty
                       ? () async {
                           _focusNodeEmail.unfocus();
                           await Future.delayed(const Duration(milliseconds: 200));

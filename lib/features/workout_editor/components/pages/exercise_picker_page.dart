@@ -112,7 +112,7 @@ class _ExercisePickerPageState extends State<ExercisePickerPage> {
                       const SizedBox(height: 10),
                       CustomTitleButton(
                         label: 'Select ( ${_selectedExercises.length} )',
-                        onPressed: () {
+                        onTap: () {
                           widget.onExercisesChanged(_selectedExercises);
                           Navigator.of(context).pop();
                         },

@@ -8,6 +8,7 @@ import 'package:training_partner/core/constants/component_constants.dart';
 import 'package:training_partner/core/globals/component_functions.dart';
 import 'package:training_partner/core/resources/widgets/custom_back_button.dart';
 import 'package:training_partner/core/resources/widgets/custom_button.dart';
+import 'package:training_partner/core/resources/widgets/custom_input_field.dart';
 import 'package:training_partner/core/resources/widgets/custom_title_button.dart';
 import 'package:training_partner/core/resources/widgets/custom_toast.dart';
 import 'package:training_partner/core/utils/date_time_util.dart';
@@ -43,6 +44,9 @@ class _WorkoutPageState extends State<WorkoutPage> {
   Map<String, int> setNumbers = {};
 
   int _seconds = 0;
+
+  // TODO REMOVE LATER
+  TextEditingController dateController = TextEditingController();
 
   @override
   void initState() {
@@ -97,6 +101,11 @@ class _WorkoutPageState extends State<WorkoutPage> {
         ),
         if (_currentPageIndex == session.exercises.length - 1)
           Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: CustomInputField(inputController: dateController, hintText: 'TEST: DATE'),
+          ),
+        if (_currentPageIndex == session.exercises.length - 1)
+          Padding(
             padding: const EdgeInsets.only(left: 15, right: 15, bottom: 15),
             child: Row(
               children: [
@@ -106,8 +115,13 @@ class _WorkoutPageState extends State<WorkoutPage> {
                     icon: Iconsax.medal_star5,
                     label: 'Finish Workout',
                     isEnabled: errors.isEmpty,
-                    onPressed: () {
-                      final sessionWithDuration = session.copyWith(durationInSeconds: _seconds, date: DateTime.now());
+                    onTap: () {
+                      var sessionWithDuration = session.copyWith(durationInSeconds: _seconds, date: DateTime.now());
+
+                      if (dateController.text.isNotEmpty) {
+                        sessionWithDuration = sessionWithDuration.copyWith(date: DateTimeUtil.TESTstringToDate(dateController.text));
+                      }
+
                       context.read<WorkoutCubit>().saveWorkoutSession(sessionWithDuration);
 
                       Navigator.pop(context);

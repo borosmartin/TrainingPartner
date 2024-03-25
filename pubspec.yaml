@@ -57,6 +57,7 @@ flutter:
     - assets/images/legs_icon.png
     - assets/images/shoulder_icon.png
     - assets/images/
+    - lib/features/statistics/models/
 
   fonts:
     - family: Omnes

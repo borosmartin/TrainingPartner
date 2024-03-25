@@ -21,6 +21,7 @@ class WorkoutServiceLocal {
 
   Future<List<WorkoutSession>> getAllPreviousWorkouts(String email) async {
     final box = await Hive.openBox(workoutBoxKey);
+    // box.clear();
 
     final jsonList = box.keys.where((key) => key.startsWith(email));
     final List<WorkoutSession> sessions = [];

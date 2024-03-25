@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 class TextUtil {
@@ -20,5 +22,22 @@ class TextUtil {
       fontWeight: fontWeight ?? FontWeight.w400,
       color: color ?? Colors.black,
     );
+  }
+
+  static String generateUniqueId(List<String> existingIds) {
+    Random random = Random();
+    bool isUnique = false;
+    int newId = 0;
+
+    while (!isUnique) {
+      newId = 100 + random.nextInt(900);
+      String newIdString = newId.toString();
+
+      if (!existingIds.contains(newIdString)) {
+        isUnique = true;
+      }
+    }
+
+    return newId.toString();
   }
 }

@@ -148,7 +148,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   const SizedBox(height: 40),
                   CustomTitleButton(
                     label: 'Sign up',
-                    onPressed: _createUserWithEmailAndPassword,
+                    onTap: _createUserWithEmailAndPassword,
                   ),
                   const SizedBox(height: 30),
                   const DividerWithText(text: 'Continue with', textStyle: smallGrey),

@@ -24,7 +24,7 @@ class JournalExerciseCard extends StatelessWidget {
     required this.movements,
   });
 
-  // todo csak egy elem const BoxDecoration(color: Colors.white, borderRadius: defaultBorderRadius)
+  // todo csak egy elem van a listába, akkor all corner 10: const BoxDecoration(color: Colors.white, borderRadius: defaultBorderRadius)
   @override
   Widget build(BuildContext context) {
     var width = (MediaQuery.of(context).size.width - 110) / 3;
@@ -41,7 +41,7 @@ class JournalExerciseCard extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: Padding(
-          padding: EdgeInsets.only(top: isFirst ? 0 : 15, bottom: 15, left: 15, right: 15),
+          padding: EdgeInsets.only(top: isFirst ? 0 : 15, bottom: 15, left: 20, right: 15),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -68,7 +68,6 @@ class JournalExerciseCard extends StatelessWidget {
                     errorWidget: (context, url, error) => const Icon(Icons.error, color: Colors.red),
                   ),
                   if (previousExercise != null) _getWorkoutSetList(context, isPreviousExercise: true),
-                  if (previousExercise == null) const SizedBox(width: 20),
                   _getWorkoutSetList(context, isPreviousExercise: false),
                 ],
               ),
@@ -82,8 +81,8 @@ class JournalExerciseCard extends StatelessWidget {
   Widget _getWorkoutSetList(BuildContext context, {bool isPreviousExercise = false}) {
     var width = (MediaQuery.of(context).size.width - 100) / 3;
     Exercise widgetExercise = isPreviousExercise ? previousExercise! : exercise;
-    Color cardColor = previousExercise == null || isPreviousExercise ? Colors.grey.shade200 : chartColors[index % chartColors.length];
-    TextStyle textColor = previousExercise == null || isPreviousExercise ? smallGrey : smallWhite;
+    Color cardColor = isPreviousExercise ? Colors.grey.shade200 : chartColors[index % chartColors.length];
+    TextStyle textColor = isPreviousExercise ? smallGrey : smallWhite;
 
     Widget child = Container();
 
@@ -99,7 +98,6 @@ class JournalExerciseCard extends StatelessWidget {
 
         child = SizedBox(
           height: width,
-          width: width,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -153,12 +151,17 @@ class JournalExerciseCard extends StatelessWidget {
         break;
     }
 
-    return Card(
-      elevation: 0,
-      shape: defaultCornerShape,
-      margin: EdgeInsets.zero,
-      color: cardColor,
-      child: child,
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.only(left: 15),
+        child: Card(
+          elevation: 0,
+          shape: defaultCornerShape,
+          margin: EdgeInsets.zero,
+          color: cardColor,
+          child: child,
+        ),
+      ),
     );
   }
 }

@@ -138,7 +138,7 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 20),
                   CustomTitleButton(
                     label: 'Sign in',
-                    onPressed: () => _signInWithEmailAndPassword(),
+                    onTap: () => _signInWithEmailAndPassword(),
                   ),
                   const SizedBox(height: 50),
                   const DividerWithText(text: 'Continue with', textStyle: smallGrey),
