@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
 import 'package:training_partner/core/globals/component_functions.dart';
+import 'package:training_partner/core/resources/open_ai/gpt_cubit.dart';
+import 'package:training_partner/core/resources/open_ai/gpt_message.dart';
 import 'package:training_partner/core/resources/widgets/custom_toast.dart';
 import 'package:training_partner/core/utils/text_util.dart';
 import 'package:training_partner/features/exercises/models/exercise.dart';
@@ -39,17 +41,19 @@ class _WorkoutEditorPageState extends State<WorkoutEditorPage> {
   @override
   void initState() {
     super.initState();
+    colorSafeArea(color: Colors.white);
+
     _pageController = PageController(initialPage: _currentPageIndex);
 
     workoutPlan = widget.workoutPlan;
     if (workoutPlan != null) {
       workoutSessions = workoutPlan!.sessions;
       workoutPlaneNameController.text = workoutPlan!.name;
+
+      context.read<GptCubit>().getGptResponse(workoutPlan!, _getTipPromtString());
     } else {
       workoutPlaneNameController.text = 'New workout';
     }
-
-    colorSafeArea(color: Colors.white);
   }
 
   @override
@@ -108,6 +112,7 @@ class _WorkoutEditorPageState extends State<WorkoutEditorPage> {
             workoutSessions: workoutSessions,
             pageController: _pageController,
             workoutPlaneNameController: workoutPlaneNameController,
+            workoutPlan: workoutPlan,
           ),
           const SizedBox(height: 20),
           _getSessionPageView(movements),
@@ -296,9 +301,29 @@ class _WorkoutEditorPageState extends State<WorkoutEditorPage> {
     });
   }
 
+  List<GptMessage> _getTipPromtString() {
+    List<GptMessage> messages = [];
+
+    String tipPromt =
+        "This prompt is designed to analyze the provided workout routine and generate specific tips for improvement. Keep responses concise and focused on potential mistakes in the routine. Ensure each tip addresses specific aspects of the workout, such as muscle targeting, rep and set counts, and weekly volume. Ensure each exercise adequately targets specific muscle groups; for instance, check if any major muscle group is overlooked in the routine. Avoid generic advice and prioritize insights tailored to the given routine. Give at most 3 tips. Here is the workout routine to base your analysis on:";
+
+    for (var session in workoutSessions) {
+      String sessionName = session.name;
+      tipPromt += "\nWorkout name: $sessionName\nExerices:\n";
+      for (var exercise in session.exercises) {
+        tipPromt += "${exercise.movement.name}: ${exercise.workoutSets.length} sets of ${exercise.workoutSets[0].repetitions} reps\n";
+      }
+    }
+
+    messages.add(GptMessage(role: 'user', content: tipPromt));
+
+    return messages;
+  }
+
   @override
   void dispose() {
     _pageController.dispose();
+
     super.dispose();
   }
 }

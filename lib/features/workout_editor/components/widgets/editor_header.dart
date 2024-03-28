@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
 import 'package:training_partner/core/globals/component_functions.dart';
 import 'package:training_partner/core/resources/widgets/custom_toast.dart';
 import 'package:training_partner/features/exercises/models/exercise.dart';
+import 'package:training_partner/features/workout_editor/components/widgets/gpt_tip_widget.dart';
 import 'package:training_partner/features/workout_editor/logic/cubits/workout_plan_cubit.dart';
 import 'package:training_partner/features/workout_editor/models/workout_plan.dart';
 import 'package:training_partner/features/workout_editor/models/workout_session.dart';
@@ -13,12 +15,14 @@ class EditorHeader extends StatefulWidget {
   final List<WorkoutSession> workoutSessions;
   final PageController pageController;
   final TextEditingController workoutPlaneNameController;
+  final WorkoutPlan? workoutPlan;
 
   const EditorHeader({
     super.key,
     required this.workoutSessions,
     required this.pageController,
     required this.workoutPlaneNameController,
+    this.workoutPlan,
   });
 
   @override
@@ -27,6 +31,7 @@ class EditorHeader extends StatefulWidget {
 
 class _EditorHeaderState extends State<EditorHeader> {
   List<WorkoutSession> get sessions => widget.workoutSessions;
+  bool isTipVisible = true;
 
   @override
   Widget build(BuildContext context) {
@@ -38,11 +43,11 @@ class _EditorHeaderState extends State<EditorHeader> {
           bottomRight: Radius.circular(20),
         ),
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-        child: Column(
-          children: [
-            Row(
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 GestureDetector(
@@ -79,24 +84,62 @@ class _EditorHeaderState extends State<EditorHeader> {
                 ),
               ],
             ),
-            if (sessions.isNotEmpty) const SizedBox(height: 10),
-            if (sessions.isNotEmpty)
-              SmoothPageIndicator(
-                controller: widget.pageController,
-                count: sessions.length,
-                effect: WormEffect(
-                  type: WormType.thin,
-                  activeDotColor: Theme.of(context).colorScheme.tertiary,
-                  dotColor: Colors.grey.shade400,
+          ),
+          if (sessions.isNotEmpty) const SizedBox(height: 10),
+          if (sessions.isNotEmpty)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 30),
+                  child: GestureDetector(
+                    onTap: widget.workoutPlan == null
+                        ? null
+                        : () {
+                            setState(() {
+                              isTipVisible = !isTipVisible;
+                            });
+                          },
+                    child: Icon(
+                      isTipVisible ? FontAwesomeIcons.lightbulb : FontAwesomeIcons.solidLightbulb,
+                      color: widget.workoutPlan == null ? Colors.transparent : const Color(0xFF28a08c),
+                    ),
+                  ),
                 ),
-                onDotClicked: (int index) => widget.pageController.animateToPage(
-                  index,
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.ease,
+                SmoothPageIndicator(
+                  controller: widget.pageController,
+                  count: sessions.length,
+                  effect: WormEffect(
+                    type: WormType.thin,
+                    activeDotColor: Theme.of(context).colorScheme.tertiary,
+                    dotColor: Colors.grey.shade400,
+                  ),
+                  onDotClicked: (int index) => widget.pageController.animateToPage(
+                    index,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.ease,
+                  ),
                 ),
-              ),
-          ],
-        ),
+                const Padding(
+                  padding: EdgeInsets.only(right: 30),
+                  child: Icon(
+                    FontAwesomeIcons.solidLightbulb,
+                    color: Colors.transparent,
+                  ),
+                ),
+              ],
+            ),
+          const SizedBox(height: 15),
+          if (widget.workoutPlan != null)
+            GptTipWidget(
+              isTipVisible: isTipVisible,
+              onTap: () {
+                setState(() {
+                  isTipVisible = !isTipVisible;
+                });
+              },
+            ),
+        ],
       ),
     );
   }
@@ -180,7 +223,7 @@ class _EditorHeaderState extends State<EditorHeader> {
     } else if (durationEmptyError) {
       showBottomToast(context: context, message: 'Error: One of the exercises has no duration set!', type: ToastType.error);
     } else {
-      context.read<WorkoutPlanCubit>().saveWorkoutPlan(WorkoutPlan(name: widget.workoutPlaneNameController.text, sessions: sessions));
+      context.read<WorkoutPlanCubit>().createWorkoutPlan(WorkoutPlan(name: widget.workoutPlaneNameController.text, sessions: sessions));
 
       Navigator.pop(context);
     }

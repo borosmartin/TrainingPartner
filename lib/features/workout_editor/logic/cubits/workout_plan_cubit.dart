@@ -9,11 +9,11 @@ class WorkoutPlanCubit extends Cubit<WorkoutPlanState> {
 
   WorkoutPlanCubit(this._workoutRepository) : super(WorkoutPlansUninitialized());
 
-  Future<void> saveWorkoutPlan(WorkoutPlan workoutPlan) async {
+  Future<void> createWorkoutPlan(WorkoutPlan workoutPlan) async {
     try {
       emit(WorkoutPlanCreationLoading());
 
-      await _workoutRepository.saveWorkoutPlan(currentUser.email!, workoutPlan);
+      await _workoutRepository.createWorkoutPlan(currentUser.email!, workoutPlan);
 
       emit(WorkoutPlanCreationSuccessful(workoutPlan: workoutPlan));
     } catch (e) {
@@ -25,7 +25,7 @@ class WorkoutPlanCubit extends Cubit<WorkoutPlanState> {
     try {
       emit(WorkoutPlansLoading());
 
-      List<WorkoutPlan> workoutPlans = await _workoutRepository.getAllWorkoutPlansFromHive(currentUser.email!);
+      List<WorkoutPlan> workoutPlans = await _workoutRepository.getAllWorkoutPlan(currentUser.email!);
 
       emit(WorkoutPlansLoaded(workoutPlans: workoutPlans));
     } catch (e) {

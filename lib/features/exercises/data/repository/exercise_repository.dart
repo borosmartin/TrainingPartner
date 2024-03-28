@@ -13,20 +13,18 @@ class ExerciseRepository {
       MovementData? hiveData = await _exerciseServiceLocal.getMovementDataFromHive();
 
       if (hiveData != null) {
-        // todo emulátron 1 órával folyton visszább áll
         DateTime now = DateTime.now();
         DateTime todayRefreshTime = DateTime(now.year, now.month, now.day, 19, 0);
 
         var difference = now.difference(hiveData.lastUpdated).inHours;
-        if (now.isBefore(todayRefreshTime) && difference < 22) {
+        if (now.isBefore(todayRefreshTime) && difference < 20) {
           return hiveData;
         }
       }
 
-      // todo törölni a cachelt képeket, kell e egyáltalán?
-      // CachedNetworkImage.evictFromCache();
       MovementData apiData = await _exerciseService.fetchMovementList();
       _exerciseServiceLocal.saveMovementData(apiData);
+
       return apiData;
     } catch (error) {
       try {

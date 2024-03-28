@@ -4,6 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:training_partner/config/themes/light_theme.dart';
 import 'package:training_partner/core/resources/firebase/firebase_options.dart';
+import 'package:training_partner/core/resources/open_ai/gpt_cubit.dart';
+import 'package:training_partner/core/resources/open_ai/gpt_repository.dart';
+import 'package:training_partner/core/resources/open_ai/gpt_service.dart';
 import 'package:training_partner/core/resources/widgets/home_page_navigator.dart';
 import 'package:training_partner/features/exercises/data/repository/exercise_repository.dart';
 import 'package:training_partner/features/exercises/data/service/exercise_local_service.dart';
@@ -20,6 +23,8 @@ import 'package:training_partner/features/workout/logic/cubits/workout_cubit.dar
 import 'package:training_partner/features/workout_editor/data/repository/workout_plan_repository.dart';
 import 'package:training_partner/features/workout_editor/data/service/workout_plan_local_service.dart';
 import 'package:training_partner/features/workout_editor/logic/cubits/workout_plan_cubit.dart';
+
+import 'core/resources/open_ai/gpt_service_local.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -78,6 +83,11 @@ class TrainingPartner extends StatelessWidget {
       BlocProvider<ChartBuilderCubit>(
         create: (context) => ChartBuilderCubit(),
       ),
+      BlocProvider<GptCubit>(
+        create: (context) => GptCubit(
+          RepositoryProvider.of<GptRepository>(context),
+        ),
+      ),
     ];
   }
 
@@ -102,6 +112,12 @@ class TrainingPartner extends StatelessWidget {
       RepositoryProvider<StatisticsRepository>(
         create: (context) => StatisticsRepository(
           StatisticsLocalService(),
+        ),
+      ),
+      RepositoryProvider<GptRepository>(
+        create: (context) => GptRepository(
+          GptService(),
+          GptServiceLocal(),
         ),
       ),
     ];

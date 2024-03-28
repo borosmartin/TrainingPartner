@@ -11,7 +11,7 @@ class StatisticsCubit extends Cubit<StatisticsState> {
 
   Future<void> saveChart(Chart chart) async {
     try {
-      _statisticsRepository.saveChart(currentUser.email!, chart);
+      _statisticsRepository.createChart(currentUser.email!, chart);
 
       emit(ChartAddSuccess());
     } catch (e) {
@@ -23,7 +23,7 @@ class StatisticsCubit extends Cubit<StatisticsState> {
     try {
       emit(ChartsLoading());
 
-      final charts = await _statisticsRepository.getAllCharts(currentUser.email!);
+      final charts = await _statisticsRepository.getAllChart(currentUser.email!);
 
       emit(ChartsLoaded(charts));
     } catch (e) {

@@ -3,6 +3,7 @@ class Assets {
   Assets._();
 
   static const String animationsDumbbells = 'assets/animations/dumbbells.json';
+  static const String animationsLoadingBar = 'assets/animations/loading_bar.json';
   static const String assetsAnimationsDumbbells = 'assets/animations/dumbbells.json';
   static const String assetsCsvMovements = 'assets/csv/movements.csv';
   static const String assetsImagesArmsIcon = 'assets/images/arms_icon.png';
@@ -56,14 +57,20 @@ class Assets {
   static const String modelsChartMinMaxValues = 'lib/features/statistics/models/chart_min_max_values.dart';
   static const String modelsChartOptions = 'lib/features/statistics/models/chart_options.dart';
   static const String modelsExercise = 'lib/features/exercises/models/exercise.dart';
+  static const String modelsExericseMuscleChart = 'lib/features/statistics/models/exericse_muscle_chart.dart';
   static const String modelsMovement = 'lib/features/exercises/models/movement.dart';
   static const String modelsMovementFilter = 'lib/features/workout_editor/models/movement_filter.dart';
-  static const String modelsMuscleChart = 'lib/features/statistics/models/exericse_muscle_chart.dart';
   static const String modelsUser = 'lib/features/login/models/user.dart';
   static const String modelsWorkoutChart = 'lib/features/statistics/models/workout_chart.dart';
   static const String modelsWorkoutPlan = 'lib/features/workout_editor/models/workout_plan.dart';
   static const String modelsWorkoutSession = 'lib/features/workout_editor/models/workout_session.dart';
   static const String modelsWorkoutSet = 'lib/features/exercises/models/workout_set.dart';
+  static const String openAiGptCubit = 'lib/core/resources/open_ai/gpt_cubit.dart';
+  static const String openAiGptMessage = 'lib/core/resources/open_ai/gpt_message.dart';
+  static const String openAiGptRepository = 'lib/core/resources/open_ai/gpt_repository.dart';
+  static const String openAiGptService = 'lib/core/resources/open_ai/gpt_service.dart';
+  static const String openAiGptServiceLocal = 'lib/core/resources/open_ai/gpt_service_local.dart';
+  static const String openAiGptState = 'lib/core/resources/open_ai/gpt_state.dart';
   static const String pagesExerciseDetailPage = 'lib/features/exercises/components/pages/exercise_detail_page.dart';
   static const String pagesExerciseListPage = 'lib/features/exercises/components/pages/exercise_list_page.dart';
   static const String pagesExercisePickerPage = 'lib/features/workout_editor/components/pages/exercise_picker_page.dart';
@@ -119,6 +126,7 @@ class Assets {
   static const String widgetsEditorWheelDialog = 'lib/features/workout_editor/components/widgets/editor_wheel_dialog.dart';
   static const String widgetsEquipmentDropdown = 'lib/features/exercises/components/widgets/equipment_dropdown.dart';
   static const String widgetsExerciseGroupCard = 'lib/features/exercises/components/widgets/exercise_group_card.dart';
+  static const String widgetsGptTipWidget = 'lib/features/workout_editor/components/widgets/gpt_tip_widget.dart';
   static const String widgetsHomePageNavigator = 'lib/core/resources/widgets/home_page_navigator.dart';
   static const String widgetsJournalExerciseCard = 'lib/features/journal/components/widgets/journal_exercise_card.dart';
   static const String widgetsLoginSignupNavigator = 'lib/features/login/components/widgets/login_signup_navigator.dart';

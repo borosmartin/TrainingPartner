@@ -19,7 +19,7 @@ class WorkoutServiceLocal {
     await box.delete(key);
   }
 
-  Future<List<WorkoutSession>> getAllPreviousWorkouts(String email) async {
+  Future<List<WorkoutSession>> getAllPreviousWorkout(String email) async {
     final box = await Hive.openBox(workoutBoxKey);
     // box.clear();
 
