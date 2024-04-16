@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
-import 'package:training_partner/core/globals/component_functions.dart';
+import 'package:training_partner/core/resources/widgets/colored_safe_area_body.dart';
 import 'package:training_partner/core/resources/widgets/custom_action_chip.dart';
 import 'package:training_partner/core/resources/widgets/custom_search_bar.dart';
 import 'package:training_partner/core/resources/widgets/custom_small_button.dart';
@@ -49,110 +50,121 @@ class _ExerciseListPageState extends State<ExerciseListPage> {
     _targetNames = _movements.map((movement) => movement.target).toSet().toList();
     _isTargetVisible = _targetNames.length > 2;
 
-    colorSafeArea(color: Colors.white);
-
     _filterMovements();
   }
 
-  // todo ha nincs filter találat valamit azé tegyünk ki
+  // todo ha nincs filter találat valamit azért tegyünk ki
   // todo cubit filter, plusz merge shared widgets
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      onPopInvoked: (value) => colorSafeArea(color: Theme.of(context).colorScheme.background),
-      child: SafeArea(
-        child: GestureDetector(
-          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-          child: Scaffold(
-            backgroundColor: Theme.of(context).colorScheme.background,
-            floatingActionButton: _isTop
-                ? null
-                : CustomSmallButton(
-                    elevation: 1,
-                    backgroundColor: Theme.of(context).colorScheme.tertiary,
-                    icon: const Icon(Icons.arrow_upward, color: Colors.white),
-                    onTap: () {
-                      _scrollController.animateTo(
-                        0.0,
-                        duration: const Duration(milliseconds: 500),
-                        curve: Curves.easeInOut,
-                      );
-                    },
-                  ),
-            body: CustomScrollView(
-              controller: _scrollController,
-              slivers: [
-                SliverAppBar(
-                  leading: const BackButton(),
-                  title: Text(widget.groupName, style: boldLargeBlack),
-                  centerTitle: true,
-                  expandedHeight: _isTargetVisible ? 310 : 220,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(20),
-                      bottomRight: Radius.circular(20),
-                    ),
-                  ),
-                  flexibleSpace: FlexibleSpaceBar(
-                    background: Padding(
-                      padding: const EdgeInsets.only(top: 60, left: 15, right: 15),
-                      child: Column(
-                        children: [
-                          CustomSearchBar(
-                            hintText: 'Search...',
-                            onChanged: (value) => _filterMovements(),
-                            textController: _searchController,
-                          ),
-                          const SizedBox(height: 10),
-                          const DividerWithText(text: 'Equipment', textStyle: smallGrey),
-                          const SizedBox(height: 10),
-                          EquipmentDropdown(
-                            equipments: _getEquipments(),
-                            initialItem: 'All',
-                            onSelect: (value) {
-                              setState(() {
-                                selectedEquipment = value.toLowerCase();
-                              });
-                              _filterMovements();
-                            },
-                          ),
-                          const SizedBox(height: 10),
-                          _buildTargetRow(),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (BuildContext context, int index) {
-                      if (index == 0) {
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: MovementCard(movement: _filteredMovements[index], isTargetVisible: _isTargetVisible),
-                        );
-                      }
-
-                      return MovementCard(movement: _filteredMovements[index], isTargetVisible: _isTargetVisible);
-                    },
-                    childCount: _filteredMovements.length,
-                  ),
-                ),
-              ],
-            ),
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.background,
+        floatingActionButton: _isTop
+            ? null
+            : CustomSmallButton(
+                elevation: 1,
+                backgroundColor: accentColor,
+                icon: const Icon(Icons.arrow_upward, color: Colors.white),
+                onTap: () {
+                  _scrollController.animateTo(
+                    0.0,
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeInOut,
+                  );
+                },
+              ),
+        body: ColoredSafeAreaBody(
+          safeAreaColor: Theme.of(context).cardColor,
+          isLightTheme: Theme.of(context).brightness == Brightness.light,
+          child: CustomScrollView(
+            controller: _scrollController,
+            slivers: [
+              _getHeader(),
+              _getBodyContent(),
+            ],
           ),
         ),
       ),
     );
   }
 
+  SliverAppBar _getHeader() {
+    Color backgroundColor = Theme.of(context).brightness == Brightness.dark ? Theme.of(context).colorScheme.primary : Colors.grey.shade200;
+
+    return SliverAppBar(
+      leading: const BackButton(),
+      title: Text(widget.groupName, style: CustomTextStyle.titlePrimary(context)),
+      centerTitle: true,
+      expandedHeight: _isTargetVisible ? 310 : 220,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(20),
+          bottomRight: Radius.circular(20),
+        ),
+      ),
+      flexibleSpace: FlexibleSpaceBar(
+        background: Padding(
+          padding: const EdgeInsets.only(top: 60, left: 15, right: 15),
+          child: Column(
+            children: [
+              CustomSearchBar(
+                hintText: 'Search...',
+                onChanged: (value) => _filterMovements(),
+                textController: _searchController,
+                backgroundColor: backgroundColor,
+              ),
+              const SizedBox(height: 10),
+              DividerWithText(text: 'Equipment', textStyle: CustomTextStyle.bodySmallSecondary(context)),
+              const SizedBox(height: 10),
+              EquipmentDropdown(
+                equipments: _getEquipments(),
+                initialItem: 'All',
+                backgroundColor: backgroundColor,
+                onSelect: (value) {
+                  setState(() {
+                    selectedEquipment = value.toLowerCase();
+                  });
+                  _filterMovements();
+                },
+              ),
+              const SizedBox(height: 10),
+              _buildTargetRow(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  SliverList _getBodyContent() {
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (BuildContext context, int index) {
+          if (index == 0) {
+            return Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: MovementCard(movement: _filteredMovements[index], isTargetVisible: _isTargetVisible),
+            );
+          }
+
+          return MovementCard(movement: _filteredMovements[index], isTargetVisible: _isTargetVisible);
+        },
+        childCount: _filteredMovements.length,
+      ),
+    );
+  }
+
   Widget _buildTargetRow() {
     List<Widget> targets = [];
+    Color backgroundColor = Theme.of(context).brightness == Brightness.dark ? Theme.of(context).colorScheme.primary : Colors.grey.shade200;
 
     for (var target in _targetNames) {
       targets.add(
         CustomActionChip(
           label: target,
+          unSelectedColor: backgroundColor,
           onTap: (isActive, label) {
             setState(() {
               if (!isActive) {
@@ -171,7 +183,7 @@ class _ExerciseListPageState extends State<ExerciseListPage> {
     return _isTargetVisible
         ? Column(
             children: [
-              const DividerWithText(text: 'Targets', textStyle: smallGrey),
+              DividerWithText(text: 'Targets', textStyle: CustomTextStyle.bodySmallSecondary(context)),
               const SizedBox(height: 10),
               SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: targets)),
             ],

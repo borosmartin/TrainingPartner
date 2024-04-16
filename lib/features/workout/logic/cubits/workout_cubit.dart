@@ -9,14 +9,14 @@ class WorkoutCubit extends Cubit<WorkoutState> {
 
   WorkoutCubit(this._workoutRepository) : super(WorkoutUninitialized());
 
-  Future<void> saveWorkoutSession(WorkoutSession workoutSession) async {
+  Future<void> completeWorkoutSession(WorkoutSession workoutSession) async {
     try {
       emit(WorkoutLoading());
 
       await _workoutRepository.saveWorkoutSession(currentUser.email!, workoutSession);
       List<WorkoutSession> workoutSessions = await _workoutRepository.getAllPreviousWorkouts(currentUser.email!);
 
-      emit(WorkoutSaved(sessions: workoutSessions));
+      emit(WorkoutSessionsLoaded(sessions: workoutSessions, isCompleted: true));
     } catch (error, stackTrace) {
       emit(WorkoutError(errorMessage: 'Error: $error, stackTrace: $stackTrace'));
     }
@@ -29,7 +29,7 @@ class WorkoutCubit extends Cubit<WorkoutState> {
       await _workoutRepository.deleteWorkoutSession(currentUser.email!, workoutSession);
       List<WorkoutSession> workoutSessions = await _workoutRepository.getAllPreviousWorkouts(currentUser.email!);
 
-      emit(WorkoutDeleted(sessions: workoutSessions));
+      emit(WorkoutSessionsLoaded(sessions: workoutSessions, isDeleted: true));
     } catch (error, stackTrace) {
       emit(WorkoutError(errorMessage: 'Error: $error, stackTrace: $stackTrace'));
     }

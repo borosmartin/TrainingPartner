@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
 import 'package:training_partner/core/utils/text_util.dart';
 
@@ -23,7 +24,7 @@ class BodyPartPieChart extends StatelessWidget {
               padding: EdgeInsets.only(right: 5),
               child: Icon(FontAwesomeIcons.dumbbell, size: 17),
             ),
-            Text('${_getTotalSetNum()} sets', style: smallBlack),
+            Text('${_getTotalSetNum()} sets', style: CustomTextStyle.bodySmallPrimary(context)),
           ],
         ),
         SizedBox(
@@ -32,7 +33,7 @@ class BodyPartPieChart extends StatelessWidget {
           child: PieChart(
             PieChartData(
               sectionsSpace: 5,
-              sections: showingSections(),
+              sections: showingSections(context),
             ),
           ),
         ),
@@ -40,7 +41,7 @@ class BodyPartPieChart extends StatelessWidget {
     );
   }
 
-  List<PieChartSectionData> showingSections() {
+  List<PieChartSectionData> showingSections(BuildContext context) {
     List<PieChartSectionData> sections = [];
 
     for (var bodyPart in bodyPartMap.entries) {
@@ -49,7 +50,7 @@ class BodyPartPieChart extends StatelessWidget {
           color: _getChartColor(bodyPart.key),
           value: bodyPart.value.toDouble(),
           title: '${TextUtil.firstLetterToUpperCase(bodyPart.key)}\n${bodyPart.value} sets',
-          titleStyle: smallWhite,
+          titleStyle: CustomTextStyle.bodySmallTetriary(context),
           showTitle: true,
           radius: 100,
         ),

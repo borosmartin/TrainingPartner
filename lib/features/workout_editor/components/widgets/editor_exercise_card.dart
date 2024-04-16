@@ -1,13 +1,15 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:iconsax/iconsax.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:quds_popup_menu/quds_popup_menu.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
-import 'package:training_partner/core/resources/widgets/shimmer_container.dart';
+import 'package:training_partner/core/resources/widgets/cached_image.dart';
 import 'package:training_partner/core/utils/text_util.dart';
 import 'package:training_partner/features/exercises/components/pages/exercise_detail_page.dart';
 import 'package:training_partner/features/exercises/models/exercise.dart';
 import 'package:training_partner/features/exercises/models/movement.dart';
+import 'package:training_partner/features/settings/model/app_settings.dart';
 import 'package:training_partner/features/workout_editor/components/widgets/editor_wheel_dialog.dart';
 
 class EditorExerciseCard extends StatefulWidget {
@@ -18,6 +20,7 @@ class EditorExerciseCard extends StatefulWidget {
   final Function(num, num) onValuesChange;
   final VoidCallback onRemoveExercise;
   final VoidCallback onChangeType;
+  final AppSettings settings;
 
   const EditorExerciseCard({
     super.key,
@@ -28,6 +31,7 @@ class EditorExerciseCard extends StatefulWidget {
     required this.isLast,
     required this.onRemoveExercise,
     required this.onChangeType,
+    required this.settings,
   });
 
   @override
@@ -52,24 +56,22 @@ class _EditorExerciseCardState extends State<EditorExerciseCard> {
   Widget build(BuildContext context) {
     return Container(
       decoration: widget.isFirst && widget.isLast
-          ? const BoxDecoration(color: Colors.white, borderRadius: defaultBorderRadius)
+          ? BoxDecoration(color: Theme.of(context).cardColor, borderRadius: defaultBorderRadius)
           : widget.isFirst
-              ? const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
+              ? BoxDecoration(
+                  color: Theme.of(context).cardColor,
+                  borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(10),
                     topRight: Radius.circular(10),
                   ))
               : widget.isLast
-                  ? const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
+                  ? BoxDecoration(
+                      color: Theme.of(context).cardColor,
+                      borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(10),
                         bottomRight: Radius.circular(10),
                       ))
-                  : const BoxDecoration(
-                      color: Colors.white,
-                    ),
+                  : BoxDecoration(color: Theme.of(context).cardColor),
       child: Material(
         color: Colors.transparent,
         child: Padding(
@@ -80,21 +82,10 @@ class _EditorExerciseCardState extends State<EditorExerciseCard> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  CachedNetworkImage(
+                  CachedImage(
                     imageUrl: widget.movements.firstWhere((movement) => movement.id == exercise.movement.id).gifUrl,
                     height: 100,
                     width: 100,
-                    imageBuilder: (context, imageProvider) => Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(image: imageProvider, fit: BoxFit.contain),
-                        borderRadius: defaultBorderRadius,
-                      ),
-                    ),
-                    placeholder: (context, url) => const Padding(
-                      padding: EdgeInsets.only(left: 5),
-                      child: ShimmerContainer(height: 100, width: 100),
-                    ),
-                    errorWidget: (context, url, error) => const Icon(Icons.error, color: Colors.red),
                   ),
                   const SizedBox(width: 25),
                   Expanded(
@@ -107,8 +98,8 @@ class _EditorExerciseCardState extends State<EditorExerciseCard> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(exercise.movement.name, style: boldNormalBlack),
-                                  Text(TextUtil.firstLetterToUpperCase(exercise.movement.equipment), style: normalGrey),
+                                  Text(exercise.movement.name, style: CustomTextStyle.subtitlePrimary(context)),
+                                  Text(TextUtil.firstLetterToUpperCase(exercise.movement.equipment), style: CustomTextStyle.bodySecondary(context)),
                                   const SizedBox(height: 5),
                                 ],
                               ),
@@ -133,24 +124,31 @@ class _EditorExerciseCardState extends State<EditorExerciseCard> {
   Widget _getAmountSetterWidget() {
     List<Widget> children = [];
 
+    bool isLightMode = Theme.of(context).brightness == Brightness.light;
+    TextStyle style = isLightMode
+        ? CustomTextStyle.getCustomTextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black26)
+        : CustomTextStyle.bodySmallTetriary(context);
+
     switch (exercise.type) {
       case ExerciseType.repetitions:
         children = [
-          Expanded(child: Center(child: Text(_getSetNumString(), style: smallGrey))),
+          Expanded(child: Center(child: Text(_getSetNumString(), style: style))),
           const VerticalDivider(width: 0, thickness: 2, color: Colors.black26, indent: 2, endIndent: 2),
-          Expanded(child: Center(child: Text(_getRepNumString(), style: smallGrey))),
+          Expanded(child: Center(child: Text(_getRepNumString(), style: style))),
         ];
         break;
 
       case ExerciseType.distance:
+        String unit = exercise.workoutSets.first.distanceUnit == DistanceUnit.km ? 'km' : 'miles';
+
         children = [
           Expanded(
             child: Center(
               child: Text(
                 exercise.workoutSets.isNotEmpty && exercise.workoutSets.first.distance != null && exercise.workoutSets.first.distance != 0
-                    ? '${exercise.workoutSets.first.distance} km'
+                    ? '${exercise.workoutSets.first.distance} $unit'
                     : 'Distance',
-                style: smallGrey,
+                style: style,
               ),
             ),
           ),
@@ -165,7 +163,7 @@ class _EditorExerciseCardState extends State<EditorExerciseCard> {
                 exercise.workoutSets.isNotEmpty && exercise.workoutSets.first.duration != null && exercise.workoutSets.first.distance != 0
                     ? '${exercise.workoutSets.first.duration} min'
                     : 'Duration',
-                style: smallGrey,
+                style: style,
               ),
             ),
           ),
@@ -173,11 +171,12 @@ class _EditorExerciseCardState extends State<EditorExerciseCard> {
         break;
     }
 
+    Color cardColor = isLightMode ? Colors.grey.shade200 : Colors.grey.shade800;
     return Card(
       elevation: 0,
       shape: defaultCornerShape,
       margin: EdgeInsets.zero,
-      color: Colors.grey.shade200,
+      color: cardColor,
       child: InkWell(
         borderRadius: defaultBorderRadius,
         onTap: () => _showWheelNumberDialog(context),
@@ -203,6 +202,7 @@ class _EditorExerciseCardState extends State<EditorExerciseCard> {
           secondWheelValue: _getSecondWheelValue(),
           exerciseType: exercise.type,
           onValuesChange: widget.onValuesChange,
+          settings: widget.settings,
         );
       },
     );
@@ -259,19 +259,18 @@ class _EditorExerciseCardState extends State<EditorExerciseCard> {
     }
   }
 
-  // todo icons
   Widget _getExerciseOptions() {
     return QudsPopupButton(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.primary,
       items: [
         QudsPopupMenuItem(
-          leading: const Icon(Iconsax.edit_25),
-          title: const Text('Change type', style: normalBlack),
+          leading: const Icon(Icons.edit),
+          title: Text('Change type', style: CustomTextStyle.bodyPrimary(context)),
           onPressed: () => widget.onChangeType(),
         ),
         QudsPopupMenuItem(
-          leading: const Icon(Icons.help_center_rounded, color: Colors.black38),
-          title: const Text('About exercise', style: normalGrey),
+          leading: const Icon(FontAwesomeIcons.circleInfo),
+          title: Text('About exercise', style: CustomTextStyle.bodyTetriary(context)),
           onPressed: () => Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => ExerciseDetailPage(movement: exercise.movement),
@@ -279,12 +278,11 @@ class _EditorExerciseCardState extends State<EditorExerciseCard> {
           ),
         ),
         QudsPopupMenuItem(
-          leading: const Icon(Icons.delete, color: Colors.red),
+          leading: const Icon(PhosphorIconsBold.trash, color: Colors.red),
           title: Text(
             'Remove exercise',
-            style: TextUtil.getCustomTextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
+            style: CustomTextStyle.getCustomTextStyle(
+              fontWeight: FontWeight.w500,
               color: Colors.red,
             ),
           ),
@@ -294,10 +292,10 @@ class _EditorExerciseCardState extends State<EditorExerciseCard> {
           },
         ),
       ],
-      child: const Icon(
+      child: Icon(
         Icons.more_vert_rounded,
         size: 25,
-        color: Colors.black38,
+        color: Theme.of(context).colorScheme.secondary,
       ),
     );
   }

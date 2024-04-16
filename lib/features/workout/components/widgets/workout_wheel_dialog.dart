@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
 import 'package:training_partner/core/resources/widgets/custom_divider.dart';
 import 'package:training_partner/core/resources/widgets/custom_title_button.dart';
 import 'package:training_partner/features/exercises/models/exercise.dart';
+import 'package:training_partner/features/settings/model/app_settings.dart';
 
 class WorkoutWheelDialog extends StatefulWidget {
   final num? firstWheelValue;
   final num? secondWheelValue;
   final ExerciseType exerciseType;
   final Function(num, num) onSetButtonPressed;
+  final AppSettings settings;
 
   const WorkoutWheelDialog({
     super.key,
@@ -16,6 +19,7 @@ class WorkoutWheelDialog extends StatefulWidget {
     required this.secondWheelValue,
     required this.onSetButtonPressed,
     required this.exerciseType,
+    required this.settings,
   });
 
   @override
@@ -82,30 +86,30 @@ class _EditorWheelDialogState extends State<WorkoutWheelDialog> {
   Widget _getHeader() {
     switch (exerciseType) {
       case ExerciseType.repetitions:
-        return const Column(children: [
-          SizedBox(height: 15),
+        return Column(children: [
+          const SizedBox(height: 15),
           Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-            Padding(padding: EdgeInsets.only(right: 15), child: Text('Reps', style: boldLargeGrey)),
-            Padding(padding: EdgeInsets.only(left: 15), child: Text('Weight', style: boldLargeGrey)),
+            Padding(padding: const EdgeInsets.only(right: 15), child: Text('Reps', style: CustomTextStyle.titleSecondary(context))),
+            Padding(padding: const EdgeInsets.only(left: 15), child: Text('Weight', style: CustomTextStyle.titleSecondary(context))),
           ]),
-          CustomDivider(thickness: 2.5, padding: EdgeInsets.symmetric(vertical: 15)),
+          const CustomDivider(thickness: 2.5, padding: EdgeInsets.symmetric(vertical: 15)),
         ]);
 
       case ExerciseType.distance:
-        return const Column(
+        return Column(
           children: [
-            SizedBox(height: 15),
-            Text('Distance', style: boldLargeGrey),
-            CustomDivider(thickness: 2.5, padding: EdgeInsets.symmetric(vertical: 15)),
+            const SizedBox(height: 15),
+            Text('Distance', style: CustomTextStyle.titleSecondary(context)),
+            const CustomDivider(thickness: 2.5, padding: EdgeInsets.symmetric(vertical: 15)),
           ],
         );
 
       case ExerciseType.duration:
-        return const Column(
+        return Column(
           children: [
-            SizedBox(height: 15),
-            Text('Duration', style: boldLargeGrey),
-            CustomDivider(thickness: 2.5, padding: EdgeInsets.symmetric(vertical: 15)),
+            const SizedBox(height: 15),
+            Text('Duration', style: CustomTextStyle.titleSecondary(context)),
+            const CustomDivider(thickness: 2.5, padding: EdgeInsets.symmetric(vertical: 15)),
           ],
         );
     }
@@ -180,7 +184,7 @@ class _EditorWheelDialogState extends State<WorkoutWheelDialog> {
       child: SizedBox(
         width: 70,
         child: Center(
-          child: Text(numText, style: boldLargeBlack),
+          child: Text(numText, style: CustomTextStyle.titlePrimary(context)),
         ),
       ),
     );
@@ -192,17 +196,31 @@ class _EditorWheelDialogState extends State<WorkoutWheelDialog> {
     switch (exerciseType) {
       case ExerciseType.repetitions:
         children = [
-          const Padding(padding: EdgeInsets.only(left: 60), child: Text('#', style: smallGrey)),
-          const Padding(padding: EdgeInsets.only(left: 35), child: Text('kg', style: smallGrey)),
+          Padding(padding: const EdgeInsets.only(left: 60), child: Text('#', style: CustomTextStyle.bodySmallSecondary(context))),
+          Padding(
+            padding: const EdgeInsets.only(left: 35),
+            child: Text(
+              widget.settings.weightUnit == WeightUnit.kg ? 'kg' : 'lbs',
+              style: CustomTextStyle.bodySmallSecondary(context),
+            ),
+          ),
         ];
         break;
 
       case ExerciseType.distance:
-        children = [const Padding(padding: EdgeInsets.only(left: 100), child: Text('km', style: smallGrey))];
+        children = [
+          Padding(
+            padding: const EdgeInsets.only(left: 100),
+            child: Text(
+              widget.settings.distanceUnit == DistanceUnit.km ? 'km' : 'miles',
+              style: CustomTextStyle.bodySmallSecondary(context),
+            ),
+          )
+        ];
         break;
 
       case ExerciseType.duration:
-        children = [const Padding(padding: EdgeInsets.only(left: 80), child: Text('min', style: smallGrey))];
+        children = [Padding(padding: const EdgeInsets.only(left: 80), child: Text('min', style: CustomTextStyle.bodySmallSecondary(context)))];
         break;
     }
 
@@ -211,9 +229,9 @@ class _EditorWheelDialogState extends State<WorkoutWheelDialog> {
       child: Container(
         width: 290,
         height: 50,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           borderRadius: defaultBorderRadius,
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.primary,
         ),
         child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: children),
       ),

@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:training_partner/core/constants/component_constants.dart';
 import 'package:training_partner/features/exercises/components/widgets/exercise_group_card.dart';
 import 'package:training_partner/features/exercises/models/movement.dart';
 import 'package:training_partner/generated/assets.dart';
@@ -17,8 +15,6 @@ class ExerciseTypePage extends StatelessWidget {
       child: Column(
         children: [
           const SizedBox(height: 10),
-          _getHeader(),
-          const SizedBox(height: 10),
           Expanded(
             child: SingleChildScrollView(
               child: Column(
@@ -27,24 +23,6 @@ class ExerciseTypePage extends StatelessWidget {
                 ],
               ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _getHeader() {
-    return const Card(
-      elevation: 0,
-      shape: defaultCornerShape,
-      margin: EdgeInsets.zero,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(FontAwesomeIcons.personWalking),
-          Padding(
-            padding: EdgeInsets.all(10),
-            child: Text('Exercises', style: boldLargeBlack),
           ),
         ],
       ),

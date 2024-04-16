@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quds_popup_menu/quds_popup_menu.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
 
 class ChartCreatorOptionsCard extends StatelessWidget {
@@ -24,6 +25,7 @@ class ChartCreatorOptionsCard extends StatelessWidget {
       elevation: 0,
       shape: defaultCornerShape,
       margin: EdgeInsets.zero,
+      color: Theme.of(context).cardColor,
       child: InkWell(
         borderRadius: defaultBorderRadius,
         onTap: () => onTap != null
@@ -32,7 +34,7 @@ class ChartCreatorOptionsCard extends StatelessWidget {
                 context: context,
                 items: options,
                 startOffset: const Offset(1, 0),
-                backgroundColor: Colors.white,
+                backgroundColor: Theme.of(context).colorScheme.primary,
               ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
@@ -45,10 +47,10 @@ class ChartCreatorOptionsCard extends StatelessWidget {
                 children: [
                   icon,
                   const SizedBox(width: 10),
-                  Text(title, style: boldNormalGrey),
+                  Text(title, style: CustomTextStyle.subtitleSecondary(context)),
                 ],
               ),
-              Text(value, style: boldNormalGrey, overflow: TextOverflow.ellipsis),
+              Text(value, style: CustomTextStyle.subtitleSecondary(context), overflow: TextOverflow.ellipsis),
             ],
           ),
         ),

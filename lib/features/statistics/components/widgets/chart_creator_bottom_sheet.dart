@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:training_partner/core/constants/component_constants.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/utils/text_util.dart';
 import 'package:training_partner/features/exercises/models/movement.dart';
 import 'package:training_partner/features/statistics/components/widgets/chart_creator_options_body.dart';
@@ -43,10 +43,10 @@ class _ChartCreatorBottomSheetState extends State<ChartCreatorBottomSheet> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Card(
+            Card(
               elevation: 0,
-              color: Colors.black26,
-              child: SizedBox(height: 5, width: 80),
+              color: Theme.of(context).colorScheme.secondary,
+              child: const SizedBox(height: 5, width: 80),
             ),
             _getBodyContent(),
           ],
@@ -55,7 +55,6 @@ class _ChartCreatorBottomSheetState extends State<ChartCreatorBottomSheet> {
     );
   }
 
-  // todo icons
   Widget _getBodyContent() {
     return BlocBuilder<ChartBuilderCubit, ChartBuilderState>(builder: (context, state) {
       if (state is ChartBuilderUninitialized) {
@@ -76,7 +75,7 @@ class _ChartCreatorBottomSheetState extends State<ChartCreatorBottomSheet> {
         const SizedBox(height: 15),
         _getBottomSheetHeader(1, 'New chart'),
         const SizedBox(height: 5),
-        const Text("Select the type of information you'd like to visualize on a chart:", style: normalGrey),
+        Text("Select the type of information you'd like to visualize on a chart:", style: CustomTextStyle.bodySecondary(context)),
         const SizedBox(height: 15),
         ChartCreatorTypeBody(
           onChartTypeSelected: (type) {
@@ -110,7 +109,7 @@ class _ChartCreatorBottomSheetState extends State<ChartCreatorBottomSheet> {
         const SizedBox(height: 15),
         _getBottomSheetHeader(2, title),
         const SizedBox(height: 5),
-        Text(subtitle, style: normalGrey),
+        Text(subtitle, style: CustomTextStyle.bodySecondary(context)),
         const SizedBox(height: 10),
         ChartCreatorValueBody(
           type: chart.type!,
@@ -135,7 +134,7 @@ class _ChartCreatorBottomSheetState extends State<ChartCreatorBottomSheet> {
         const SizedBox(height: 15),
         _getBottomSheetHeader(3, 'Options'),
         const SizedBox(height: 5),
-        const Text('Here you can fine tune the options for your chart:', style: normalGrey),
+        Text('Here you can fine tune the options for your chart:', style: CustomTextStyle.bodySecondary(context)),
         const SizedBox(height: 15),
         ChartCreatorOptionsBody(
           type: chart.type!,
@@ -177,7 +176,7 @@ class _ChartCreatorBottomSheetState extends State<ChartCreatorBottomSheet> {
           onTap: () => onBack(stage),
           child: Icon(Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back, color: Colors.black38),
         ),
-        Text(title, style: boldLargeBlack),
+        Text(title, style: CustomTextStyle.titlePrimary(context)),
         stage == 3
             ? const Icon(Icons.arrow_forward, color: Colors.transparent)
             : GestureDetector(

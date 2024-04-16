@@ -6,6 +6,7 @@ import 'package:training_partner/features/exercises/models/movement.dart';
 import 'package:training_partner/features/home/components/widgets/profile_widget.dart';
 import 'package:training_partner/features/home/components/widgets/week_view_widget.dart';
 import 'package:training_partner/features/home/components/widgets/workout_widget.dart';
+import 'package:training_partner/features/settings/model/app_settings.dart';
 import 'package:training_partner/features/workout_editor/logic/cubits/workout_plan_cubit.dart';
 import 'package:training_partner/features/workout_editor/logic/states/workout_plan_states.dart';
 import 'package:training_partner/features/workout_editor/models/workout_plan.dart';
@@ -14,11 +15,13 @@ import 'package:training_partner/features/workout_editor/models/workout_session.
 class HomePage extends StatefulWidget {
   final List<Movement> movements;
   final List<WorkoutSession> previousSessions;
+  final AppSettings settings;
 
   const HomePage({
     super.key,
     required this.movements,
     required this.previousSessions,
+    required this.settings,
   });
 
   @override
@@ -39,22 +42,23 @@ class _HomePageState extends State<HomePage> {
     workoutCubit.getAllWorkoutPlan();
   }
 
-  // todo singlechildscrollview?
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(15),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          ProfileWidget(user: _user),
-          const SizedBox(height: 20),
-          const WeekViewWidget(),
-          const SizedBox(height: 20),
-          _getWorkoutWidget(),
-        ],
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(15),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ProfileWidget(user: _user, settings: widget.settings),
+            const SizedBox(height: 25),
+            const WeekViewWidget(),
+            const SizedBox(height: 20),
+            _getWorkoutWidget(),
+          ],
+        ),
       ),
     );
   }
@@ -91,6 +95,7 @@ class _HomePageState extends State<HomePage> {
               selectedWorkoutPlan = plan;
             });
           },
+          settings: widget.settings,
         );
       }
 

@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
 import 'package:training_partner/core/globals/component_functions.dart';
+import 'package:training_partner/core/resources/widgets/custom_back_button.dart';
 import 'package:training_partner/core/resources/widgets/custom_toast.dart';
 import 'package:training_partner/features/exercises/models/exercise.dart';
 import 'package:training_partner/features/workout_editor/components/widgets/gpt_tip_widget.dart';
@@ -31,14 +33,14 @@ class EditorHeader extends StatefulWidget {
 
 class _EditorHeaderState extends State<EditorHeader> {
   List<WorkoutSession> get sessions => widget.workoutSessions;
-  bool isTipVisible = true;
+  bool isTipVisible = false;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(20),
           bottomRight: Radius.circular(20),
         ),
@@ -55,13 +57,13 @@ class _EditorHeaderState extends State<EditorHeader> {
                     context.read<WorkoutPlanCubit>().getAllWorkoutPlan();
                     Navigator.pop(context);
                   },
-                  child: const Text('Cancel', style: boldNormalGrey),
+                  child: CustomBackButton(context: context),
                 ),
                 const SizedBox(width: 15),
                 Expanded(
                   child: TextField(
                     controller: widget.workoutPlaneNameController,
-                    style: boldLargeBlack,
+                    style: CustomTextStyle.titlePrimary(context),
                     textAlign: TextAlign.center,
                     cursorColor: Theme.of(context).colorScheme.tertiary,
                     decoration: InputDecoration(
@@ -78,10 +80,13 @@ class _EditorHeaderState extends State<EditorHeader> {
                   ),
                 ),
                 const SizedBox(width: 15),
-                GestureDetector(
-                  onTap: _handleSaveOnTap,
-                  child: Text('Save', style: sessions.isNotEmpty ? boldNormalAccent : boldNormalGrey),
-                ),
+                IconButton(
+                    onPressed: _handleSaveOnTap,
+                    icon: const Icon(
+                      FontAwesomeIcons.floppyDisk,
+                      color: accentColor,
+                      size: 25,
+                    )),
               ],
             ),
           ),
@@ -111,8 +116,8 @@ class _EditorHeaderState extends State<EditorHeader> {
                   count: sessions.length,
                   effect: WormEffect(
                     type: WormType.thin,
-                    activeDotColor: Theme.of(context).colorScheme.tertiary,
-                    dotColor: Colors.grey.shade400,
+                    activeDotColor: accentColor,
+                    dotColor: Theme.of(context).colorScheme.secondary,
                   ),
                   onDotClicked: (int index) => widget.pageController.animateToPage(
                     index,

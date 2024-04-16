@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lottie/lottie.dart';
-import 'package:training_partner/core/constants/component_constants.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/globals/component_functions.dart';
+import 'package:training_partner/core/resources/widgets/colored_safe_area_body.dart';
 import 'package:training_partner/core/resources/widgets/custom_input_field.dart';
 import 'package:training_partner/core/resources/widgets/custom_title_button.dart';
 import 'package:training_partner/core/resources/widgets/custom_toast.dart';
@@ -58,144 +59,145 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _getBodyContent() {
-    return SafeArea(
-      child: GestureDetector(
-        onTap: () {
-          _emailFocusNode.unfocus();
-          _passwordFocusNode.unfocus();
-        },
+    return GestureDetector(
+      onTap: () {
+        _emailFocusNode.unfocus();
+        _passwordFocusNode.unfocus();
+      },
+      child: ColoredSafeAreaBody(
+        safeAreaColor: Theme.of(context).colorScheme.background,
+        isLightTheme: Theme.of(context).brightness == Brightness.light,
         child: Scaffold(
-          body: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 30),
-                    child: SizedBox(
-                      height: 200,
-                      child: Lottie.asset('assets/animations/dumbbells.json', repeat: false),
-                    ),
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 30),
+                  child: SizedBox(
+                    height: 200,
+                    child: Lottie.asset('assets/animations/dumbbells.json', repeat: false),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.only(right: 15),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.waving_hand_outlined),
-                        SizedBox(width: 10),
-                        Text('Welcome back!', style: boldNormalBlack),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  CustomInputField(
-                    labelText: 'Email',
-                    hintText: 'example@gmail.com',
-                    keyboardType: TextInputType.emailAddress,
-                    inputController: _emailController,
-                    focusNode: _emailFocusNode,
-                  ),
-                  const SizedBox(height: 15),
-                  CustomInputField(
-                    labelText: 'Password',
-                    hintText: 'Enter your password',
-                    focusNode: _passwordFocusNode,
-                    trailing: Padding(
-                      padding: const EdgeInsets.only(right: 10),
-                      child: IconButton(
-                        icon: isObscure
-                            ? Icon(Icons.visibility_rounded, color: Colors.grey.shade600)
-                            : Icon(Icons.visibility_off_rounded, color: Colors.grey.shade600),
-                        onPressed: () {
-                          setState(() {
-                            isObscure = !isObscure;
-                          });
-                        },
-                      ),
-                    ),
-                    keyboardType: TextInputType.visiblePassword,
-                    obscureText: isObscure,
-                    inputController: _passwordController,
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => const PasswordResetDialog(),
-                          );
-                        },
-                        child: const Text('Forgot password?', style: smallAccent),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  CustomTitleButton(
-                    label: 'Sign in',
-                    onTap: () => _signInWithEmailAndPassword(),
-                  ),
-                  const SizedBox(height: 50),
-                  const DividerWithText(text: 'Continue with', textStyle: smallGrey),
-                  const SizedBox(height: 20),
-                  Row(
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 15),
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      GoogleAuthButton(
-                        onPressed: () async => context.read<LoginCubit>().signInWithGoogle(),
-                        style: const AuthButtonStyle(
-                          height: 70,
-                          width: 70,
-                          iconSize: 35,
-                          buttonType: AuthButtonType.icon,
-                          elevation: 0,
-                        ),
-                      ),
-                      const SizedBox(width: 20),
-                      FacebookAuthButton(
-                        // todo
-                        onPressed: () {},
-                        style: const AuthButtonStyle(
-                          height: 70,
-                          width: 70,
-                          iconSize: 35,
-                          buttonType: AuthButtonType.icon,
-                          elevation: 0,
-                        ),
-                      ),
-                      const SizedBox(width: 20),
-                      TwitterAuthButton(
-                        // todo
-                        onPressed: () {},
-                        style: const AuthButtonStyle(
-                          height: 70,
-                          width: 70,
-                          iconSize: 35,
-                          buttonType: AuthButtonType.icon,
-                          elevation: 0,
-                        ),
-                      ),
+                      const Icon(Icons.waving_hand_outlined),
+                      const SizedBox(width: 10),
+                      Text('Welcome back!', style: CustomTextStyle.subtitlePrimary(context)),
                     ],
                   ),
-                  const SizedBox(height: 70),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text("Don't have an account yet?", style: smallGrey),
-                      const SizedBox(width: 5),
-                      GestureDetector(
-                        onTap: widget.onTap,
-                        child: const Text('Sign up', style: smallAccent),
-                      ),
-                    ],
+                ),
+                const SizedBox(height: 20),
+                CustomInputField(
+                  labelText: 'Email',
+                  hintText: 'example@email.com',
+                  keyboardType: TextInputType.emailAddress,
+                  inputController: _emailController,
+                  focusNode: _emailFocusNode,
+                ),
+                const SizedBox(height: 15),
+                CustomInputField(
+                  labelText: 'Password',
+                  hintText: 'Enter your password',
+                  focusNode: _passwordFocusNode,
+                  trailing: Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: IconButton(
+                      icon: isObscure
+                          ? Icon(Icons.visibility_rounded, color: Colors.grey.shade600)
+                          : Icon(Icons.visibility_off_rounded, color: Colors.grey.shade600),
+                      onPressed: () {
+                        setState(() {
+                          isObscure = !isObscure;
+                        });
+                      },
+                    ),
                   ),
-                ],
-              ),
+                  keyboardType: TextInputType.visiblePassword,
+                  obscureText: isObscure,
+                  inputController: _passwordController,
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => const PasswordResetDialog(),
+                        );
+                      },
+                      child: Text('Forgot password?', style: CustomTextStyle.bodySmallAccent(context)),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                CustomTitleButton(
+                  label: 'Sign in',
+                  onTap: () => _signInWithEmailAndPassword(),
+                ),
+                const SizedBox(height: 50),
+                DividerWithText(text: 'Continue with', textStyle: CustomTextStyle.bodySmallSecondary(context)),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    GoogleAuthButton(
+                      onPressed: () async => context.read<LoginCubit>().signInWithGoogle(),
+                      style: const AuthButtonStyle(
+                        height: 70,
+                        width: 70,
+                        iconSize: 35,
+                        buttonType: AuthButtonType.icon,
+                        elevation: 0,
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                    FacebookAuthButton(
+                      // todo
+                      onPressed: () {},
+                      style: const AuthButtonStyle(
+                        height: 70,
+                        width: 70,
+                        iconSize: 35,
+                        buttonType: AuthButtonType.icon,
+                        elevation: 0,
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                    TwitterAuthButton(
+                      // todo
+                      onPressed: () {},
+                      style: const AuthButtonStyle(
+                        height: 70,
+                        width: 70,
+                        iconSize: 35,
+                        buttonType: AuthButtonType.icon,
+                        elevation: 0,
+                      ),
+                    ),
+                  ],
+                ),
+                const Spacer(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Don't have an account yet?", style: CustomTextStyle.bodySmallSecondary(context)),
+                    const SizedBox(width: 5),
+                    GestureDetector(
+                      onTap: widget.onTap,
+                      child: Text('Sign up', style: CustomTextStyle.bodySmallAccent(context)),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+              ],
             ),
           ),
         ),

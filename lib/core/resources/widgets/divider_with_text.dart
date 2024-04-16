@@ -10,20 +10,22 @@ class DividerWithText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const Expanded(
+        Expanded(
           child: CustomDivider(
             thickness: 2.0,
-            padding: EdgeInsets.only(right: 20),
+            color: Theme.of(context).colorScheme.secondary,
+            padding: const EdgeInsets.only(right: 20),
           ),
         ),
         Text(
           text,
           style: textStyle,
         ),
-        const Expanded(
+        Expanded(
           child: CustomDivider(
             thickness: 2.0,
-            padding: EdgeInsets.only(left: 20),
+            color: Theme.of(context).colorScheme.secondary,
+            padding: const EdgeInsets.only(left: 20),
           ),
         ),
       ],

@@ -1,13 +1,14 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
-import 'package:training_partner/core/resources/widgets/shimmer_container.dart';
+import 'package:training_partner/core/resources/widgets/cached_image.dart';
 import 'package:training_partner/core/utils/text_util.dart';
 import 'package:training_partner/features/exercises/components/pages/exercise_detail_page.dart';
 import 'package:training_partner/features/exercises/models/exercise.dart';
 import 'package:training_partner/features/exercises/models/movement.dart';
 import 'package:training_partner/features/exercises/models/workout_set.dart';
+import 'package:training_partner/features/settings/model/app_settings.dart';
 import 'package:training_partner/features/workout/components/widgets/workout_wheel_dialog.dart';
 
 class WorkoutExerciseBody extends StatefulWidget {
@@ -18,6 +19,7 @@ class WorkoutExerciseBody extends StatefulWidget {
   final Function(int) onCurrentSetIndexChanged;
   final Function(Exercise) onExerciseUpdated;
   final List<Movement> movements;
+  final AppSettings settings;
 
   const WorkoutExerciseBody({
     super.key,
@@ -28,6 +30,7 @@ class WorkoutExerciseBody extends StatefulWidget {
     required this.onCurrentSetIndexChanged,
     required this.onExerciseUpdated,
     required this.movements,
+    required this.settings,
   });
 
   @override
@@ -77,8 +80,11 @@ class _WorkoutExerciseBodyState extends State<WorkoutExerciseBody> {
             ? '${TextUtil.firstLetterToUpperCase(_exercise.movement.equipment)}'
                 '  -  ${_exercise.workoutSets.first.duration} min'
             : _exercise.workoutSets.first.distance != null
-                ? '${TextUtil.firstLetterToUpperCase(_exercise.movement.equipment)}'
-                    '  -  ${_exercise.workoutSets.first.distance} km'
+                ? widget.settings.distanceUnit == DistanceUnit.km
+                    ? '${TextUtil.firstLetterToUpperCase(_exercise.movement.equipment)}'
+                        '  -  ${_exercise.workoutSets.first.distance} km'
+                    : '${TextUtil.firstLetterToUpperCase(_exercise.movement.equipment)}'
+                        '  -  ${_exercise.workoutSets.first.distance} miles'
                 : ''
         : '${TextUtil.firstLetterToUpperCase(_exercise.movement.equipment)}  -  '
             '${_exercise.workoutSets.length} set';
@@ -86,17 +92,16 @@ class _WorkoutExerciseBodyState extends State<WorkoutExerciseBody> {
     return Card(
       elevation: 0,
       shape: defaultCornerShape,
+      color: Theme.of(context).cardColor,
       margin: EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsets.all(10),
         child: Row(
           children: [
-            CachedNetworkImage(
+            CachedImage(
               imageUrl: widget.movements.firstWhere((movement) => movement.id == _exercise.movement.id).gifUrl,
               height: 80,
               width: 80,
-              placeholder: (context, url) => const ShimmerContainer(height: 80, width: 80),
-              errorWidget: (context, url, error) => const Icon(Icons.error, color: Colors.red),
             ),
             const SizedBox(width: 15),
             Expanded(
@@ -109,9 +114,9 @@ class _WorkoutExerciseBodyState extends State<WorkoutExerciseBody> {
                         builder: (context) => ExerciseDetailPage(movement: _exercise.movement),
                       ));
                     },
-                    child: Text(_exercise.movement.name, style: boldLargeAccent),
+                    child: Text(_exercise.movement.name, style: CustomTextStyle.titleAccent(context)),
                   ),
-                  Text(subtitle, style: normalGrey),
+                  Text(subtitle, style: CustomTextStyle.bodySecondary(context)),
                 ],
               ),
             ),
@@ -121,7 +126,6 @@ class _WorkoutExerciseBodyState extends State<WorkoutExerciseBody> {
     );
   }
 
-  // todo set num változtató bottom sheet?
   Widget _getSetTable() {
     List<TableRow> tableRows = [];
 
@@ -137,7 +141,15 @@ class _WorkoutExerciseBodyState extends State<WorkoutExerciseBody> {
               cells: [
                 (i + 1).toString(),
                 _exercise.workoutSets[i].repetitions.toString(),
-                _exercise.workoutSets[i].weight == null ? '0 kg' : '${_exercise.workoutSets[i].weight.toString()} kg',
+                _exercise.workoutSets[i].weight == null
+                    ? widget.settings.weightUnit == WeightUnit.kg
+                        ? '0 kg'
+                        : '0 lbs'
+                    : TextUtil.getWeightStringWithUnit(
+                        weight: _exercise.workoutSets[i].weight!,
+                        setUnit: widget.settings.weightUnit,
+                        settingsUnit: widget.settings.weightUnit,
+                      ),
                 null,
               ],
             ),
@@ -146,12 +158,14 @@ class _WorkoutExerciseBodyState extends State<WorkoutExerciseBody> {
         break;
 
       case ExerciseType.distance:
+        String distance = _exercise.workoutSets[0].distanceUnit == DistanceUnit.km ? 'km' : 'miles';
+
         tableRows.addAll([
-          _getTableRow(workoutSet: _exercise.workoutSets[0], cells: ['Distance ( km )', '']),
+          _getTableRow(workoutSet: _exercise.workoutSets[0], cells: ['Distance ( $distance )', '']),
           _getTableRow(
             setIndex: 0,
             workoutSet: _exercise.workoutSets[0],
-            cells: ['${_exercise.workoutSets.first.distance} km', null],
+            cells: ['${_exercise.workoutSets.first.distance} $distance', null],
           ),
         ]);
         break;
@@ -210,7 +224,7 @@ class _WorkoutExerciseBodyState extends State<WorkoutExerciseBody> {
     } else {
       return Container(
         decoration: BoxDecoration(
-          color: setIndex == _currentSetNum ? Colors.white : Colors.transparent,
+          color: setIndex == _currentSetNum ? Theme.of(context).colorScheme.primary : Colors.transparent,
           borderRadius: BorderRadius.only(
             topLeft: columnIndex == 0 ? const Radius.circular(10) : Radius.zero,
             bottomLeft: columnIndex == 0 ? const Radius.circular(10) : Radius.zero,
@@ -221,7 +235,7 @@ class _WorkoutExerciseBodyState extends State<WorkoutExerciseBody> {
         child: Padding(
           padding: const EdgeInsets.all(5),
           child: Center(
-            child: Text(label, style: setIndex == _currentSetNum ? boldNormalBlack : normalGrey),
+            child: Text(label, style: setIndex == _currentSetNum ? CustomTextStyle.subtitlePrimary(context) : CustomTextStyle.bodySecondary(context)),
           ),
         ),
       );
@@ -230,15 +244,14 @@ class _WorkoutExerciseBodyState extends State<WorkoutExerciseBody> {
 
   Widget _buildCheckIcon(bool isDone) {
     if (isDone) {
-      return const Padding(
-        padding: EdgeInsets.only(left: 15),
-        child: Icon(Icons.check, color: Colors.black38, size: 25),
+      return Padding(
+        padding: const EdgeInsets.only(left: 15),
+        child: Icon(Icons.check, color: Theme.of(context).colorScheme.secondary, size: 25),
       );
     } else {
       return GestureDetector(
         onTap: () {
           setState(() {
-            // todo check on non emulator
             HapticFeedback.vibrate();
             _currentSetNum++;
             widget.onCurrentSetIndexChanged(_currentSetNum);
@@ -248,9 +261,9 @@ class _WorkoutExerciseBodyState extends State<WorkoutExerciseBody> {
         child: Padding(
           padding: const EdgeInsets.only(left: 15),
           child: Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.tertiary,
-              borderRadius: const BorderRadius.all(Radius.circular(10)),
+            decoration: const BoxDecoration(
+              color: accentColor,
+              borderRadius: BorderRadius.all(Radius.circular(10)),
             ),
             child: const Padding(
               padding: EdgeInsets.all(4.5),
@@ -271,6 +284,7 @@ class _WorkoutExerciseBodyState extends State<WorkoutExerciseBody> {
           secondWheelValue: _exercise.type == ExerciseType.repetitions ? workoutSet.weight : null,
           exerciseType: widget.exercise.type,
           onSetButtonPressed: (firsWheelValue, secondWheelValue) => _handleWheelDialogOnChange(setIndex, firsWheelValue, secondWheelValue),
+          settings: widget.settings,
         );
       },
     );
@@ -296,6 +310,7 @@ class _WorkoutExerciseBodyState extends State<WorkoutExerciseBody> {
           _exercise.workoutSets[setIndex] = _exercise.workoutSets[setIndex].copyWith(
             repetitions: firsWheelValue,
             weight: secondWheelValue,
+            weightUnit: widget.settings.weightUnit,
           );
         });
         break;
@@ -304,6 +319,7 @@ class _WorkoutExerciseBodyState extends State<WorkoutExerciseBody> {
         setState(() {
           _exercise.workoutSets[setIndex] = _exercise.workoutSets[setIndex].copyWith(
             distance: firsWheelValue,
+            distanceUnit: widget.settings.distanceUnit,
           );
         });
         break;

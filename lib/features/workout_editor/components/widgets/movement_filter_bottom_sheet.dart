@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:training_partner/core/constants/component_constants.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/resources/widgets/custom_action_chip.dart';
 import 'package:training_partner/core/resources/widgets/custom_back_button.dart';
 import 'package:training_partner/core/resources/widgets/divider_with_text.dart';
@@ -44,21 +44,21 @@ class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Card(
                       elevation: 0,
-                      color: Colors.black26,
-                      child: SizedBox(height: 5, width: 80),
+                      color: Theme.of(context).colorScheme.secondary,
+                      child: const SizedBox(height: 5, width: 80),
                     ),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const CustomBackButton(color: Colors.black38),
-                    const Text('Filters', style: boldLargeBlack),
+                    CustomBackButton(context: context),
+                    Text('Filters', style: CustomTextStyle.titlePrimary(context)),
                     IconButton(
                       onPressed: () {},
                       icon: const Icon(
@@ -68,7 +68,7 @@ class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
                     ),
                   ],
                 ),
-                const DividerWithText(text: 'Equipment', textStyle: smallGrey),
+                DividerWithText(text: 'Equipment', textStyle: CustomTextStyle.bodySmallTetriary(context)),
                 const SizedBox(height: 10),
                 // todo mintha ez is néha beakadna?
                 EquipmentDropdown(
@@ -102,7 +102,7 @@ class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
       BodyPartActionChip(
         label: 'chest',
         isSelected: bodyParts.contains('chest'),
-        assetLocation: Assets.assetsImagesChestIcon,
+        assetLocation: Assets.imagesChestIcon,
         onTap: (isActive, label) {
           setBottomSheetState(() {
             if (!isActive) {
@@ -121,7 +121,7 @@ class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
       BodyPartActionChip(
         label: 'arms',
         isSelected: bodyParts.contains('arms'),
-        assetLocation: Assets.assetsImagesArmsIcon,
+        assetLocation: Assets.imagesArmsIcon,
         onTap: (isActive, label) {
           setBottomSheetState(() {
             if (!isActive) {
@@ -140,7 +140,7 @@ class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
       BodyPartActionChip(
         label: 'shoulders',
         isSelected: bodyParts.contains('shoulders'),
-        assetLocation: Assets.assetsImagesShoulderIcon,
+        assetLocation: Assets.imagesShoulderIcon,
         onTap: (isActive, label) {
           setBottomSheetState(() {
             if (!isActive) {
@@ -159,7 +159,7 @@ class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
       BodyPartActionChip(
         label: 'waist',
         isSelected: bodyParts.contains('waist'),
-        assetLocation: Assets.assetsImagesCoreIcon,
+        assetLocation: Assets.imagesCoreIcon,
         onTap: (isActive, label) {
           setBottomSheetState(() {
             if (!isActive) {
@@ -178,7 +178,7 @@ class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
       BodyPartActionChip(
         label: 'back',
         isSelected: bodyParts.contains('back'),
-        assetLocation: Assets.assetsImagesBackIcon,
+        assetLocation: Assets.imagesBackIcon,
         onTap: (isActive, label) {
           setBottomSheetState(() {
             if (!isActive) {
@@ -197,7 +197,7 @@ class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
       BodyPartActionChip(
         label: 'legs',
         isSelected: bodyParts.contains('legs'),
-        assetLocation: Assets.assetsImagesLegsIcon,
+        assetLocation: Assets.imagesLegsIcon,
         onTap: (isActive, label) {
           setBottomSheetState(() {
             if (!isActive) {
@@ -216,7 +216,7 @@ class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
       BodyPartActionChip(
         label: 'cardio',
         isSelected: bodyParts.contains('cardio'),
-        assetLocation: Assets.assetsImagesCardioIcon,
+        assetLocation: Assets.imagesCardioIcon,
         onTap: (isActive, label) {
           setBottomSheetState(() {
             if (!isActive) {
@@ -237,7 +237,7 @@ class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
     return Column(
       children: [
         const SizedBox(height: 10),
-        const DividerWithText(text: 'Body part', textStyle: smallGrey),
+        DividerWithText(text: 'Body part', textStyle: CustomTextStyle.bodySmallTetriary(context)),
         const SizedBox(height: 10),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
@@ -255,6 +255,7 @@ class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
   Widget _buildTargetRow() {
     List<Widget> result = [];
     List<String> targets = _movementFilter.targets ?? [];
+    Color backgroundColor = Theme.of(context).brightness == Brightness.dark ? Theme.of(context).colorScheme.primary : Colors.grey.shade200;
 
     var selectedBodyParts = _movementFilter.bodyParts ?? [];
     var filteredTargets = widget.allMovements
@@ -267,6 +268,7 @@ class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
       result.add(
         CustomActionChip(
           label: target,
+          unSelectedColor: backgroundColor,
           isSelected: targets.contains(target),
           onTap: (isActive, label) {
             setState(() {
@@ -291,7 +293,7 @@ class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
     } else {
       return Column(
         children: [
-          const DividerWithText(text: 'Target', textStyle: smallGrey),
+          DividerWithText(text: 'Target', textStyle: CustomTextStyle.bodySmallTetriary(context)),
           const SizedBox(height: 10),
           SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: result)),
         ],

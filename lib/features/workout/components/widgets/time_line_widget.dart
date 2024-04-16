@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
 import 'package:training_partner/features/exercises/models/exercise.dart';
 import 'package:training_partner/features/workout_editor/models/workout_session.dart';
@@ -23,7 +24,7 @@ class TimeLineWidget extends StatelessWidget {
       list.add(_getTimeLineNode(context, i, session.exercises[i]));
 
       if (i < session.exercises.length - 1) {
-        final Color lineColor = (i < currentExerciseIndex) ? Theme.of(context).colorScheme.tertiary : Colors.black26;
+        final Color lineColor = (i < currentExerciseIndex) ? accentColor : Theme.of(context).colorScheme.secondary;
 
         list.add(Expanded(child: Container(height: 2.0, color: lineColor)));
       }
@@ -36,7 +37,7 @@ class TimeLineWidget extends StatelessWidget {
   }
 
   Widget _getTimeLineNode(BuildContext context, int index, Exercise exercise) {
-    final Color color = index <= currentExerciseIndex ? Theme.of(context).colorScheme.tertiary : Colors.black26;
+    final Color color = index <= currentExerciseIndex ? accentColor : Theme.of(context).colorScheme.secondary;
 
     return GestureDetector(
       onTap: () => onExerciseClick(index),
@@ -46,7 +47,7 @@ class TimeLineWidget extends StatelessWidget {
           height: 30,
           width: 30,
           child: Center(
-            child: Text("${index + 1}", style: normalWhite),
+            child: Text("${index + 1}", style: CustomTextStyle.bodyTetriary(context)),
           ),
         ),
       ),

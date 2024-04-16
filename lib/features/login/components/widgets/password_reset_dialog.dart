@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
 import 'package:training_partner/core/globals/component_functions.dart';
 import 'package:training_partner/core/resources/firebase/auth_service.dart';
@@ -44,17 +45,17 @@ class _PasswordResetDialogState extends State<PasswordResetDialog> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Row(
+                Row(
                   children: [
-                    Icon(Icons.mail_lock_rounded),
-                    SizedBox(width: 10),
-                    Text('Password reset', style: boldNormalBlack),
+                    const Icon(Icons.mail_lock_rounded),
+                    const SizedBox(width: 10),
+                    Text('Password reset', style: CustomTextStyle.subtitlePrimary(context)),
                   ],
                 ),
                 const SizedBox(height: 10),
-                const Text(
+                Text(
                   'Here you can provide your email adress, and we will send you a link to reset your password:',
-                  style: smallGrey,
+                  style: CustomTextStyle.bodySmallSecondary(context),
                 ),
                 const SizedBox(height: 20),
                 CustomInputField(

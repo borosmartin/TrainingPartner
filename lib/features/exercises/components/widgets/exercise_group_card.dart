@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
-import 'package:training_partner/core/utils/text_util.dart';
 import 'package:training_partner/features/exercises/components/pages/exercise_list_page.dart';
 import 'package:training_partner/features/exercises/models/movement.dart';
 
@@ -41,12 +41,19 @@ class ExerciseGroupCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 15),
-                Image.asset(assetLocation, height: 60, width: 60),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.asset(
+                    assetLocation,
+                    height: 75,
+                    width: 75,
+                  ),
+                ),
                 const SizedBox(height: 15),
                 Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.tertiary,
-                    borderRadius: const BorderRadius.only(
+                  decoration: const BoxDecoration(
+                    color: accentColor,
+                    borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(10),
                       bottomRight: Radius.circular(10),
                     ),
@@ -56,12 +63,10 @@ class ExerciseGroupCard extends StatelessWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Text(label,
-                            style: TextUtil.getCustomTextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white,
-                            )),
+                        child: Text(
+                          label,
+                          style: CustomTextStyle.bodyTetriary(context),
+                        ),
                       ),
                     ],
                   ),

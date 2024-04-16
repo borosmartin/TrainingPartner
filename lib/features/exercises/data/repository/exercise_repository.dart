@@ -17,7 +17,7 @@ class ExerciseRepository {
         DateTime todayRefreshTime = DateTime(now.year, now.month, now.day, 19, 0);
 
         var difference = now.difference(hiveData.lastUpdated).inHours;
-        if (now.isBefore(todayRefreshTime) && difference < 20) {
+        if (now.isBefore(todayRefreshTime) && difference < 12) {
           return hiveData;
         }
       }

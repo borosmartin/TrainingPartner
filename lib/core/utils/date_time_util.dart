@@ -17,14 +17,25 @@ class DateTimeUtil {
   }
 
   ///  example: 2024.12.02 16:01
-  static String dateToStringWithHour(DateTime? date) {
+  static String dateToStringWithHour(DateTime? date, bool is24HourFormat) {
     if (date == null) {
       return '';
     }
+
     String month = date.month.toString().padLeft(2, '0');
     String day = date.day.toString().padLeft(2, '0');
     String hour = date.hour.toString().padLeft(2, '0');
     String minute = date.minute.toString().padLeft(2, '0');
+
+    if (!is24HourFormat) {
+      if (date.hour >= 12) {
+        hour = (date.hour - 12).toString().padLeft(2, '0');
+        hour = hour == '00' ? '12' : hour;
+        minute += ' PM';
+      } else {
+        minute += ' AM';
+      }
+    }
 
     return '${date.year}.$month.$day · $hour:$minute';
   }

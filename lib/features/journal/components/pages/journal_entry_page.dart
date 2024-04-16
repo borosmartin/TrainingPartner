@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
-import 'package:training_partner/core/globals/component_functions.dart';
+import 'package:training_partner/core/resources/widgets/colored_safe_area_body.dart';
 import 'package:training_partner/core/resources/widgets/custom_back_button.dart';
 import 'package:training_partner/core/resources/widgets/custom_button.dart';
 import 'package:training_partner/core/resources/widgets/custom_divider.dart';
@@ -13,6 +14,7 @@ import 'package:training_partner/features/exercises/models/movement.dart';
 import 'package:training_partner/features/journal/components/widgets/body_part_piechart.dart';
 import 'package:training_partner/features/journal/components/widgets/journal_exercise_card.dart';
 import 'package:training_partner/features/journal/components/widgets/progress_bar_chart.dart';
+import 'package:training_partner/features/settings/model/app_settings.dart';
 import 'package:training_partner/features/workout/logic/cubits/workout_cubit.dart';
 import 'package:training_partner/features/workout_editor/models/workout_session.dart';
 
@@ -21,6 +23,7 @@ class JournalEntryPage extends StatefulWidget {
   final WorkoutSession? previousSession;
   final List<Movement> movements;
   final PageController pageController;
+  final AppSettings settings;
 
   const JournalEntryPage({
     super.key,
@@ -28,6 +31,7 @@ class JournalEntryPage extends StatefulWidget {
     this.previousSession,
     required this.movements,
     required this.pageController,
+    required this.settings,
   });
 
   @override
@@ -38,25 +42,17 @@ class _JournalEntryPageState extends State<JournalEntryPage> {
   WorkoutSession get currentSession => widget.currentSession;
 
   @override
-  void initState() {
-    super.initState();
-
-    colorSafeArea(color: Colors.white);
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return PopScope(
-      onPopInvoked: (value) => colorSafeArea(color: Theme.of(context).colorScheme.background),
-      child: SafeArea(
-        child: Scaffold(
-          backgroundColor: Theme.of(context).colorScheme.background,
-          body: Column(
-            children: [
-              _getHeaderWidget(),
-              _getBodyContent(),
-            ],
-          ),
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
+      body: ColoredSafeAreaBody(
+        safeAreaColor: Theme.of(context).cardColor,
+        isLightTheme: Theme.of(context).brightness == Brightness.light,
+        child: Column(
+          children: [
+            _getHeaderWidget(),
+            _getBodyContent(),
+          ],
         ),
       ),
     );
@@ -86,9 +82,9 @@ class _JournalEntryPageState extends State<JournalEntryPage> {
 
   Widget _getHeaderWidget() {
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(20),
           bottomRight: Radius.circular(20),
         ),
@@ -100,8 +96,8 @@ class _JournalEntryPageState extends State<JournalEntryPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const CustomBackButton(),
-                Text(currentSession.name, style: boldLargeBlack),
+                CustomBackButton(context: context),
+                Text(currentSession.name, style: CustomTextStyle.titlePrimary(context)),
                 Padding(
                   padding: const EdgeInsets.only(right: 15),
                   child: GestureDetector(
@@ -127,50 +123,51 @@ class _JournalEntryPageState extends State<JournalEntryPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(
+            Row(
               children: [
-                Icon(FontAwesomeIcons.circleInfo, size: 20),
-                SizedBox(width: 10),
-                Text('Information:', style: boldNormalBlack),
+                const Icon(FontAwesomeIcons.circleInfo, size: 20),
+                const SizedBox(width: 10),
+                Text('Information:', style: CustomTextStyle.subtitlePrimary(context)),
               ],
             ),
             const SizedBox(height: 10),
-            const CustomDivider(),
+            CustomDivider(color: Theme.of(context).colorScheme.secondary),
             const SizedBox(height: 10),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    const Row(children: [
-                      Icon(Iconsax.clock5, color: Colors.black38, size: 20),
-                      SizedBox(width: 10),
-                      Text('Duration:', style: normalGrey),
+                    Row(children: [
+                      Icon(Iconsax.clock5, color: Theme.of(context).colorScheme.secondary, size: 20),
+                      const SizedBox(width: 10),
+                      Text('Duration:', style: CustomTextStyle.bodySecondary(context)),
                     ]),
                     const Spacer(),
-                    Text(DateTimeUtil.secondsToTextTime(currentSession.durationInSeconds!), style: normalGrey),
+                    Text(DateTimeUtil.secondsToTextTime(currentSession.durationInSeconds!), style: CustomTextStyle.bodySecondary(context)),
                   ],
                 ),
                 Row(
                   children: [
-                    const Row(children: [
-                      Icon(Iconsax.calendar5, color: Colors.black38, size: 20),
-                      SizedBox(width: 10),
-                      Text('Date:', style: normalGrey),
+                    Row(children: [
+                      Icon(Iconsax.calendar5, color: Theme.of(context).colorScheme.secondary, size: 20),
+                      const SizedBox(width: 10),
+                      Text('Date:', style: CustomTextStyle.bodySecondary(context)),
                     ]),
                     const Spacer(),
-                    Text(DateTimeUtil.dateToStringWithHour(currentSession.date!), style: normalGrey),
+                    Text(DateTimeUtil.dateToStringWithHour(currentSession.date!, widget.settings.is24HourFormat),
+                        style: CustomTextStyle.bodySecondary(context)),
                   ],
                 ),
                 Row(
                   children: [
-                    const Row(children: [
-                      Icon(FontAwesomeIcons.dumbbell, color: Colors.black38, size: 15),
-                      SizedBox(width: 15),
-                      Text('Total exercises:', style: normalGrey),
+                    Row(children: [
+                      Icon(FontAwesomeIcons.dumbbell, color: Theme.of(context).colorScheme.secondary, size: 15),
+                      const SizedBox(width: 15),
+                      Text('Total exercises:', style: CustomTextStyle.bodySecondary(context)),
                     ]),
                     const Spacer(),
-                    Text('${currentSession.exercises.length} exercises', style: normalGrey),
+                    Text('${currentSession.exercises.length} exercises', style: CustomTextStyle.bodySecondary(context)),
                   ],
                 ),
               ],
@@ -192,11 +189,11 @@ class _JournalEntryPageState extends State<JournalEntryPage> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(
+            Row(
               children: [
-                Icon(FontAwesomeIcons.chartPie, size: 20),
-                SizedBox(width: 10),
-                Text('Targeted muscles:', style: boldNormalBlack),
+                const Icon(FontAwesomeIcons.chartPie, size: 20),
+                const SizedBox(width: 10),
+                Text('Targeted muscles:', style: CustomTextStyle.subtitlePrimary(context)),
               ],
             ),
             const SizedBox(height: 20),
@@ -231,11 +228,11 @@ class _JournalEntryPageState extends State<JournalEntryPage> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Row(
+                Row(
                   children: [
-                    Icon(FontAwesomeIcons.arrowTrendUp, size: 20),
-                    SizedBox(width: 10),
-                    Text('Progress from last session:', style: boldNormalBlack),
+                    const Icon(FontAwesomeIcons.arrowTrendUp, size: 20),
+                    const SizedBox(width: 10),
+                    Text('Progress from last session:', style: CustomTextStyle.subtitlePrimary(context)),
                   ],
                 ),
                 const SizedBox(height: 20),
@@ -252,24 +249,24 @@ class _JournalEntryPageState extends State<JournalEntryPage> {
   Widget _getExerciseCardList() {
     List<Widget> children = [];
     children.add(
-      const Card(
+      Card(
         elevation: 0,
         margin: EdgeInsets.zero,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))),
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))),
         child: Padding(
-          padding: EdgeInsets.only(top: 20, bottom: 0, left: 20, right: 20),
+          padding: const EdgeInsets.only(top: 20, bottom: 0, left: 20, right: 20),
           child: Column(
             children: [
               Row(
                 children: [
-                  Icon(FontAwesomeIcons.personRunning),
-                  SizedBox(width: 10),
-                  Text('Exercises:', style: boldNormalBlack),
+                  const Icon(FontAwesomeIcons.personRunning),
+                  const SizedBox(width: 10),
+                  Text('Exercises:', style: CustomTextStyle.subtitlePrimary(context)),
                 ],
               ),
-              SizedBox(height: 10),
-              CustomDivider(),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
+              CustomDivider(color: Theme.of(context).colorScheme.secondary),
+              const SizedBox(height: 10),
             ],
           ),
         ),
@@ -285,6 +282,7 @@ class _JournalEntryPageState extends State<JournalEntryPage> {
           isLast: currentSession.exercises[i] == currentSession.exercises.last,
           index: i,
           movements: widget.movements,
+          settings: widget.settings,
         ),
       );
     }
@@ -322,20 +320,20 @@ class _JournalEntryPageState extends State<JournalEntryPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Row(
+              Row(
                 children: [
-                  Icon(Icons.warning_rounded),
-                  SizedBox(width: 5),
-                  Text('Warning', style: boldNormalBlack),
+                  const Icon(Icons.warning_rounded),
+                  const SizedBox(width: 5),
+                  Text('Warning', style: CustomTextStyle.subtitlePrimary(context)),
                 ],
               ),
-              const Text('Are you sure you want to delete this workout session?', style: normalGrey),
+              Text('Are you sure you want to delete this workout session?', style: CustomTextStyle.bodyTetriary(context)),
               const SizedBox(height: 15),
               Row(
                 children: [
                   CustomButton(
                     label: 'No',
-                    isOutlined: true,
+                    isSecondary: true,
                     onTap: () => Navigator.pop(context),
                   ),
                   const Spacer(),

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:training_partner/core/constants/component_constants.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/globals/component_functions.dart';
+import 'package:training_partner/core/resources/widgets/colored_safe_area_body.dart';
 import 'package:training_partner/core/resources/widgets/custom_search_bar.dart';
 import 'package:training_partner/core/resources/widgets/custom_title_button.dart';
 import 'package:training_partner/core/resources/widgets/custom_toast.dart';
@@ -53,26 +54,26 @@ class _ExercisePickerPageState extends State<ExercisePickerPage> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
-      child: PopScope(
-        // todo not working, fekete lesz mikor visszalépek
-        onPopInvoked: (value) => colorSafeArea(color: Colors.white),
-        child: Scaffold(
-          backgroundColor: Theme.of(context).colorScheme.background,
-          appBar: AppBar(
-            backgroundColor: Colors.white,
-            centerTitle: true,
-            title: const Text('Exercises', style: boldLargeBlack),
-            actions: [
-              IconButton(
-                onPressed: () => _showExerciseFiltersBottomSheet(context),
-                icon: Icon(
-                  Icons.filter_alt_rounded,
-                  color: Theme.of(context).colorScheme.tertiary,
-                ),
-              )
-            ],
-          ),
-          body: BlocConsumer<MovementCubit, MovementState>(
+      child: Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.background,
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).cardColor,
+          centerTitle: true,
+          title: Text('Exercises', style: CustomTextStyle.titlePrimary(context)),
+          actions: [
+            IconButton(
+              onPressed: () => _showExerciseFiltersBottomSheet(context),
+              icon: Icon(
+                Icons.filter_alt_rounded,
+                color: Theme.of(context).colorScheme.tertiary,
+              ),
+            )
+          ],
+        ),
+        body: ColoredSafeAreaBody(
+          safeAreaColor: Theme.of(context).cardColor,
+          isLightTheme: Theme.of(context).brightness == Brightness.light,
+          child: BlocConsumer<MovementCubit, MovementState>(
             listener: (BuildContext context, MovementState state) {
               if (state is MovementsError) {
                 showBottomToast(
@@ -96,16 +97,21 @@ class _ExercisePickerPageState extends State<ExercisePickerPage> {
                   padding: const EdgeInsets.all(15),
                   child: Column(
                     children: [
-                      CustomSearchBar(
-                        hintText: 'Search...',
-                        onChanged: (value) => context.read<MovementCubit>().filterMovements(
-                              widget.allMovements,
-                              state.previousFilter != null ? state.previousFilter!.copyWith(searchQuery: value) : MovementFilter(searchQuery: value),
-                            ),
-                        textController: _searchController,
-                        backgroundColor: Colors.white,
-                        iconColor: Colors.black,
-                        textStyle: smallBlack,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 3),
+                        child: CustomSearchBar(
+                          hintText: 'Search...',
+                          onChanged: (value) => context.read<MovementCubit>().filterMovements(
+                                widget.allMovements,
+                                state.previousFilter != null
+                                    ? state.previousFilter!.copyWith(searchQuery: value)
+                                    : MovementFilter(searchQuery: value),
+                              ),
+                          textController: _searchController,
+                          backgroundColor: Theme.of(context).colorScheme.primary,
+                          iconColor: Colors.black,
+                          textStyle: CustomTextStyle.bodySmallSecondary(context),
+                        ),
                       ),
                       const SizedBox(height: 10),
                       _getMovementList(state),
@@ -133,13 +139,13 @@ class _ExercisePickerPageState extends State<ExercisePickerPage> {
   // todo a kiválaszott movements nem elől vannak
   Widget _getMovementList(MovementsLoaded state) {
     if (state.previousFilter != null && state.filteredMovements != null && state.filteredMovements!.isEmpty) {
-      return const Expanded(
+      return Expanded(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.search_off_rounded, size: 30, color: Colors.black38),
-            SizedBox(width: 5),
-            Text('No exercise found', style: boldNormalGrey),
+            Icon(Icons.search_off_rounded, size: 30, color: Theme.of(context).colorScheme.secondary),
+            const SizedBox(width: 5),
+            Text('No exercise found', style: CustomTextStyle.subtitleSecondary(context)),
           ],
         ),
       );

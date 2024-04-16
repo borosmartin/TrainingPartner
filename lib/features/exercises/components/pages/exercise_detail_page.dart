@@ -1,12 +1,13 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
-import 'package:training_partner/core/globals/component_functions.dart';
+import 'package:training_partner/core/resources/widgets/cached_image.dart';
+import 'package:training_partner/core/resources/widgets/colored_safe_area_body.dart';
 import 'package:training_partner/core/resources/widgets/custom_back_button.dart';
 import 'package:training_partner/core/resources/widgets/custom_divider.dart';
-import 'package:training_partner/core/resources/widgets/shimmer_container.dart';
 import 'package:training_partner/core/utils/text_util.dart';
 import 'package:training_partner/features/exercises/models/movement.dart';
 
@@ -21,20 +22,15 @@ class ExerciseDetailPage extends StatefulWidget {
 
 class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
   @override
-  void initState() {
-    super.initState();
-
-    colorSafeArea(color: Colors.white);
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.background,
-        body: Column(
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
+      body: ColoredSafeAreaBody(
+        safeAreaColor: Theme.of(context).cardColor,
+        isLightTheme: Theme.of(context).brightness == Brightness.light,
+        child: Column(
           children: [
-            _getHeaderWidget(),
+            _getHeaderWidget(context),
             _getBodyContent(),
           ],
         ),
@@ -64,25 +60,25 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
     );
   }
 
-  Widget _getHeaderWidget() {
+  Widget _getHeaderWidget(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(20),
           bottomRight: Radius.circular(20),
         ),
       ),
-      child: const Padding(
-        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
         child: Column(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                CustomBackButton(),
-                Text('Exercise Details', style: boldLargeBlack),
-                Icon(FontAwesomeIcons.bullseye, color: Colors.transparent, size: 43),
+                CustomBackButton(context: context),
+                Text('Exercise Details', style: CustomTextStyle.titlePrimary(context)),
+                const Icon(FontAwesomeIcons.bullseye, color: Colors.transparent, size: 43),
               ],
             ),
           ],
@@ -91,7 +87,6 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
     );
   }
 
-  // todo ilyen spaceres megoldás mint a journal entryknél? ne legyen ennyire baloldalt minden
   Widget _getTitleCard() {
     return Card(
       elevation: 0,
@@ -102,28 +97,16 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const SizedBox(height: 10),
-          CachedNetworkImage(
+          CachedImage(
             imageUrl: widget.movement.gifUrl,
-            width: MediaQuery.of(context).size.width * 0.6,
             height: MediaQuery.of(context).size.width * 0.6,
-            fit: BoxFit.contain,
-            placeholder: (context, url) => Padding(
-              padding: const EdgeInsets.only(left: 5),
-              child: ShimmerContainer(
-                height: MediaQuery.of(context).size.width * 0.6,
-                width: MediaQuery.of(context).size.width * 0.8,
-              ),
-            ),
-            errorWidget: (context, url, error) => const Icon(
-              Icons.image_not_supported_outlined,
-              color: Colors.red,
-            ),
+            width: MediaQuery.of(context).size.width * 0.6,
           ),
           const SizedBox(height: 10),
           Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.tertiary,
-              borderRadius: const BorderRadius.only(
+            decoration: const BoxDecoration(
+              color: accentColor,
+              borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(10),
                 bottomRight: Radius.circular(10),
               ),
@@ -134,41 +117,38 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 15),
-                  Text(widget.movement.name, style: boldLargeWhite),
+                  Text(widget.movement.name, style: CustomTextStyle.titleTetriary(context)),
                   const SizedBox(height: 15),
                   const CustomDivider(color: Colors.white, thickness: 1.7),
                   const SizedBox(height: 15),
                   // todo icons
                   Row(
                     children: [
-                      const Icon(FontAwesomeIcons.dumbbell, size: 20),
-                      const SizedBox(width: 15),
-                      Text(
-                        'Body Part:  ${TextUtil.firstLetterToUpperCase(widget.movement.bodyPart)}',
-                        style: smallWhite,
-                      ),
+                      const Icon(PhosphorIconsFill.personArmsSpread, size: 28, color: Colors.white),
+                      const SizedBox(width: 10),
+                      Text('Body Part:', style: CustomTextStyle.bodyTetriary(context)),
+                      const Spacer(),
+                      Text(TextUtil.firstLetterToUpperCase(widget.movement.bodyPart), style: CustomTextStyle.bodyTetriary(context)),
                     ],
                   ),
                   const SizedBox(height: 10),
                   Row(
                     children: [
-                      const Icon(FontAwesomeIcons.dumbbell, size: 20),
-                      const SizedBox(width: 15),
-                      Text(
-                        'Equipment:  ${TextUtil.firstLetterToUpperCase(widget.movement.equipment)}',
-                        style: smallWhite,
-                      ),
+                      const Icon(PhosphorIconsFill.barbell, size: 28, color: Colors.white),
+                      const SizedBox(width: 10),
+                      Text('Equipment:', style: CustomTextStyle.bodyTetriary(context)),
+                      const Spacer(),
+                      Text(TextUtil.firstLetterToUpperCase(widget.movement.equipment), style: CustomTextStyle.bodyTetriary(context)),
                     ],
                   ),
                   const SizedBox(height: 10),
                   Row(
                     children: [
-                      const Icon(FontAwesomeIcons.dumbbell, size: 20),
-                      const SizedBox(width: 15),
-                      Text(
-                        'Target:  ${TextUtil.firstLetterToUpperCase(widget.movement.target)}',
-                        style: smallWhite,
-                      ),
+                      const Icon(PhosphorIconsBold.target, size: 28, color: Colors.white),
+                      const SizedBox(width: 10),
+                      Text('Target:', style: CustomTextStyle.bodyTetriary(context)),
+                      const Spacer(),
+                      Text(TextUtil.firstLetterToUpperCase(widget.movement.target), style: CustomTextStyle.bodyTetriary(context)),
                     ],
                   ),
                 ],
@@ -190,13 +170,13 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(
+            Row(
               children: [
-                Icon(Iconsax.flash5, size: 25),
-                SizedBox(width: 10),
+                const Icon(Iconsax.flash5, size: 25),
+                const SizedBox(width: 10),
                 Text(
                   'Instructions:',
-                  style: boldNormalBlack,
+                  style: CustomTextStyle.subtitlePrimary(context),
                 ),
               ],
             ),
@@ -211,7 +191,7 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
                   padding: const EdgeInsets.only(bottom: 10),
                   child: Text(
                     '${index + 1} ).  ${widget.movement.instructions[index]}',
-                    style: smallBlack,
+                    style: CustomTextStyle.bodySmallPrimary(context),
                   ),
                 ),
               ),
@@ -231,14 +211,13 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            const Row(
-              // todo icon
+            Row(
               children: [
-                Icon(Iconsax.calendar5, size: 25),
-                SizedBox(width: 10),
+                const Icon(PhosphorIconsBold.target, size: 25),
+                const SizedBox(width: 10),
                 Text(
                   'Secondary Muscles:',
-                  style: boldNormalBlack,
+                  style: CustomTextStyle.subtitlePrimary(context),
                 ),
               ],
             ),
@@ -251,11 +230,11 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
                 (index) => Chip(
                   label: Text(
                     TextUtil.firstLetterToUpperCase(widget.movement.secondaryMuscles[index]),
-                    style: smallWhite,
+                    style: CustomTextStyle.bodySmallTetriary(context),
                   ),
                   shape: defaultCornerShape,
-                  side: BorderSide(color: Theme.of(context).colorScheme.tertiary),
-                  backgroundColor: Theme.of(context).colorScheme.tertiary,
+                  side: const BorderSide(color: accentColor),
+                  backgroundColor: accentColor,
                 ),
               ),
             ),

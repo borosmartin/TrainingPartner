@@ -2,7 +2,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:training_partner/config/themes/light_theme.dart';
+import 'package:provider/provider.dart';
+import 'package:training_partner/config/theme/theme.dart';
+import 'package:training_partner/config/theme/theme_provider.dart';
 import 'package:training_partner/core/resources/firebase/firebase_options.dart';
 import 'package:training_partner/core/resources/open_ai/gpt_cubit.dart';
 import 'package:training_partner/core/resources/open_ai/gpt_repository.dart';
@@ -13,6 +15,10 @@ import 'package:training_partner/features/exercises/data/service/exercise_local_
 import 'package:training_partner/features/exercises/data/service/exercise_service.dart';
 import 'package:training_partner/features/exercises/logic/cubits/movement_cubit.dart';
 import 'package:training_partner/features/login/logic/cubits/login_cubit.dart';
+import 'package:training_partner/features/settings/data/repository/settings_repository.dart';
+import 'package:training_partner/features/settings/data/service/settings_service_local.dart';
+import 'package:training_partner/features/settings/logic/cubits/settings_cubit.dart';
+import 'package:training_partner/features/settings/logic/cubits/user_delete_cubit.dart';
 import 'package:training_partner/features/statistics/data/repository/statistics_repository.dart';
 import 'package:training_partner/features/statistics/data/service/statistics_local_service.dart';
 import 'package:training_partner/features/statistics/logic/cubits/chart_builder_cubit.dart';
@@ -34,7 +40,12 @@ Future<void> main() async {
 
   await Hive.initFlutter();
 
-  runApp(const TrainingPartner());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ThemeProvider(),
+      child: const TrainingPartner(),
+    ),
+  );
 }
 
 class TrainingPartner extends StatelessWidget {
@@ -42,12 +53,16 @@ class TrainingPartner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return MultiRepositoryProvider(
       providers: _getRepositoryProviders(),
       child: MultiBlocProvider(
         providers: _getBlocProviders(),
         child: MaterialApp(
+          themeMode: themeProvider.themeMode,
           theme: lightTheme,
+          darkTheme: darkTheme,
           debugShowCheckedModeBanner: false,
           home: const HomePageNavigator(),
         ),
@@ -83,9 +98,23 @@ class TrainingPartner extends StatelessWidget {
       BlocProvider<ChartBuilderCubit>(
         create: (context) => ChartBuilderCubit(),
       ),
+      BlocProvider<SettingsCubit>(
+        create: (context) => SettingsCubit(
+          RepositoryProvider.of<SettingsRepository>(context),
+        ),
+      ),
       BlocProvider<GptCubit>(
         create: (context) => GptCubit(
           RepositoryProvider.of<GptRepository>(context),
+        ),
+      ),
+      BlocProvider<UserDeleteCubit>(
+        create: (context) => UserDeleteCubit(
+          RepositoryProvider.of<GptRepository>(context),
+          RepositoryProvider.of<SettingsRepository>(context),
+          RepositoryProvider.of<WorkoutPlanRepository>(context),
+          RepositoryProvider.of<WorkoutRepository>(context),
+          RepositoryProvider.of<StatisticsRepository>(context),
         ),
       ),
     ];
@@ -112,6 +141,11 @@ class TrainingPartner extends StatelessWidget {
       RepositoryProvider<StatisticsRepository>(
         create: (context) => StatisticsRepository(
           StatisticsLocalService(),
+        ),
+      ),
+      RepositoryProvider<SettingsRepository>(
+        create: (context) => SettingsRepository(
+          SettingsServiceLocal(),
         ),
       ),
       RepositoryProvider<GptRepository>(

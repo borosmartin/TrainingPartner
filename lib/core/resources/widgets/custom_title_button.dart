@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
 
 class CustomTitleButton extends StatelessWidget {
@@ -22,7 +23,7 @@ class CustomTitleButton extends StatelessWidget {
         alignment: Alignment.center,
         elevation: 0,
         minimumSize: const Size.fromHeight(60),
-        backgroundColor: Theme.of(context).colorScheme.tertiary,
+        backgroundColor: accentColor,
         shape: defaultCornerShape,
       ),
       onPressed: isEnabled! ? onTap : null,
@@ -31,7 +32,7 @@ class CustomTitleButton extends StatelessWidget {
         children: [
           if (icon != null) Icon(icon, color: Colors.white, size: 30),
           if (icon != null) const SizedBox(width: 5),
-          Text(label, style: boldLargeWhite),
+          Text(label, style: CustomTextStyle.titleTetriary(context)),
         ],
       ),
     );

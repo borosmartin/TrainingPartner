@@ -1,24 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
 import 'package:training_partner/core/resources/widgets/custom_divider.dart';
 import 'package:training_partner/core/resources/widgets/custom_title_button.dart';
 import 'package:training_partner/core/utils/date_time_util.dart';
 import 'package:training_partner/features/exercises/models/movement.dart';
 import 'package:training_partner/features/journal/components/pages/journal_entry_page.dart';
+import 'package:training_partner/features/settings/model/app_settings.dart';
 import 'package:training_partner/features/workout_editor/models/workout_session.dart';
 
 class JournalPage extends StatelessWidget {
   final List<Movement> movements;
   final List<WorkoutSession> sessions;
   final PageController pageController;
+  final AppSettings settings;
 
   const JournalPage({
     super.key,
     required this.movements,
     required this.sessions,
     required this.pageController,
+    required this.settings,
   });
 
   @override
@@ -28,15 +32,12 @@ class JournalPage extends StatelessWidget {
       child: Column(
         children: [
           const SizedBox(height: 10),
-          _getHeader(),
-          const SizedBox(height: 20),
           _getBodyContent(context),
         ],
       ),
     );
   }
 
-  // todo no entry layout egységesítés
   Widget _getBodyContent(BuildContext context) {
     if (sessions.isEmpty) {
       return Expanded(
@@ -44,9 +45,9 @@ class JournalPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(FontAwesomeIcons.personRunning, size: 85, color: Colors.black38),
+              Icon(FontAwesomeIcons.personRunning, size: 85, color: Theme.of(context).colorScheme.secondary),
               const SizedBox(height: 10),
-              const Text("You haven't completed any workout yet, let's start one!", style: boldNormalGrey),
+              Text("You haven't completed any workout yet, let's start one!", style: CustomTextStyle.subtitleSecondary(context)),
               const SizedBox(height: 20),
               CustomTitleButton(
                 icon: FontAwesomeIcons.play,
@@ -74,18 +75,18 @@ class JournalPage extends StatelessWidget {
                 Positioned(
                   left: 132.5,
                   top: 50,
-                  child: Container(height: 80, width: 4, decoration: BoxDecoration(color: Theme.of(context).colorScheme.tertiary)),
+                  child: Container(height: 80, width: 4, decoration: const BoxDecoration(color: accentColor)),
                 ),
               if (index != 0)
                 Positioned(
                   left: 132.5,
                   bottom: 50,
-                  child: Container(height: 80, width: 4, decoration: BoxDecoration(color: Theme.of(context).colorScheme.tertiary)),
+                  child: Container(height: 80, width: 4, decoration: const BoxDecoration(color: accentColor)),
                 ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  _getDateWidget(sessions[index]),
+                  _getDateWidget(context, sessions[index]),
                   const SizedBox(width: 15),
                   _getTimeLineNode(context),
                   const SizedBox(width: 20),
@@ -99,25 +100,7 @@ class JournalPage extends StatelessWidget {
     );
   }
 
-  Widget _getHeader() {
-    return const Card(
-      elevation: 0,
-      shape: defaultCornerShape,
-      margin: EdgeInsets.zero,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.menu_book_rounded),
-          Padding(
-            padding: EdgeInsets.all(10),
-            child: Text('Journal', style: boldLargeBlack),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _getDateWidget(WorkoutSession session) {
+  Widget _getDateWidget(BuildContext context, WorkoutSession session) {
     String day = session.date!.day.toString().padLeft(2, '0');
 
     return SizedBox(
@@ -127,12 +110,12 @@ class JournalPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Iconsax.calendar5, color: Colors.black38),
+          Icon(Iconsax.calendar5, color: Theme.of(context).colorScheme.secondary),
           const SizedBox(width: 15),
           Column(
             children: [
-              Text('${session.date!.year}.', style: smallGrey),
-              Text('${_getMonthName(session.date!)} $day.', style: smallGrey),
+              Text('${session.date!.year}.', style: CustomTextStyle.bodySmallSecondary(context)),
+              Text('${_getMonthName(session.date!)} $day.', style: CustomTextStyle.bodySmallSecondary(context)),
             ],
           ),
         ],
@@ -144,11 +127,9 @@ class JournalPage extends StatelessWidget {
     return Container(
       height: 20,
       width: 20,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
-        border: Border.fromBorderSide(
-          BorderSide(color: Theme.of(context).colorScheme.tertiary, width: 4),
-        ),
+        border: Border.fromBorderSide(BorderSide(color: accentColor, width: 4)),
         shape: BoxShape.circle,
       ),
     );
@@ -164,6 +145,7 @@ class JournalPage extends StatelessWidget {
             elevation: 0,
             shape: defaultCornerShape,
             margin: EdgeInsets.zero,
+            color: Theme.of(context).cardColor,
             child: InkWell(
               onTap: () => Navigator.of(context).push(
                 MaterialPageRoute(
@@ -172,6 +154,7 @@ class JournalPage extends StatelessWidget {
                     previousSession: _getPreviousSession(sessions, session),
                     movements: movements,
                     pageController: pageController,
+                    settings: settings,
                   ),
                 ),
               ),
@@ -181,36 +164,36 @@ class JournalPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(5),
+                    padding: const EdgeInsets.all(8),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Icon(Icons.chevron_right_rounded, size: 15, color: Colors.transparent),
-                        Text(session.name, style: normalBlack, overflow: TextOverflow.ellipsis),
+                        Text(session.name, style: CustomTextStyle.bodyPrimary(context), overflow: TextOverflow.ellipsis),
                         const Icon(Icons.chevron_right_rounded, size: 15),
                       ],
                     ),
                   ),
                   Container(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.tertiary,
-                      borderRadius: const BorderRadius.only(
+                    decoration: const BoxDecoration(
+                      color: accentColor,
+                      borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(10),
                         bottomRight: Radius.circular(10),
                       ),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
+                      padding: const EdgeInsets.symmetric(vertical: 7),
                       child: IntrinsicHeight(
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             // todo esetleg progress inkább?
                             Expanded(
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text('${session.exercises.length} exercise', style: smallWhite),
+                                  Text('${session.exercises.length} exercise', style: CustomTextStyle.bodySmallTetriary(context)),
                                 ],
                               ),
                             ),
@@ -221,7 +204,8 @@ class JournalPage extends StatelessWidget {
                                 children: [
                                   const Icon(Iconsax.clock5, color: Colors.white, size: 20),
                                   const SizedBox(width: 5),
-                                  Text(DateTimeUtil.secondsToDigitalFormat(session.durationInSeconds!.toInt()), style: smallWhite),
+                                  Text(DateTimeUtil.secondsToDigitalFormat(session.durationInSeconds!.toInt()),
+                                      style: CustomTextStyle.bodySmallTetriary(context)),
                                 ],
                               ),
                             ),

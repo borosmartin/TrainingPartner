@@ -26,4 +26,14 @@ class GptServiceLocal {
       return GptMessage.fromJson(json);
     }
   }
+
+  Future<void> deleteAllGptTipFromHive(String email) async {
+    final box = await Hive.openBox(gptTipBoxKey);
+
+    final keys = box.keys.where((key) => key.startsWith(email)).toList();
+
+    for (final key in keys) {
+      await box.delete(key);
+    }
+  }
 }

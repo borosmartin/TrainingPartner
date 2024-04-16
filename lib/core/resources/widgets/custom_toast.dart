@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
-import 'package:training_partner/core/utils/text_util.dart';
 
 enum ToastType { success, error, warning }
 
@@ -27,7 +27,7 @@ class CustomToast extends StatelessWidget {
             Expanded(
               child: Text(
                 message,
-                style: TextUtil.getCustomTextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+                style: CustomTextStyle.getCustomTextStyle(color: Colors.white, fontWeight: FontWeight.w500),
               ),
             ),
           ],

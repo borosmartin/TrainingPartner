@@ -1,8 +1,8 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
+import 'package:training_partner/core/resources/widgets/cached_image.dart';
 import 'package:training_partner/core/resources/widgets/custom_divider.dart';
-import 'package:training_partner/core/resources/widgets/shimmer_container.dart';
 import 'package:training_partner/core/utils/text_util.dart';
 import 'package:training_partner/features/exercises/components/pages/exercise_detail_page.dart';
 import 'package:training_partner/features/exercises/models/movement.dart';
@@ -23,6 +23,7 @@ class MovementCard extends StatelessWidget {
         child: Card(
           elevation: 0,
           shape: defaultCornerShape,
+          color: Theme.of(context).cardColor,
           child: SizedBox(
             height: 110,
             child: Padding(
@@ -31,16 +32,7 @@ class MovementCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  CachedNetworkImage(
-                    imageUrl: movement.gifUrl,
-                    height: 90,
-                    width: 90,
-                    placeholder: (context, url) => const Padding(
-                      padding: EdgeInsets.only(left: 5),
-                      child: ShimmerContainer(height: 70, width: 70),
-                    ),
-                    errorWidget: (context, url, error) => const Icon(Icons.error, color: Colors.red),
-                  ),
+                  CachedImage(imageUrl: movement.gifUrl, height: 90, width: 90),
                   const SizedBox(width: 10),
                   const CustomDivider(isVertical: true),
                   const SizedBox(width: 10),
@@ -53,18 +45,21 @@ class MovementCard extends StatelessWidget {
                           movement.name,
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
-                          style: boldNormalBlack,
+                          style: CustomTextStyle.subtitlePrimary(context),
                         ),
-                        Text(TextUtil.firstLetterToUpperCase(movement.equipment), style: smallGrey),
+                        Text(TextUtil.firstLetterToUpperCase(movement.equipment), style: CustomTextStyle.bodySmallSecondary(context)),
                         if (isTargetVisible)
                           Text(
                             '${TextUtil.firstLetterToUpperCase(movement.bodyPart)} - ${TextUtil.firstLetterToUpperCase(movement.target)}',
-                            style: smallGrey,
+                            style: CustomTextStyle.bodySmallSecondary(context),
                           ),
                       ],
                     ),
                   ),
-                  const Icon(Icons.keyboard_arrow_right),
+                  const Icon(
+                    Icons.keyboard_arrow_right_rounded,
+                    size: 28,
+                  ),
                 ],
               ),
             ),

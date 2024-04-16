@@ -1,16 +1,17 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:training_partner/core/constants/component_constants.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/utils/date_time_util.dart';
 import 'package:training_partner/features/exercises/models/exercise.dart';
+import 'package:training_partner/features/settings/model/app_settings.dart';
 import 'package:training_partner/features/statistics/models/chart.dart';
 import 'package:training_partner/features/statistics/models/chart_options.dart';
 import 'package:training_partner/features/workout_editor/models/workout_session.dart';
 
-Widget getWorkoutChartYAxisValues(Chart chart, double chartValue) {
+Widget getWorkoutChartYAxisValues(Chart chart, double chartValue, WeightUnit weightUnit, TextStyle textStyle) {
   switch (chart.chartOptions.workoutValueOption) {
     case ChartWorkoutValueOption.amount:
-      return Text('${chartValue.toInt()}', style: smallGrey);
+      return Text('${chartValue.toInt()}', style: textStyle);
     case ChartWorkoutValueOption.duration:
       return Text(
           chartValue.toInt() == chartValue
@@ -18,21 +19,29 @@ Widget getWorkoutChartYAxisValues(Chart chart, double chartValue) {
               : chartValue.toInt() == 1
                   ? '${chartValue.toInt()} hr'
                   : '${chartValue.toStringAsFixed(1)} hrs',
-          style: smallGrey,
+          style: textStyle,
           textAlign: TextAlign.left);
     case ChartWorkoutValueOption.volume:
-      return Text('${chartValue.toInt()} kg', style: smallGrey);
+      if (weightUnit == WeightUnit.kg) {
+        return Text(chartValue.toInt() > 1000 ? '${chartValue.toInt() / 1000} t' : '${chartValue.toInt()} kg', style: textStyle);
+      } else {
+        return Text(chartValue.toInt() > 2240 ? '${chartValue.toInt() / 2240} ton' : '${chartValue.toInt() * 2.20462} lbs', style: textStyle);
+      }
   }
 }
 
-LineTooltipItem getWorkoutChartTooltip(Chart chart, LineBarSpot spot) {
+LineTooltipItem getWorkoutChartTooltip(BuildContext context, Chart chart, LineBarSpot spot, WeightUnit weightUnit) {
   switch (chart.chartOptions.workoutValueOption) {
     case ChartWorkoutValueOption.amount:
-      return LineTooltipItem('${spot.y.toInt()} workouts', smallWhite);
+      return LineTooltipItem('${spot.y.toInt()} workouts', CustomTextStyle.bodySmallTetriary(context));
     case ChartWorkoutValueOption.duration:
-      return LineTooltipItem(DateTimeUtil.secondsToTextTime((spot.y * 3600).toInt()), smallWhite);
+      return LineTooltipItem(DateTimeUtil.secondsToTextTime((spot.y * 3600).toInt()), CustomTextStyle.bodySmallTetriary(context));
     case ChartWorkoutValueOption.volume:
-      return LineTooltipItem('${spot.y.toInt()} kg', smallWhite);
+      if (weightUnit == WeightUnit.kg) {
+        return LineTooltipItem('${spot.y.toInt()} kg', CustomTextStyle.bodySmallTetriary(context));
+      } else {
+        return LineTooltipItem('${spot.y.toInt() * 2.20462} lbs', CustomTextStyle.bodySmallTetriary(context));
+      }
   }
 }
 
@@ -74,7 +83,7 @@ List<FlSpot> getWorkoutChartSpots(Chart chart, List<WorkoutSession> previousSess
 
 List<FlSpot> _getLastWeekAmount(List<WorkoutSession> previousSessions) {
   List<FlSpot> chartSpots = [];
-  double xAxisPosition = 0;
+  double xAxisPosition = 6;
 
   for (var date in DateTimeUtil.getLastWeek()) {
     int workoutCount = 0;
@@ -86,7 +95,7 @@ List<FlSpot> _getLastWeekAmount(List<WorkoutSession> previousSessions) {
     }
 
     chartSpots.add(FlSpot(xAxisPosition, workoutCount.toDouble()));
-    xAxisPosition += 1;
+    xAxisPosition -= 1;
   }
 
   return chartSpots;
@@ -147,7 +156,7 @@ List<FlSpot> _getLastYearAmount(List<WorkoutSession> previousSessions) {
 
 List<FlSpot> _getLastWeekDuration(List<WorkoutSession> previousSessions) {
   List<FlSpot> chartSpots = [];
-  double xAxisPosition = 0;
+  double xAxisPosition = 6;
 
   for (var date in DateTimeUtil.getLastWeek()) {
     num totalDuration = 0;
@@ -159,7 +168,7 @@ List<FlSpot> _getLastWeekDuration(List<WorkoutSession> previousSessions) {
     }
 
     chartSpots.add(FlSpot(xAxisPosition, totalDuration / 3600));
-    xAxisPosition += 1;
+    xAxisPosition -= 1;
   }
 
   return chartSpots;
@@ -238,7 +247,7 @@ List<FlSpot> _getLastWeekVolume(List<WorkoutSession> previousSessions) {
     }
 
     chartSpots.add(FlSpot(xAxisPosition, totalVolume.toDouble()));
-    xAxisPosition += 1;
+    xAxisPosition -= 1;
   }
 
   return chartSpots;

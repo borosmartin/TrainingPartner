@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
 
 class CustomSearchBar extends StatelessWidget {
@@ -26,7 +27,7 @@ class CustomSearchBar extends StatelessWidget {
     return TextField(
       controller: textController,
       onChanged: onChanged,
-      style: textStyle ?? smallGrey,
+      style: textStyle ?? CustomTextStyle.bodySmallSecondary(context),
       cursorColor: Theme.of(context).colorScheme.tertiary,
       decoration: InputDecoration(
         prefixIcon: Icon(Icons.search, color: iconColor ?? Colors.black45),
@@ -42,7 +43,7 @@ class CustomSearchBar extends StatelessWidget {
         filled: true,
         fillColor: backgroundColor ?? Colors.grey.shade200,
         hintText: hintText,
-        hintStyle: hintStyle ?? smallGrey,
+        hintStyle: hintStyle ?? CustomTextStyle.bodySmallSecondary(context),
         contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
         border: const OutlineInputBorder(
           borderRadius: defaultBorderRadius,

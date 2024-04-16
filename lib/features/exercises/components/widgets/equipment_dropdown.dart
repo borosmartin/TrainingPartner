@@ -1,5 +1,6 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
 
 // todo misc a sok fölöslegesnek, pl medicin labda
@@ -32,12 +33,12 @@ class EquipmentDropdown extends StatelessWidget {
         children: [
           Icon(Icons.fitness_center, color: iconColor ?? Colors.black45),
           const SizedBox(width: 10),
-          Text(label, style: smallGrey),
+          Text(label, style: CustomTextStyle.bodySmallSecondary(context)),
         ],
       ),
       decoration: CustomDropdownDecoration(
-        listItemStyle: smallGrey,
-        headerStyle: smallGrey,
+        listItemStyle: CustomTextStyle.bodySmallSecondary(context),
+        headerStyle: CustomTextStyle.bodySmallSecondary(context),
         closedBorderRadius: defaultBorderRadius,
         expandedBorderRadius: defaultBorderRadius,
         expandedFillColor: backgroundColor ?? Colors.grey.shade200,

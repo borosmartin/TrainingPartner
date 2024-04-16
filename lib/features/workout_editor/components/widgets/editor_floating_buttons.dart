@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
 import 'package:training_partner/features/workout_editor/models/workout_session.dart';
 
@@ -28,17 +29,17 @@ class EditorFloatingButtons extends StatelessWidget {
             onPressed: onRemoveTap,
             elevation: 1,
             tooltip: 'Remove session',
-            child: const Icon(Icons.delete_outline_rounded, color: Colors.white, size: 35),
+            child: const Icon(PhosphorIconsBold.trash, color: Colors.white, size: 30),
           ),
         const SizedBox(height: 15),
         FloatingActionButton(
           heroTag: 'addSession',
           shape: defaultCornerShape,
-          backgroundColor: Theme.of(context).colorScheme.tertiary,
+          backgroundColor: accentColor,
           onPressed: onAddTap,
           elevation: 1,
           tooltip: 'Add new session',
-          child: const Icon(Icons.post_add_rounded, color: Colors.white, size: 35),
+          child: const Icon(Icons.add, color: Colors.white, size: 35),
         ),
       ],
     );

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:iconsax/iconsax.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
 import 'package:training_partner/features/statistics/models/chart.dart';
+
+import '../../../../config/theme/custom_text_theme.dart';
 
 class ChartCreatorTypeBody extends StatefulWidget {
   final Function(ChartBuilderChartType? type) onChartTypeSelected;
@@ -24,7 +26,7 @@ class _ChartCreatorTypeBodyState extends State<ChartCreatorTypeBody> {
           index: 0,
           name: 'Workout',
           type: ChartBuilderChartType.workout,
-          iconData: Iconsax.note_215,
+          iconData: PhosphorIconsBold.barbell,
         ),
         const SizedBox(width: 10),
         _getItem(
@@ -38,7 +40,7 @@ class _ChartCreatorTypeBodyState extends State<ChartCreatorTypeBody> {
           index: 2,
           name: 'Muscle',
           type: ChartBuilderChartType.muscle,
-          iconData: Iconsax.weight_15,
+          iconData: PhosphorIconsBold.target,
         ),
       ],
     );
@@ -61,17 +63,15 @@ class _ChartCreatorTypeBodyState extends State<ChartCreatorTypeBody> {
         child: Card(
           elevation: 0,
           margin: EdgeInsets.zero,
-          shape: RoundedRectangleBorder(
-            borderRadius: defaultBorderRadius,
-            side: BorderSide(color: selectedIndex == index ? Theme.of(context).colorScheme.tertiary : Colors.transparent, width: 2.5),
-          ),
+          color: selectedIndex == index ? accentColor : Theme.of(context).cardColor,
+          shape: const RoundedRectangleBorder(borderRadius: defaultBorderRadius),
           child: Padding(
             padding: const EdgeInsets.all(10),
             child: Column(
               children: [
-                Icon(iconData, size: 30, color: selectedIndex == index ? Theme.of(context).colorScheme.tertiary : Colors.black),
+                Icon(iconData, size: 30, color: selectedIndex == index ? Colors.white : Theme.of(context).colorScheme.tertiary),
                 const SizedBox(height: 10),
-                Text(name, style: selectedIndex == index ? boldNormalAccent : boldNormalGrey),
+                Text(name, style: selectedIndex == index ? CustomTextStyle.bodyTetriary(context) : CustomTextStyle.bodyPrimary(context)),
               ],
             ),
           ),

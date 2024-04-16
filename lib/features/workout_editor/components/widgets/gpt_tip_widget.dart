@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:marquee/marquee.dart';
-import 'package:training_partner/core/constants/component_constants.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/resources/open_ai/gpt_cubit.dart';
 import 'package:training_partner/core/resources/open_ai/gpt_state.dart';
 import 'package:training_partner/generated/assets.dart';
@@ -65,7 +65,7 @@ class _GptTipWidgetState extends State<GptTipWidget> {
                 blendMode: BlendMode.dstIn,
                 child: Marquee(
                   text: processText(state.message.content),
-                  style: smallWhite,
+                  style: CustomTextStyle.bodySmallTetriary(context),
                   scrollAxis: Axis.horizontal,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   blankSpace: 20.0,
@@ -81,7 +81,7 @@ class _GptTipWidgetState extends State<GptTipWidget> {
             ),
           );
         } else if (state is GptResponseError) {
-          return Text(state.message, style: smallWhite);
+          return Text(state.message, style: CustomTextStyle.bodySmallSecondary(context));
         }
 
         throw Exception('Unknown state: $state');

@@ -3,9 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:iconsax/iconsax.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
 import 'package:training_partner/core/globals/component_functions.dart';
+import 'package:training_partner/core/resources/widgets/colored_safe_area_body.dart';
 import 'package:training_partner/core/resources/widgets/custom_back_button.dart';
 import 'package:training_partner/core/resources/widgets/custom_button.dart';
 import 'package:training_partner/core/resources/widgets/custom_input_field.dart';
@@ -14,6 +16,7 @@ import 'package:training_partner/core/resources/widgets/custom_toast.dart';
 import 'package:training_partner/core/utils/date_time_util.dart';
 import 'package:training_partner/features/exercises/models/exercise.dart';
 import 'package:training_partner/features/exercises/models/movement.dart';
+import 'package:training_partner/features/settings/model/app_settings.dart';
 import 'package:training_partner/features/workout/components/widgets/time_line_widget.dart';
 import 'package:training_partner/features/workout/components/widgets/workout_exercise_body.dart';
 import 'package:training_partner/features/workout/logic/cubits/workout_cubit.dart';
@@ -23,12 +26,14 @@ class WorkoutPage extends StatefulWidget {
   final WorkoutSession session;
   final WorkoutSession? previousSession;
   final List<Movement> movements;
+  final AppSettings settings;
 
   const WorkoutPage({
     super.key,
     required this.session,
     this.previousSession,
     required this.movements,
+    required this.settings,
   });
 
   @override
@@ -53,17 +58,18 @@ class _WorkoutPageState extends State<WorkoutPage> {
     super.initState();
     _pageController = PageController(initialPage: _currentPageIndex);
 
-    colorSafeArea(color: Colors.white);
     _startTimer();
     _fillEmptyFields();
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.background,
-        body: _getBodyContent(),
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
+      body: ColoredSafeAreaBody(
+        safeAreaColor: Theme.of(context).cardColor,
+        isLightTheme: Theme.of(context).brightness == Brightness.light,
+        child: _getBodyContent(),
       ),
     );
   }
@@ -90,6 +96,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                   session.exercises[_currentPageIndex] = updated;
                 },
                 movements: widget.movements,
+                settings: widget.settings,
               );
             },
             onPageChanged: (int index) {
@@ -112,7 +119,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                 if (errors.isNotEmpty) _getErrorWidget(errors),
                 Flexible(
                   child: CustomTitleButton(
-                    icon: Iconsax.medal_star5,
+                    icon: PhosphorIconsFill.trophy,
                     label: 'Finish Workout',
                     isEnabled: errors.isEmpty,
                     onTap: () {
@@ -122,7 +129,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                         sessionWithDuration = sessionWithDuration.copyWith(date: DateTimeUtil.TESTstringToDate(dateController.text));
                       }
 
-                      context.read<WorkoutCubit>().saveWorkoutSession(sessionWithDuration);
+                      context.read<WorkoutCubit>().completeWorkoutSession(sessionWithDuration);
 
                       Navigator.pop(context);
                     },
@@ -137,9 +144,9 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
   Widget _getHeaderWidget() {
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(20),
           bottomRight: Radius.circular(20),
         ),
@@ -151,8 +158,8 @@ class _WorkoutPageState extends State<WorkoutPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                CustomBackButton(dialog: _getBackDialog()),
-                Text(DateTimeUtil.secondsToDigitalFormat(_seconds), style: boldLargeBlack),
+                CustomBackButton(dialog: _getBackDialog(), context: context),
+                Text(DateTimeUtil.secondsToDigitalFormat(_seconds), style: CustomTextStyle.titlePrimary(context)),
                 const Icon(FontAwesomeIcons.bullseye, color: Colors.transparent, size: 43),
               ],
             ),
@@ -174,7 +181,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
     );
   }
 
-  // todo kicsit szépíteni
   Widget _getBackDialog() {
     return Dialog(
       elevation: 0,
@@ -184,20 +190,20 @@ class _WorkoutPageState extends State<WorkoutPage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Row(
+            Row(
               children: [
-                Icon(Icons.warning_rounded),
-                SizedBox(width: 5),
-                Text('Warning', style: boldNormalBlack),
+                const Icon(Icons.warning_rounded),
+                const SizedBox(width: 5),
+                Text('Warning', style: CustomTextStyle.subtitlePrimary(context)),
               ],
             ),
-            const Text('Are you sure you want to cancel the current workout?', style: normalGrey),
-            const SizedBox(height: 15),
+            Text('Are you sure you want to cancel the current workout?', style: CustomTextStyle.bodySecondary(context)),
+            const SizedBox(height: 20),
             Row(
               children: [
                 CustomButton(
                   label: 'No',
-                  isOutlined: true,
+                  isSecondary: true,
                   onTap: () => Navigator.pop(context),
                 ),
                 const Spacer(),

@@ -1,10 +1,11 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
-import 'package:training_partner/core/resources/widgets/shimmer_container.dart';
+import 'package:training_partner/core/resources/widgets/cached_image.dart';
 import 'package:training_partner/core/utils/text_util.dart';
 import 'package:training_partner/features/exercises/models/exercise.dart';
 import 'package:training_partner/features/exercises/models/movement.dart';
+import 'package:training_partner/features/settings/model/app_settings.dart';
 
 class JournalExerciseCard extends StatelessWidget {
   final Exercise exercise;
@@ -13,6 +14,7 @@ class JournalExerciseCard extends StatelessWidget {
   final bool isLast;
   final int index;
   final List<Movement> movements;
+  final AppSettings settings;
 
   const JournalExerciseCard({
     super.key,
@@ -22,22 +24,23 @@ class JournalExerciseCard extends StatelessWidget {
     required this.isLast,
     required this.index,
     required this.movements,
+    required this.settings,
   });
 
-  // todo csak egy elem van a listába, akkor all corner 10: const BoxDecoration(color: Colors.white, borderRadius: defaultBorderRadius)
   @override
   Widget build(BuildContext context) {
-    var width = (MediaQuery.of(context).size.width - 110) / 3;
+    var size = (MediaQuery.of(context).size.width - 110) / 3;
+
     return Container(
       decoration: isLast
-          ? const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
+          ? BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(10),
                 bottomRight: Radius.circular(10),
               ),
             )
-          : const BoxDecoration(color: Colors.white),
+          : BoxDecoration(color: Theme.of(context).cardColor),
       child: Material(
         color: Colors.transparent,
         child: Padding(
@@ -47,25 +50,17 @@ class JournalExerciseCard extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 5),
-                child: Text(exercise.movement.name, style: normalBlack, overflow: TextOverflow.ellipsis),
+                child: Text(exercise.movement.name, style: CustomTextStyle.bodyPrimary(context), overflow: TextOverflow.ellipsis),
               ),
               const SizedBox(height: 10),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: previousExercise == null ? MainAxisAlignment.start : MainAxisAlignment.spaceAround,
                 children: [
-                  CachedNetworkImage(
+                  CachedImage(
                     imageUrl: movements.firstWhere((movement) => movement.id == exercise.movement.id).gifUrl,
-                    height: width,
-                    width: width,
-                    imageBuilder: (context, imageProvider) => Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(image: imageProvider, fit: BoxFit.contain),
-                        borderRadius: defaultBorderRadius,
-                      ),
-                    ),
-                    placeholder: (context, url) => const ShimmerContainer(height: 100, width: 100),
-                    errorWidget: (context, url, error) => const Icon(Icons.error, color: Colors.red),
+                    height: size,
+                    width: size,
                   ),
                   if (previousExercise != null) _getWorkoutSetList(context, isPreviousExercise: true),
                   _getWorkoutSetList(context, isPreviousExercise: false),
@@ -81,8 +76,8 @@ class JournalExerciseCard extends StatelessWidget {
   Widget _getWorkoutSetList(BuildContext context, {bool isPreviousExercise = false}) {
     var width = (MediaQuery.of(context).size.width - 100) / 3;
     Exercise widgetExercise = isPreviousExercise ? previousExercise! : exercise;
-    Color cardColor = isPreviousExercise ? Colors.grey.shade200 : chartColors[index % chartColors.length];
-    TextStyle textColor = isPreviousExercise ? smallGrey : smallWhite;
+    Color cardColor = isPreviousExercise ? Theme.of(context).colorScheme.secondary : chartColors[index % chartColors.length];
+    TextStyle textColor = isPreviousExercise ? CustomTextStyle.bodySmallTetriary(context) : CustomTextStyle.bodySmallTetriary(context);
 
     Widget child = Container();
 
@@ -93,7 +88,12 @@ class JournalExerciseCard extends StatelessWidget {
       case ExerciseType.repetitions:
         for (var set in widgetExercise.workoutSets) {
           sets.add(Text(TextUtil.numToString(set.repetitions!), style: textColor));
-          reps.add(Text('${TextUtil.numToString(set.weight!)} kg', style: textColor));
+          reps.add(
+            Text(
+              TextUtil.getWeightStringWithUnit(weight: set.weight!, setUnit: set.weightUnit!, settingsUnit: settings.weightUnit),
+              style: textColor,
+            ),
+          );
         }
 
         child = SizedBox(
@@ -125,13 +125,20 @@ class JournalExerciseCard extends StatelessWidget {
         break;
 
       case ExerciseType.distance:
+        var set = widgetExercise.workoutSets.first;
         child = SizedBox(
           height: width,
           width: width,
           child: Center(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              child: Text('${TextUtil.numToString(widgetExercise.workoutSets.first.distance!)} km', style: textColor),
+              child: Text(
+                  TextUtil.getDistanceStringWithUnit(
+                    distance: set.distance!,
+                    setUnit: set.distanceUnit!,
+                    settingsUnit: settings.distanceUnit,
+                  ),
+                  style: textColor),
             ),
           ),
         );

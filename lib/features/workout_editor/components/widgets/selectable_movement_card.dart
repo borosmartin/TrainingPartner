@@ -1,7 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
-import 'package:training_partner/core/resources/widgets/shimmer_container.dart';
+import 'package:training_partner/core/resources/widgets/cached_image.dart';
 import 'package:training_partner/core/utils/text_util.dart';
 import 'package:training_partner/features/exercises/models/movement.dart';
 
@@ -26,7 +26,7 @@ class _SelectableMovementCardState extends State<SelectableMovementCard> {
   Widget build(BuildContext context) {
     return Card(
       elevation: 0,
-      color: widget.isSelected ? Theme.of(context).colorScheme.tertiary : Colors.white,
+      color: widget.isSelected ? accentColor : Theme.of(context).cardColor,
       shape: defaultCornerShape,
       child: InkWell(
         onTap: () => widget.onSelect(!widget.isSelected),
@@ -37,22 +37,7 @@ class _SelectableMovementCardState extends State<SelectableMovementCard> {
             mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              CachedNetworkImage(
-                imageUrl: widget.movement.gifUrl,
-                height: 70,
-                width: 70,
-                imageBuilder: (context, imageProvider) => Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(image: imageProvider, fit: BoxFit.contain),
-                    borderRadius: defaultBorderRadius,
-                  ),
-                ),
-                placeholder: (context, url) => const Padding(
-                  padding: EdgeInsets.only(left: 5),
-                  child: ShimmerContainer(height: 70, width: 70),
-                ),
-                errorWidget: (context, url, error) => const Icon(Icons.error, color: Colors.red),
-              ),
+              CachedImage(imageUrl: widget.movement.gifUrl, height: 70, width: 70),
               const SizedBox(width: 20),
               Expanded(
                 child: Column(
@@ -61,11 +46,11 @@ class _SelectableMovementCardState extends State<SelectableMovementCard> {
                   children: [
                     Text(
                       widget.movement.name,
-                      style: widget.isSelected ? boldNormalWhite : boldNormalBlack,
+                      style: widget.isSelected ? CustomTextStyle.subtitleTetriary(context) : CustomTextStyle.subtitlePrimary(context),
                     ),
                     Text(
                       TextUtil.firstLetterToUpperCase(widget.movement.equipment),
-                      style: widget.isSelected ? smallWhite : smallGrey,
+                      style: widget.isSelected ? CustomTextStyle.bodySmallTetriary(context) : CustomTextStyle.bodySmallSecondary(context),
                     ),
                   ],
                 ),

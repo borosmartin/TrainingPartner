@@ -1,13 +1,15 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
+import 'package:training_partner/core/resources/widgets/cached_image.dart';
 import 'package:training_partner/core/resources/widgets/custom_title_button.dart';
-import 'package:training_partner/core/resources/widgets/shimmer_container.dart';
 import 'package:training_partner/core/utils/text_util.dart';
 import 'package:training_partner/features/exercises/models/exercise.dart';
 import 'package:training_partner/features/exercises/models/movement.dart';
 import 'package:training_partner/features/exercises/models/workout_set.dart';
+import 'package:training_partner/features/settings/model/app_settings.dart';
 import 'package:training_partner/features/workout/components/pages/workout_page.dart';
 import 'package:training_partner/features/workout_editor/models/workout_session.dart';
 
@@ -16,6 +18,7 @@ class WorkoutStartBottomSheet extends StatefulWidget {
   final List<WorkoutSession> previousSessions;
   final String workoutPlanName;
   final List<Movement> movements;
+  final AppSettings settings;
 
   const WorkoutStartBottomSheet({
     super.key,
@@ -23,6 +26,7 @@ class WorkoutStartBottomSheet extends StatefulWidget {
     required this.previousSessions,
     required this.workoutPlanName,
     required this.movements,
+    required this.settings,
   });
 
   @override
@@ -39,10 +43,10 @@ class _WorkoutStartBottomSheetState extends State<WorkoutStartBottomSheet> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Card(
+          Card(
             elevation: 0,
-            color: Colors.black26,
-            child: SizedBox(height: 5, width: 80),
+            color: Theme.of(context).colorScheme.secondary,
+            child: const SizedBox(height: 5, width: 80),
           ),
           const SizedBox(height: 10),
           Row(
@@ -54,15 +58,15 @@ class _WorkoutStartBottomSheetState extends State<WorkoutStartBottomSheet> {
                     children: [
                       const Icon(Iconsax.flash_15),
                       const SizedBox(width: 8),
-                      Text(workoutSession.name, style: boldLargeBlack),
+                      Text(workoutSession.name, style: CustomTextStyle.titlePrimary(context)),
                     ],
                   ),
                   const SizedBox(height: 3),
                   Row(
                     children: [
-                      const Icon(Iconsax.note_215, color: Colors.black38),
+                      Icon(PhosphorIconsBold.barbell, color: Theme.of(context).colorScheme.secondary),
                       const SizedBox(width: 8),
-                      Text(widget.workoutPlanName, style: normalGrey),
+                      Text(widget.workoutPlanName, style: CustomTextStyle.bodySecondary(context)),
                     ],
                   ),
                 ],
@@ -70,13 +74,15 @@ class _WorkoutStartBottomSheetState extends State<WorkoutStartBottomSheet> {
               const Spacer(),
               IconButton(
                 onPressed: () => Navigator.of(context).pop(),
-                icon: const Icon(Iconsax.close_circle5, size: 30, color: Colors.black38),
+                icon: Icon(PhosphorIconsFill.xCircle, size: 30, color: Theme.of(context).colorScheme.secondary),
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 15),
+          _getExerciseCards(),
+          const SizedBox(height: 15),
           CustomTitleButton(
-            icon: Iconsax.play5,
+            icon: PhosphorIconsBold.playCircle,
             label: 'Start workout',
             onTap: () {
               Navigator.of(context).pop();
@@ -86,13 +92,12 @@ class _WorkoutStartBottomSheetState extends State<WorkoutStartBottomSheet> {
                     session: workoutSession,
                     previousSession: _getPreviousSession(widget.previousSessions, workoutSession),
                     movements: widget.movements,
+                    settings: widget.settings,
                   ),
                 ),
               );
             },
           ),
-          const SizedBox(height: 15),
-          _getExerciseCards(),
         ],
       ),
     );
@@ -123,32 +128,33 @@ class _WorkoutStartBottomSheetState extends State<WorkoutStartBottomSheet> {
             ? '${TextUtil.firstLetterToUpperCase(exercise.movement.equipment)}'
                 '  -  ${exercise.workoutSets.first.duration} min'
             : exercise.workoutSets.first.distance != null
-                ? '${TextUtil.firstLetterToUpperCase(exercise.movement.equipment)}'
-                    '  -  ${exercise.workoutSets.first.distance} km'
+                ? widget.settings.distanceUnit == DistanceUnit.km
+                    ? '${TextUtil.firstLetterToUpperCase(exercise.movement.equipment)}'
+                        '  -  ${exercise.workoutSets.first.distance} km'
+                    : '${TextUtil.firstLetterToUpperCase(exercise.movement.equipment)}'
+                        '  -  ${exercise.workoutSets.first.distance} miles'
                 : ''
         : '${TextUtil.firstLetterToUpperCase(exercise.movement.equipment)}'
             '  -  ${exercise.workoutSets.length} x ${_getExerciseRepCount(exercise)} reps';
 
     return Container(
       decoration: isFirst && isLast
-          ? const BoxDecoration(color: Colors.white, borderRadius: defaultBorderRadius)
+          ? BoxDecoration(color: Theme.of(context).cardColor, borderRadius: defaultBorderRadius)
           : isFirst
-              ? const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
+              ? BoxDecoration(
+                  color: Theme.of(context).cardColor,
+                  borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(10),
                     topRight: Radius.circular(10),
                   ))
               : isLast
-                  ? const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
+                  ? BoxDecoration(
+                      color: Theme.of(context).cardColor,
+                      borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(10),
                         bottomRight: Radius.circular(10),
                       ))
-                  : const BoxDecoration(
-                      color: Colors.white,
-                    ),
+                  : BoxDecoration(color: Theme.of(context).cardColor),
       child: Material(
         color: Colors.transparent,
         child: Padding(
@@ -159,21 +165,10 @@ class _WorkoutStartBottomSheetState extends State<WorkoutStartBottomSheet> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  CachedNetworkImage(
-                    imageUrl: widget.movements.firstWhere((movement) => movement.id == exercise.movement.id).gifUrl,
+                  CachedImage(
                     height: 80,
                     width: 80,
-                    imageBuilder: (context, imageProvider) => Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(image: imageProvider, fit: BoxFit.contain),
-                        borderRadius: defaultBorderRadius,
-                      ),
-                    ),
-                    placeholder: (context, url) => const Padding(
-                      padding: EdgeInsets.only(left: 5),
-                      child: ShimmerContainer(height: 80, width: 80),
-                    ),
-                    errorWidget: (context, url, error) => const Icon(Icons.error, color: Colors.red),
+                    imageUrl: widget.movements.firstWhere((movement) => movement.id == exercise.movement.id).gifUrl,
                   ),
                   const SizedBox(width: 25),
                   Expanded(
@@ -186,8 +181,8 @@ class _WorkoutStartBottomSheetState extends State<WorkoutStartBottomSheet> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(exercise.movement.name, style: boldNormalBlack),
-                                  Text(subtitle, style: normalGrey),
+                                  Text(exercise.movement.name, style: CustomTextStyle.subtitlePrimary(context)),
+                                  Text(subtitle, style: CustomTextStyle.bodySecondary(context)),
                                   const SizedBox(height: 5),
                                 ],
                               ),

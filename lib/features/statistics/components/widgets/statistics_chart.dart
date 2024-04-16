@@ -2,10 +2,12 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:iconsax/iconsax.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
 import 'package:training_partner/core/utils/text_util.dart';
 import 'package:training_partner/features/exercises/models/movement.dart';
+import 'package:training_partner/features/settings/model/app_settings.dart';
 import 'package:training_partner/features/statistics/logic/cubits/statistics_cubit.dart';
 import 'package:training_partner/features/statistics/models/chart.dart';
 import 'package:training_partner/features/statistics/models/chart_min_max_values.dart';
@@ -14,11 +16,12 @@ import 'package:training_partner/features/statistics/models/exericse_muscle_char
 import 'package:training_partner/features/statistics/models/workout_chart.dart';
 import 'package:training_partner/features/workout_editor/models/workout_session.dart';
 
-class StatisticsChart extends StatelessWidget {
+class StatisticsChart extends StatefulWidget {
   final Chart chart;
   final int index;
   final List<WorkoutSession> previousSessions;
   final List<Movement> movements;
+  final AppSettings settings;
 
   const StatisticsChart({
     super.key,
@@ -26,8 +29,14 @@ class StatisticsChart extends StatelessWidget {
     required this.previousSessions,
     required this.movements,
     required this.index,
+    required this.settings,
   });
 
+  @override
+  State<StatisticsChart> createState() => _StatisticsChartState();
+}
+
+class _StatisticsChartState extends State<StatisticsChart> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -36,12 +45,13 @@ class StatisticsChart extends StatelessWidget {
           elevation: 0,
           margin: EdgeInsets.zero,
           shape: defaultCornerShape,
+          color: Theme.of(context).cardColor,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _getChartHeader(context),
-              _getChart(),
+              _getChart(context),
             ],
           ),
         ),
@@ -51,25 +61,24 @@ class StatisticsChart extends StatelessWidget {
   }
 
   Widget _getChartHeader(BuildContext context) {
-    var icon = chart.type == ChartBuilderChartType.workout
-        ? const Icon(Iconsax.note_215, color: Colors.white)
-        : chart.type == ChartBuilderChartType.muscle
-            ? const Padding(
-                padding: EdgeInsets.only(right: 5),
-                child: Icon(FontAwesomeIcons.dumbbell, size: 19, color: Colors.white),
-              )
-            : chart.type == ChartBuilderChartType.exercise
-                ? const Icon(FontAwesomeIcons.personRunning, color: Colors.white)
-                : const Icon(FontAwesomeIcons.dumbbell, color: Colors.white);
+    late Widget icon;
+
+    if (widget.chart.type == ChartBuilderChartType.workout) {
+      icon = const Icon(PhosphorIconsFill.barbell, color: Colors.white);
+    } else if (widget.chart.type == ChartBuilderChartType.muscle) {
+      icon = const Icon(PhosphorIconsBold.target, color: Colors.white);
+    } else if (widget.chart.type == ChartBuilderChartType.exercise) {
+      icon = const Icon(FontAwesomeIcons.personRunning, color: Colors.white);
+    }
 
     String title = '';
     String subtitle = '';
     String valueOption = '';
     String calculationOption = '';
 
-    if (chart.type == ChartBuilderChartType.workout) {
+    if (widget.chart.type == ChartBuilderChartType.workout) {
       title = 'Workout';
-      switch (chart.chartOptions.workoutValueOption) {
+      switch (widget.chart.chartOptions.workoutValueOption) {
         case ChartWorkoutValueOption.amount:
           valueOption = ' (Amount)';
           break;
@@ -80,12 +89,12 @@ class StatisticsChart extends StatelessWidget {
           valueOption = ' (Volume)';
           break;
       }
-    } else if (chart.type == ChartBuilderChartType.exercise) {
-      String exercise = movements.firstWhere((element) => element.id == chart.exerciseId).name;
+    } else if (widget.chart.type == ChartBuilderChartType.exercise) {
+      String exercise = widget.movements.firstWhere((element) => element.id == widget.chart.exerciseId).name;
 
       title = 'Exercise';
       subtitle = TextUtil.firstLetterToUpperCase(exercise);
-      switch (chart.chartOptions.muscleExerciseValueOption) {
+      switch (widget.chart.chartOptions.muscleExerciseValueOption) {
         case ChartMuscleExerciseValueOption.repetitions:
           valueOption = ' (Repetitions)';
           break;
@@ -95,12 +104,12 @@ class StatisticsChart extends StatelessWidget {
         case ChartMuscleExerciseValueOption.weight:
           valueOption = ' (Weight)';
       }
-    } else if (chart.type == ChartBuilderChartType.muscle) {
-      String muscle = movements.firstWhere((element) => element.target.toLowerCase() == chart.muscleTarget!.toLowerCase()).target;
+    } else if (widget.chart.type == ChartBuilderChartType.muscle) {
+      String muscle = widget.movements.firstWhere((element) => element.target.toLowerCase() == widget.chart.muscleTarget!.toLowerCase()).target;
 
       title = 'Muscle';
       subtitle = TextUtil.firstLetterToUpperCase(muscle);
-      switch (chart.chartOptions.muscleExerciseValueOption) {
+      switch (widget.chart.chartOptions.muscleExerciseValueOption) {
         case ChartMuscleExerciseValueOption.repetitions:
           valueOption = ' (Repetitions)';
           break;
@@ -112,7 +121,7 @@ class StatisticsChart extends StatelessWidget {
       }
     }
 
-    if (chart.chartOptions.calculationOption == ChartCalculationOption.average) {
+    if (widget.chart.chartOptions.calculationOption == ChartCalculationOption.average) {
       calculationOption = 'Average';
     } else {
       calculationOption = 'Best set';
@@ -120,10 +129,10 @@ class StatisticsChart extends StatelessWidget {
 
     return Material(
       borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-      color: chartColors[index % chartColors.length],
+      color: chartColors[widget.index % chartColors.length],
       child: InkWell(
         borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-        onTap: () => context.read<StatisticsCubit>().deleteChart(chart),
+        onTap: () => context.read<StatisticsCubit>().deleteChart(widget.chart),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
           child: Row(
@@ -137,22 +146,23 @@ class StatisticsChart extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Text(title, style: boldNormalWhite, overflow: TextOverflow.ellipsis),
+                        Text(title, style: CustomTextStyle.subtitleTetriary(context), overflow: TextOverflow.ellipsis),
                         const SizedBox(width: 2),
-                        Text(valueOption, style: smallWhite),
+                        Text(valueOption, style: CustomTextStyle.bodySmallTetriary(context)),
                         const Spacer(),
-                        Text(chart.chartOptions.progressOptionString, style: normalWhite),
+                        Text(widget.chart.chartOptions.progressOptionString, style: CustomTextStyle.bodyTetriary(context)),
                       ],
                     ),
-                    Row(
-                      children: [
-                        Text(subtitle, style: smallWhite, overflow: TextOverflow.ellipsis),
-                        const Spacer(),
-                        if (chart.type != ChartBuilderChartType.workout &&
-                            chart.chartOptions.muscleExerciseValueOption != ChartMuscleExerciseValueOption.volume)
-                          Text(calculationOption, style: smallWhite),
-                      ],
-                    ),
+                    if (subtitle.isNotEmpty)
+                      Row(
+                        children: [
+                          Text(subtitle, style: CustomTextStyle.bodySmallTetriary(context), overflow: TextOverflow.ellipsis),
+                          const Spacer(),
+                          if (widget.chart.type != ChartBuilderChartType.workout &&
+                              widget.chart.chartOptions.muscleExerciseValueOption != ChartMuscleExerciseValueOption.volume)
+                            Text(calculationOption, style: CustomTextStyle.bodySmallTetriary(context)),
+                        ],
+                      ),
                   ],
                 ),
               ),
@@ -166,8 +176,15 @@ class StatisticsChart extends StatelessWidget {
   Widget _getChartXAxisValues(double value, TitleMeta meta) {
     Widget bottomTitle = const Text('');
     DateTime now = DateTime.now();
+    late TextStyle style;
 
-    switch (chart.chartOptions.progressOption) {
+    if (Theme.of(context).brightness == Brightness.dark) {
+      style = CustomTextStyle.getCustomTextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w600);
+    } else {
+      style = CustomTextStyle.getCustomTextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w600);
+    }
+
+    switch (widget.chart.chartOptions.progressOption) {
       case ChartProgressOption.lastWeek:
         int currentWeekday = now.weekday;
         int currentDayIndex = (currentWeekday + 7) % 7;
@@ -176,43 +193,43 @@ class StatisticsChart extends StatelessWidget {
 
         switch (dayIndex) {
           case 1:
-            bottomTitle = const Text('Mon', style: smallGrey);
+            bottomTitle = Text('Mon', style: style);
             break;
           case 2:
-            bottomTitle = const Text('Tue', style: smallGrey);
+            bottomTitle = Text('Tue', style: style);
             break;
           case 3:
-            bottomTitle = const Text('Wed', style: smallGrey);
+            bottomTitle = Text('Wed', style: style);
             break;
           case 4:
-            bottomTitle = const Text('Thu', style: smallGrey);
+            bottomTitle = Text('Thu', style: style);
             break;
           case 5:
-            bottomTitle = const Text('Fri', style: smallGrey);
+            bottomTitle = Text('Fri', style: style);
             break;
           case 6:
-            bottomTitle = const Text('Sat', style: smallGrey);
+            bottomTitle = Text('Sat', style: style);
             break;
           case 0:
-            bottomTitle = const Text('Sun', style: smallGrey);
+            bottomTitle = Text('Sun', style: style);
             break;
         }
 
       case ChartProgressOption.lastMonth:
         switch (value.toInt()) {
           case 1:
-            bottomTitle = const Text('Week 1', style: smallGrey);
+            bottomTitle = Text('Week 1', style: style);
             break;
           case 2:
-            bottomTitle = const Text('Week 2', style: smallGrey);
+            bottomTitle = Text('Week 2', style: style);
             break;
           case 3:
-            bottomTitle = const Text('Week 3', style: smallGrey);
+            bottomTitle = Text('Week 3', style: style);
             break;
           case 4:
-            bottomTitle = const Padding(
-              padding: EdgeInsets.only(right: 25),
-              child: Text('Week 4', style: smallGrey),
+            bottomTitle = Padding(
+              padding: const EdgeInsets.only(right: 25),
+              child: Text('Week 4', style: CustomTextStyle.bodySmallTetriary(context)),
             );
             break;
         }
@@ -223,75 +240,75 @@ class StatisticsChart extends StatelessWidget {
 
         switch (targetMonthIndex) {
           case 1:
-            bottomTitle = const Padding(
-              padding: EdgeInsets.only(left: 10),
-              child: Text('Jan', style: smallGrey),
+            bottomTitle = Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Text('Jan', style: style),
             );
             break;
           case 2:
-            bottomTitle = const Padding(
-              padding: EdgeInsets.only(left: 10),
-              child: Text('Feb', style: smallGrey),
+            bottomTitle = Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Text('Feb', style: style),
             );
             break;
           case 3:
-            bottomTitle = const Padding(
-              padding: EdgeInsets.only(left: 10),
-              child: Text('Mar', style: smallGrey),
+            bottomTitle = Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Text('Mar', style: style),
             );
             break;
           case 4:
-            bottomTitle = const Padding(
-              padding: EdgeInsets.only(left: 10),
-              child: Text('Apr', style: smallGrey),
+            bottomTitle = Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Text('Apr', style: style),
             );
             break;
           case 5:
-            bottomTitle = const Padding(
-              padding: EdgeInsets.only(left: 10),
-              child: Text('May', style: smallGrey),
+            bottomTitle = Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Text('May', style: style),
             );
             break;
           case 6:
-            bottomTitle = const Padding(
-              padding: EdgeInsets.only(left: 10),
-              child: Text('Jun', style: smallGrey),
+            bottomTitle = Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Text('Jun', style: style),
             );
             break;
           case 7:
-            bottomTitle = const Padding(
-              padding: EdgeInsets.only(left: 10),
-              child: Text('Jul', style: smallGrey),
+            bottomTitle = Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Text('Jul', style: style),
             );
             break;
           case 8:
-            bottomTitle = const Padding(
-              padding: EdgeInsets.only(left: 10),
-              child: Text('Aug', style: smallGrey),
+            bottomTitle = Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Text('Aug', style: style),
             );
             break;
           case 9:
-            bottomTitle = const Padding(
-              padding: EdgeInsets.only(left: 10),
-              child: Text('Sep', style: smallGrey),
+            bottomTitle = Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Text('Sep', style: style),
             );
             break;
           case 10:
-            bottomTitle = const Padding(
-              padding: EdgeInsets.only(left: 10),
-              child: Text('Oct', style: smallGrey),
+            bottomTitle = Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Text('Oct', style: style),
             );
             break;
           case 11:
-            bottomTitle = const Padding(
-              padding: EdgeInsets.only(left: 10),
-              child: Text('Nov', style: smallGrey),
+            bottomTitle = Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Text('Nov', style: style),
             );
             break;
           case 12:
-            bottomTitle = const Padding(
-              padding: EdgeInsets.only(left: 10),
-              child: Text('Dec', style: smallGrey),
+            bottomTitle = Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Text('Dec', style: style),
             );
             break;
         }
@@ -299,23 +316,31 @@ class StatisticsChart extends StatelessWidget {
 
     return SideTitleWidget(
       axisSide: meta.axisSide,
-      angle: chart.chartOptions.progressOption == ChartProgressOption.lastYear ? 70 : 0,
+      angle: widget.chart.chartOptions.progressOption == ChartProgressOption.lastYear ? 70 : 0,
       child: bottomTitle,
     );
   }
 
   Widget _getChartYAxisValues(double value, TitleMeta meta) {
-    if (chart.type == ChartBuilderChartType.workout) {
-      return getWorkoutChartYAxisValues(chart, value);
+    late TextStyle style;
+
+    if (Theme.of(context).brightness == Brightness.dark) {
+      style = CustomTextStyle.getCustomTextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.w600);
     } else {
-      return getExerciseMuscleChartYAxisValues(chart, value);
+      style = CustomTextStyle.getCustomTextStyle(fontSize: 12, color: Colors.black, fontWeight: FontWeight.w600);
+    }
+
+    if (widget.chart.type == ChartBuilderChartType.workout) {
+      return getWorkoutChartYAxisValues(widget.chart, value, widget.settings.weightUnit, style);
+    } else {
+      return getExerciseMuscleChartYAxisValues(widget.chart, value, widget.settings.weightUnit, style);
     }
   }
 
-  Widget _getChart() {
-    ChartMinMaxValues minMaxValues = _getChartMinMaxValues(chart, previousSessions);
+  Widget _getChart(BuildContext context) {
+    ChartMinMaxValues minMaxValues = _getChartMinMaxValues(widget.chart, widget.previousSessions);
 
-    Color originalColor = chartColors[index % chartColors.length];
+    Color originalColor = chartColors[widget.index % chartColors.length];
     Color lighterColor = Color.fromRGBO(originalColor.red + 15, originalColor.green + 15, originalColor.blue + 15, 1.0);
     Color darkerColor = Color.fromRGBO(originalColor.red - 30, originalColor.green - 30, originalColor.blue - 30, 1.0);
 
@@ -335,7 +360,7 @@ class StatisticsChart extends StatelessWidget {
               tooltipBorder: BorderSide(color: darkerColor, width: 2.5),
               tooltipRoundedRadius: 10,
               getTooltipItems: (List<LineBarSpot> touchedSpots) {
-                return touchedSpots.map((LineBarSpot spot) => _getChartTooltips(chart, spot)).toList();
+                return touchedSpots.map((LineBarSpot spot) => _getChartTooltips(context, widget.chart, spot)).toList();
               },
             ),
           ),
@@ -367,7 +392,7 @@ class StatisticsChart extends StatelessWidget {
   }
 
   LineChartBarData _getBarData() {
-    Color chartColor = chartColors[index % chartColors.length];
+    Color chartColor = chartColors[widget.index % chartColors.length];
 
     List<FlSpot> chartSpots = _getChartSpots();
 
@@ -386,18 +411,18 @@ class StatisticsChart extends StatelessWidget {
   }
 
   List<FlSpot> _getChartSpots() {
-    if (chart.type == ChartBuilderChartType.workout) {
-      return getWorkoutChartSpots(chart, previousSessions);
+    if (widget.chart.type == ChartBuilderChartType.workout) {
+      return getWorkoutChartSpots(widget.chart, widget.previousSessions);
     } else {
-      return getExerciseMuscleChartSpots(chart, previousSessions);
+      return getExerciseMuscleChartSpots(widget.chart, widget.previousSessions);
     }
   }
 
-  LineTooltipItem _getChartTooltips(Chart chart, LineBarSpot spot) {
+  LineTooltipItem _getChartTooltips(BuildContext context, Chart chart, LineBarSpot spot) {
     if (chart.type == ChartBuilderChartType.workout) {
-      return getWorkoutChartTooltip(chart, spot);
+      return getWorkoutChartTooltip(context, chart, spot, widget.settings.weightUnit);
     } else {
-      return getExerciseMuscleChartTooltip(chart, spot);
+      return getExerciseMuscleChartTooltip(context, chart, spot, widget.settings.weightUnit);
     }
   }
 

@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:training_partner/core/constants/component_constants.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/globals/component_functions.dart';
 import 'package:training_partner/core/resources/open_ai/gpt_cubit.dart';
 import 'package:training_partner/core/resources/open_ai/gpt_message.dart';
+import 'package:training_partner/core/resources/widgets/colored_safe_area_body.dart';
 import 'package:training_partner/core/resources/widgets/custom_toast.dart';
 import 'package:training_partner/core/utils/text_util.dart';
 import 'package:training_partner/features/exercises/models/exercise.dart';
 import 'package:training_partner/features/exercises/models/movement.dart';
 import 'package:training_partner/features/exercises/models/workout_set.dart';
+import 'package:training_partner/features/settings/model/app_settings.dart';
 import 'package:training_partner/features/workout_editor/components/widgets/editor_exercise_card.dart';
 import 'package:training_partner/features/workout_editor/components/widgets/editor_floating_buttons.dart';
 import 'package:training_partner/features/workout_editor/components/widgets/editor_header.dart';
@@ -21,8 +24,14 @@ import 'package:training_partner/features/workout_editor/models/workout_session.
 class WorkoutEditorPage extends StatefulWidget {
   final WorkoutPlan? workoutPlan;
   final List<Movement> movements;
+  final AppSettings settings;
 
-  const WorkoutEditorPage({super.key, this.workoutPlan, required this.movements});
+  const WorkoutEditorPage({
+    super.key,
+    this.workoutPlan,
+    required this.movements,
+    required this.settings,
+  });
 
   @override
   State<WorkoutEditorPage> createState() => _WorkoutEditorPageState();
@@ -41,8 +50,6 @@ class _WorkoutEditorPageState extends State<WorkoutEditorPage> {
   @override
   void initState() {
     super.initState();
-    colorSafeArea(color: Colors.white);
-
     _pageController = PageController(initialPage: _currentPageIndex);
 
     workoutPlan = widget.workoutPlan;
@@ -58,20 +65,19 @@ class _WorkoutEditorPageState extends State<WorkoutEditorPage> {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      onPopInvoked: (value) => colorSafeArea(color: Theme.of(context).colorScheme.background),
-      child: SafeArea(
-        child: GestureDetector(
-          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-          child: Scaffold(
-            backgroundColor: Theme.of(context).colorScheme.background,
-            floatingActionButton: EditorFloatingButtons(
-              workoutSessions: workoutSessions,
-              onAddTap: _addNewWorkoutSession,
-              onRemoveTap: _removeWorkoutSession,
-            ),
-            body: _getBodyContent(),
-          ),
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.background,
+        floatingActionButton: EditorFloatingButtons(
+          workoutSessions: workoutSessions,
+          onAddTap: _addNewWorkoutSession,
+          onRemoveTap: _removeWorkoutSession,
+        ),
+        body: ColoredSafeAreaBody(
+          safeAreaColor: Theme.of(context).cardColor,
+          isLightTheme: Theme.of(context).brightness == Brightness.light,
+          child: _getBodyContent(),
         ),
       ),
     );
@@ -123,11 +129,11 @@ class _WorkoutEditorPageState extends State<WorkoutEditorPage> {
 
   Widget _getSessionPageView(List<Movement> movements) {
     if (workoutSessions.isEmpty) {
-      return const Expanded(
+      return Expanded(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 15),
+          padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Center(
-            child: Text('No sessions yet, create a new one!', style: boldNormalGrey),
+            child: Text('No sessions yet, create a new one!', style: CustomTextStyle.subtitleSecondary(context)),
           ),
         ),
       );
@@ -173,14 +179,14 @@ class _WorkoutEditorPageState extends State<WorkoutEditorPage> {
     }
   }
 
-  // todo change order of selected exercies with drag and drop?, and delete on swipe
   Widget _getExerciseList(WorkoutSession session) {
     if (session.exercises.isEmpty) {
-      return const Column(
+      return Column(
         children: [
-          SizedBox(height: 170),
-          Icon(Icons.accessibility_rounded, size: 80, color: Colors.black38),
-          Text('No exercises yet, add a few!', style: boldNormalGrey),
+          const SizedBox(height: 170),
+          Icon(FontAwesomeIcons.personRunning, size: 80, color: Theme.of(context).colorScheme.secondary),
+          const SizedBox(height: 10),
+          Text('No exercises yet, add a few!', style: CustomTextStyle.subtitleSecondary(context)),
         ],
       );
     } else {
@@ -222,6 +228,7 @@ class _WorkoutEditorPageState extends State<WorkoutEditorPage> {
                       );
                     });
                   },
+                  settings: widget.settings,
                 ),
                 if (index == session.exercises.length - 1 && session.exercises.length > 2)
                   Container(

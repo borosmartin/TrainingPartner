@@ -16,8 +16,8 @@ class WorkoutPlanCubit extends Cubit<WorkoutPlanState> {
       await _workoutRepository.createWorkoutPlan(currentUser.email!, workoutPlan);
 
       emit(WorkoutPlanCreationSuccessful(workoutPlan: workoutPlan));
-    } catch (e) {
-      emit(WorkoutPlanCreationError(message: e.toString()));
+    } catch (error, stackTrace) {
+      emit(WorkoutPlanCreationError(message: 'Error: $error, stackTrace: $stackTrace'));
     }
   }
 
@@ -28,8 +28,8 @@ class WorkoutPlanCubit extends Cubit<WorkoutPlanState> {
       List<WorkoutPlan> workoutPlans = await _workoutRepository.getAllWorkoutPlan(currentUser.email!);
 
       emit(WorkoutPlansLoaded(workoutPlans: workoutPlans));
-    } catch (e) {
-      emit(WorkoutPlanCreationError(message: e.toString()));
+    } catch (error, stackTrace) {
+      emit(WorkoutPlanCreationError(message: 'Error: $error, stackTrace: $stackTrace'));
     }
   }
 
@@ -40,8 +40,8 @@ class WorkoutPlanCubit extends Cubit<WorkoutPlanState> {
       await _workoutRepository.deleteWorkoutPlan(currentUser.email!, workoutPlan);
 
       emit(WorkoutPlanDeleteSuccessful());
-    } catch (e) {
-      emit(WorkoutPlanCreationError(message: e.toString()));
+    } catch (error, stackTrace) {
+      emit(WorkoutPlanCreationError(message: 'Error: $error, stackTrace: $stackTrace'));
     }
   }
 }

@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:quds_popup_menu/quds_popup_menu.dart';
-import 'package:training_partner/core/constants/component_constants.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/resources/widgets/custom_title_button.dart';
 import 'package:training_partner/features/exercises/models/movement.dart';
 import 'package:training_partner/features/statistics/components/widgets/chart_creator_options_card.dart';
@@ -96,14 +97,14 @@ class _ChartCreatorOptionsBodyState extends State<ChartCreatorOptionsBody> {
       ChartCreatorOptionsCard(
         title: 'Value',
         value: _getWorkoutValueText(),
-        icon: const Icon(Iconsax.element_45, color: Colors.black38),
+        icon: Icon(Iconsax.element_45, color: Theme.of(context).colorScheme.secondary),
         options: _getWorkoutValueOptions(),
       ),
       const SizedBox(height: 10),
       ChartCreatorOptionsCard(
         title: 'Progress',
         value: _getProgressText(),
-        icon: const Icon(FontAwesomeIcons.arrowTrendUp, color: Colors.black38, size: 20),
+        icon: Icon(FontAwesomeIcons.arrowTrendUp, color: Theme.of(context).colorScheme.secondary, size: 20),
         options: _getProgressOptions(),
       ),
     ];
@@ -114,7 +115,7 @@ class _ChartCreatorOptionsBodyState extends State<ChartCreatorOptionsBody> {
       ChartCreatorOptionsCard(
         title: 'Exercise',
         value: widget.movements.firstWhere((movement) => movement.id == widget.exerciseId).name,
-        icon: const Icon(FontAwesomeIcons.dumbbell, color: Colors.black38, size: 20),
+        icon: Icon(FontAwesomeIcons.dumbbell, color: Theme.of(context).colorScheme.secondary, size: 20),
         options: _getProgressOptions(),
         onTap: widget.onExerciseMuscleOnTap,
       ),
@@ -122,7 +123,7 @@ class _ChartCreatorOptionsBodyState extends State<ChartCreatorOptionsBody> {
       ChartCreatorOptionsCard(
         title: 'Value',
         value: _getExerciseMuscleValueText(),
-        icon: const Icon(Iconsax.element_45, color: Colors.black38),
+        icon: Icon(Iconsax.element_45, color: Theme.of(context).colorScheme.secondary),
         options: _getExerciseMuscleValueOptions(),
       ),
       if (chartOptions.muscleExerciseValueOption != ChartMuscleExerciseValueOption.volume) const SizedBox(height: 10),
@@ -130,14 +131,14 @@ class _ChartCreatorOptionsBodyState extends State<ChartCreatorOptionsBody> {
         ChartCreatorOptionsCard(
           title: 'Calculation',
           value: _getCalculationText(),
-          icon: const Icon(Iconsax.math5, color: Colors.black38),
+          icon: Icon(Iconsax.math5, color: Theme.of(context).colorScheme.secondary),
           options: _getCalculationOptions(),
         ),
       const SizedBox(height: 10),
       ChartCreatorOptionsCard(
         title: 'Progress',
         value: _getProgressText(),
-        icon: const Icon(FontAwesomeIcons.arrowTrendUp, color: Colors.black38, size: 20),
+        icon: Icon(FontAwesomeIcons.arrowTrendUp, color: Theme.of(context).colorScheme.secondary, size: 20),
         options: _getProgressOptions(),
       ),
     ];
@@ -148,7 +149,7 @@ class _ChartCreatorOptionsBodyState extends State<ChartCreatorOptionsBody> {
       ChartCreatorOptionsCard(
         title: 'Muscle',
         value: title,
-        icon: const Icon(Iconsax.weight_15, color: Colors.black38),
+        icon: Icon(PhosphorIconsBold.target, color: Theme.of(context).colorScheme.secondary),
         options: _getProgressOptions(),
         onTap: widget.onExerciseMuscleOnTap,
       ),
@@ -156,7 +157,7 @@ class _ChartCreatorOptionsBodyState extends State<ChartCreatorOptionsBody> {
       ChartCreatorOptionsCard(
         title: 'Value',
         value: _getExerciseMuscleValueText(),
-        icon: const Icon(Iconsax.element_45, color: Colors.black38),
+        icon: Icon(Iconsax.element_45, color: Theme.of(context).colorScheme.secondary),
         options: _getExerciseMuscleValueOptions(),
       ),
       if (chartOptions.muscleExerciseValueOption != ChartMuscleExerciseValueOption.volume) const SizedBox(height: 10),
@@ -164,14 +165,14 @@ class _ChartCreatorOptionsBodyState extends State<ChartCreatorOptionsBody> {
         ChartCreatorOptionsCard(
           title: 'Calculation',
           value: _getCalculationText(),
-          icon: const Icon(Iconsax.math5, color: Colors.black38),
+          icon: Icon(Iconsax.math5, color: Theme.of(context).colorScheme.secondary),
           options: _getCalculationOptions(),
         ),
       const SizedBox(height: 10),
       ChartCreatorOptionsCard(
         title: 'Progress',
         value: _getProgressText(),
-        icon: const Icon(FontAwesomeIcons.arrowTrendUp, color: Colors.black38, size: 20),
+        icon: Icon(FontAwesomeIcons.arrowTrendUp, color: Theme.of(context).colorScheme.secondary, size: 20),
         options: _getProgressOptions(),
       ),
     ];
@@ -180,7 +181,7 @@ class _ChartCreatorOptionsBodyState extends State<ChartCreatorOptionsBody> {
   List<QudsPopupMenuItem> _getCalculationOptions() {
     List<QudsPopupMenuItem> options = [
       QudsPopupMenuItem(
-        title: const Text('Avarage', style: normalBlack),
+        title: Text('Avarage', style: CustomTextStyle.bodyPrimary(context)),
         onPressed: () {
           setState(() {
             chartOptions = chartOptions.copyWith(calculationOption: ChartCalculationOption.average);
@@ -189,7 +190,7 @@ class _ChartCreatorOptionsBodyState extends State<ChartCreatorOptionsBody> {
         },
       ),
       QudsPopupMenuItem(
-        title: const Text('Best set', style: normalBlack),
+        title: Text('Best set', style: CustomTextStyle.bodyPrimary(context)),
         onPressed: () {
           setState(() {
             chartOptions = chartOptions.copyWith(calculationOption: ChartCalculationOption.best);
@@ -205,7 +206,7 @@ class _ChartCreatorOptionsBodyState extends State<ChartCreatorOptionsBody> {
   List<QudsPopupMenuItem> _getExerciseMuscleValueOptions() {
     List<QudsPopupMenuItem> options = [
       QudsPopupMenuItem(
-        title: const Text('Repetitions', style: normalBlack),
+        title: Text('Repetitions', style: CustomTextStyle.bodyPrimary(context)),
         onPressed: () {
           setState(() {
             chartOptions = chartOptions.copyWith(muscleExerciseValueOption: ChartMuscleExerciseValueOption.repetitions);
@@ -214,7 +215,7 @@ class _ChartCreatorOptionsBodyState extends State<ChartCreatorOptionsBody> {
         },
       ),
       QudsPopupMenuItem(
-        title: const Text('Volume', style: normalBlack),
+        title: Text('Volume', style: CustomTextStyle.bodyPrimary(context)),
         onPressed: () {
           setState(() {
             chartOptions = chartOptions.copyWith(muscleExerciseValueOption: ChartMuscleExerciseValueOption.volume);
@@ -223,7 +224,7 @@ class _ChartCreatorOptionsBodyState extends State<ChartCreatorOptionsBody> {
         },
       ),
       QudsPopupMenuItem(
-        title: const Text('Weight', style: normalBlack),
+        title: Text('Weight', style: CustomTextStyle.bodyPrimary(context)),
         onPressed: () {
           setState(() {
             chartOptions = chartOptions.copyWith(muscleExerciseValueOption: ChartMuscleExerciseValueOption.weight);
@@ -239,7 +240,7 @@ class _ChartCreatorOptionsBodyState extends State<ChartCreatorOptionsBody> {
   List<QudsPopupMenuItem> _getWorkoutValueOptions() {
     List<QudsPopupMenuItem> options = [
       QudsPopupMenuItem(
-        title: const Text('Amount', style: normalBlack),
+        title: Text('Amount', style: CustomTextStyle.bodyPrimary(context)),
         onPressed: () {
           setState(() {
             chartOptions = chartOptions.copyWith(workoutValueOption: ChartWorkoutValueOption.amount);
@@ -248,7 +249,7 @@ class _ChartCreatorOptionsBodyState extends State<ChartCreatorOptionsBody> {
         },
       ),
       QudsPopupMenuItem(
-        title: const Text('Duration', style: normalBlack),
+        title: Text('Duration', style: CustomTextStyle.bodyPrimary(context)),
         onPressed: () {
           setState(() {
             chartOptions = chartOptions.copyWith(workoutValueOption: ChartWorkoutValueOption.duration);
@@ -257,7 +258,7 @@ class _ChartCreatorOptionsBodyState extends State<ChartCreatorOptionsBody> {
         },
       ),
       QudsPopupMenuItem(
-        title: const Text('Volume', style: normalBlack),
+        title: Text('Volume', style: CustomTextStyle.bodyPrimary(context)),
         onPressed: () {
           setState(() {
             chartOptions = chartOptions.copyWith(workoutValueOption: ChartWorkoutValueOption.volume);
@@ -273,7 +274,7 @@ class _ChartCreatorOptionsBodyState extends State<ChartCreatorOptionsBody> {
   List<QudsPopupMenuItem> _getProgressOptions() {
     List<QudsPopupMenuItem> options = [
       QudsPopupMenuItem(
-        title: const Text('Last week', style: normalBlack),
+        title: Text('Last week', style: CustomTextStyle.bodyPrimary(context)),
         onPressed: () {
           setState(() {
             chartOptions = chartOptions.copyWith(progressOption: ChartProgressOption.lastWeek);
@@ -282,7 +283,7 @@ class _ChartCreatorOptionsBodyState extends State<ChartCreatorOptionsBody> {
         },
       ),
       QudsPopupMenuItem(
-        title: const Text('Last month', style: normalBlack),
+        title: Text('Last month', style: CustomTextStyle.bodyPrimary(context)),
         onPressed: () {
           setState(() {
             chartOptions = chartOptions.copyWith(progressOption: ChartProgressOption.lastMonth);
@@ -291,7 +292,7 @@ class _ChartCreatorOptionsBodyState extends State<ChartCreatorOptionsBody> {
         },
       ),
       QudsPopupMenuItem(
-        title: const Text('Last year', style: normalBlack),
+        title: Text('Last year', style: CustomTextStyle.bodyPrimary(context)),
         onPressed: () {
           setState(() {
             chartOptions = chartOptions.copyWith(progressOption: ChartProgressOption.lastYear);

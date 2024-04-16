@@ -31,4 +31,8 @@ class GptRepository {
   Future<GptMessage?> getGptTipFromHive(String email, WorkoutPlan workoutPlan) async {
     return await gptServiceLocal.getGptTipFromHive(email, workoutPlan);
   }
+
+  Future<void> deleteAllGptTipFromHive(String email) async {
+    await gptServiceLocal.deleteAllGptTipFromHive(email);
+  }
 }

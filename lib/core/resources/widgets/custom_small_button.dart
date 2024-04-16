@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
 
 class CustomSmallButton extends StatelessWidget {
@@ -39,7 +40,7 @@ class CustomSmallButton extends StatelessWidget {
               children: [
                 icon,
                 if (label != null) const SizedBox(width: 10),
-                if (label != null) Text(label!, style: normalBlack),
+                if (label != null) Text(label!, style: CustomTextStyle.bodyPrimary(context)),
               ],
             ),
           ),

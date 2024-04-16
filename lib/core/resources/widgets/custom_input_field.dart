@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
 
 class CustomInputField extends StatelessWidget {
@@ -26,18 +27,18 @@ class CustomInputField extends StatelessWidget {
     return TextField(
       controller: inputController,
       keyboardType: keyboardType,
-      style: normalBlack,
+      style: CustomTextStyle.bodyPrimary(context),
       cursorColor: Theme.of(context).colorScheme.tertiary,
       obscureText: obscureText ?? false,
       focusNode: focusNode,
       decoration: InputDecoration(
-        label: labelText == null ? null : Text(labelText!, style: normalBlack),
+        label: labelText == null ? null : Text(labelText!, style: CustomTextStyle.bodyPrimary(context)),
         filled: true,
         suffixIcon: trailing,
         contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
         fillColor: Theme.of(context).colorScheme.primary,
         hintText: hintText,
-        hintStyle: smallGrey,
+        hintStyle: CustomTextStyle.bodySmallTetriary(context),
         enabledBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: Colors.transparent),
           borderRadius: defaultBorderRadius,

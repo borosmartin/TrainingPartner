@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
 import 'package:training_partner/core/utils/text_util.dart';
 import 'package:training_partner/features/exercises/models/exercise.dart';
@@ -22,12 +23,6 @@ class _ProgressBarChartState extends State<ProgressBarChart> {
 
   late List<_BarData> _chartData;
   int touchedGroupIndex = -1;
-
-  var style = TextUtil.getCustomTextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.w500,
-    color: Colors.black,
-  );
 
   @override
   void initState() {
@@ -81,7 +76,7 @@ class _ProgressBarChartState extends State<ProgressBarChart> {
                     BarChartRodData rod,
                     int rodIndex,
                   ) {
-                    return BarTooltipItem('', smallWhite, children: [
+                    return BarTooltipItem('', CustomTextStyle.bodySmallTetriary(context), children: [
                       TextSpan(text: _getPreviousText(rod.toY)),
                       TextSpan(text: _getCurrentText(groupIndex)),
                     ]);
@@ -126,7 +121,7 @@ class _ProgressBarChartState extends State<ProgressBarChart> {
                 ),
               ),
               const SizedBox(width: 10),
-              Text('${currentSession.exercises[i].movement.name}:', style: style),
+              Text('${currentSession.exercises[i].movement.name}:', style: CustomTextStyle.bodySmallPrimary(context)),
               const Spacer(),
               _getPrecentWidget(currentSession.exercises[i], previousSession.exercises[i]),
             ],
@@ -149,21 +144,21 @@ class _ProgressBarChartState extends State<ProgressBarChart> {
 
     if (precent == 0) {
       icon = Icon(FontAwesomeIcons.equals, color: Colors.amber.shade700, size: 20);
-      precentStyle = TextUtil.getCustomTextStyle(
+      precentStyle = CustomTextStyle.getCustomTextStyle(
         fontSize: 16,
         fontWeight: FontWeight.w600,
         color: Colors.amber.shade700,
       );
     } else if (precent < 0) {
       icon = const Icon(FontAwesomeIcons.circleArrowDown, color: Colors.red, size: 20);
-      precentStyle = TextUtil.getCustomTextStyle(
+      precentStyle = CustomTextStyle.getCustomTextStyle(
         fontSize: 16,
         fontWeight: FontWeight.w600,
         color: Colors.red,
       );
     } else {
       icon = const Icon(FontAwesomeIcons.circleArrowUp, color: Colors.green, size: 20);
-      precentStyle = TextUtil.getCustomTextStyle(
+      precentStyle = CustomTextStyle.getCustomTextStyle(
         fontSize: 16,
         fontWeight: FontWeight.w600,
         color: Colors.green,
@@ -201,7 +196,7 @@ class _ProgressBarChartState extends State<ProgressBarChart> {
       barRods: [
         BarChartRodData(
           toY: previousValue,
-          color: Colors.grey.shade400,
+          color: Colors.grey.shade500,
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(10),
             topRight: Radius.circular(10),
@@ -210,7 +205,7 @@ class _ProgressBarChartState extends State<ProgressBarChart> {
           backDrawRodData: BackgroundBarChartRodData(
             show: true,
             toY: value,
-            color: Colors.grey.shade200,
+            color: Colors.grey.shade300,
           ),
         ),
         BarChartRodData(
@@ -224,7 +219,7 @@ class _ProgressBarChartState extends State<ProgressBarChart> {
           backDrawRodData: BackgroundBarChartRodData(
             show: true,
             toY: previousValue,
-            color: Colors.grey.shade200,
+            color: Colors.grey.shade300,
           ),
         ),
       ],
@@ -298,6 +293,7 @@ class _ProgressBarChartState extends State<ProgressBarChart> {
       if (_getAvarageValue(exercise) == value) {
         if (exercise.type == ExerciseType.repetitions) {
           unit = 'kg';
+          return 'Pre: ${TextUtil.numToString(value)} $unit\n';
         } else if (exercise.type == ExerciseType.distance) {
           unit = 'km';
         } else if (exercise.type == ExerciseType.duration) {

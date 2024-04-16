@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
 import 'package:training_partner/core/resources/widgets/custom_search_bar.dart';
 import 'package:training_partner/core/utils/text_util.dart';
@@ -79,9 +80,9 @@ class _ChartCreatorValueBodyState extends State<ChartCreatorValueBody> {
                         state.previousFilter != null ? state.previousFilter!.copyWith(searchQuery: value) : MovementFilter(searchQuery: value),
                       ),
                   textController: _searchController,
-                  backgroundColor: Colors.white,
+                  backgroundColor: Theme.of(context).cardColor,
                   iconColor: Colors.black,
-                  textStyle: smallBlack,
+                  textStyle: CustomTextStyle.bodySmallPrimary(context),
                 ),
                 const SizedBox(height: 10),
                 SizedBox(height: height, child: _getMovementList(state)),
@@ -97,13 +98,13 @@ class _ChartCreatorValueBodyState extends State<ChartCreatorValueBody> {
 
   Widget _getMovementList(MovementsLoaded state) {
     if (state.previousFilter != null && state.filteredMovements != null && state.filteredMovements!.isEmpty) {
-      return const Expanded(
+      return Expanded(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.search_off_rounded, size: 30, color: Colors.black38),
-            SizedBox(width: 5),
-            Text('No exercise found', style: boldNormalGrey),
+            const Icon(Icons.search_off_rounded, size: 30, color: Colors.black38),
+            const SizedBox(width: 5),
+            Text('No exercise found', style: CustomTextStyle.subtitleTetriary(context)),
           ],
         ),
       );
@@ -184,16 +185,14 @@ class _ChartCreatorValueBodyState extends State<ChartCreatorValueBody> {
           child: Card(
             elevation: 0,
             margin: EdgeInsets.zero,
-            shape: RoundedRectangleBorder(
-              borderRadius: defaultBorderRadius,
-              side: BorderSide(color: selectedMuscleIndex == index ? Theme.of(context).colorScheme.tertiary : Colors.transparent, width: 2.5),
-            ),
+            color: selectedMuscleIndex == index ? accentColor : Theme.of(context).cardColor,
+            shape: const RoundedRectangleBorder(borderRadius: defaultBorderRadius),
             child: Padding(
               padding: const EdgeInsets.all(5),
               child: Center(
                 child: Text(
                   name,
-                  style: selectedMuscleIndex == index ? boldNormalAccent : boldNormalGrey,
+                  style: selectedMuscleIndex == index ? CustomTextStyle.subtitleTetriary(context) : CustomTextStyle.subtitleSecondary(context),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),

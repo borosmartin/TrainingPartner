@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/constants/component_constants.dart';
 import 'package:training_partner/core/resources/widgets/custom_title_button.dart';
 import 'package:training_partner/features/exercises/models/exercise.dart';
@@ -43,12 +45,13 @@ class _SessionHeaderState extends State<SessionHeader> {
                   padding: const EdgeInsets.only(right: 5),
                   child: Row(
                     children: [
-                      const Icon(Icons.edit, color: Colors.black45, size: 20),
+                      Icon(Icons.edit,
+                          color: Theme.of(context).brightness == Brightness.light ? primaryTextColors[0] : primaryTextColors[1], size: 20),
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(
                           widget.session.name,
-                          style: boldLargeGrey,
+                          style: CustomTextStyle.titlePrimary(context),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -61,13 +64,13 @@ class _SessionHeaderState extends State<SessionHeader> {
                 children: [
                   Icon(
                     Icons.list_alt_rounded,
-                    color: Theme.of(context).colorScheme.tertiary,
+                    color: Theme.of(context).colorScheme.secondary,
                     size: 20,
                   ),
                   const SizedBox(width: 10),
-                  Text('${widget.session.exercises.length} exercises', style: smallGrey),
+                  Text('${widget.session.exercises.length} exercises', style: CustomTextStyle.bodySmallSecondary(context)),
                   const SizedBox(width: 10),
-                  Text('${_getTotalSets()} sets', style: smallGrey),
+                  Text('${_getTotalSets()} sets', style: CustomTextStyle.bodySmallSecondary(context)),
                 ],
               ),
             ],
@@ -77,7 +80,7 @@ class _SessionHeaderState extends State<SessionHeader> {
         // EXERCISE BUTTON
         ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Theme.of(context).colorScheme.tertiary,
+            backgroundColor: accentColor,
             shape: defaultCornerShape,
             elevation: 0,
             padding: const EdgeInsets.all(13),
@@ -92,11 +95,11 @@ class _SessionHeaderState extends State<SessionHeader> {
               ),
             ),
           ),
-          child: const Row(
+          child: Row(
             children: [
-              Icon(Icons.fitness_center, size: 26, color: Colors.white),
-              SizedBox(width: 10),
-              Text('Exercises', style: boldNormalWhite),
+              const Icon(PhosphorIconsFill.barbell, size: 26, color: Colors.white),
+              const SizedBox(width: 10),
+              Text('Exercises', style: CustomTextStyle.subtitleTetriary(context)),
             ],
           ),
         ),
@@ -122,18 +125,18 @@ class _SessionHeaderState extends State<SessionHeader> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Row(
+                  Row(
                     children: [
-                      Icon(Icons.drive_file_rename_outline_outlined),
-                      SizedBox(width: 10),
-                      Text('Rename session', style: boldNormalBlack),
+                      const Icon(Icons.drive_file_rename_outline_outlined),
+                      const SizedBox(width: 10),
+                      Text('Rename session', style: CustomTextStyle.subtitlePrimary(context)),
                     ],
                   ),
                   const SizedBox(height: 20),
                   TextField(
                     controller: textController,
                     autofocus: true,
-                    style: normalBlack,
+                    style: CustomTextStyle.bodyPrimary(context),
                     onChanged: (value) {
                       newName = value;
                     },
@@ -142,7 +145,7 @@ class _SessionHeaderState extends State<SessionHeader> {
                       filled: true,
                       contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
                       fillColor: Theme.of(context).colorScheme.primary,
-                      hintStyle: smallGrey,
+                      hintStyle: CustomTextStyle.bodySmallTetriary(context),
                       enabledBorder: const OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.transparent),
                         borderRadius: defaultBorderRadius,
