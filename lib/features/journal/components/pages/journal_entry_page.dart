@@ -50,7 +50,6 @@ class _JournalEntryPageState extends State<JournalEntryPage> {
         isLightTheme: Theme.of(context).brightness == Brightness.light,
         child: Column(
           children: [
-            _getHeaderWidget(),
             _getBodyContent(),
           ],
         ),
@@ -61,20 +60,25 @@ class _JournalEntryPageState extends State<JournalEntryPage> {
   Widget _getBodyContent() {
     return Expanded(
       child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Column(
-            children: [
-              const SizedBox(height: 15),
-              _getInfoCard(),
-              const SizedBox(height: 15),
-              _getBodyPartsPieCard(),
-              const SizedBox(height: 15),
-              _getProgressBarCard(),
-              _getExerciseCardList(),
-              const SizedBox(height: 15),
-            ],
-          ),
+        child: Column(
+          children: [
+            _getHeaderWidget(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: Column(
+                children: [
+                  const SizedBox(height: 15),
+                  _getInfoCard(),
+                  const SizedBox(height: 15),
+                  _getBodyPartsPieCard(),
+                  const SizedBox(height: 15),
+                  _getProgressBarCard(),
+                  _getExerciseCardList(),
+                  const SizedBox(height: 15),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -308,7 +312,6 @@ class _JournalEntryPageState extends State<JournalEntryPage> {
     return bodyPartMap;
   }
 
-  // todo kicsit szépíteni
   void _showDeleteDialog() {
     showDialog(
       context: context,
@@ -327,7 +330,7 @@ class _JournalEntryPageState extends State<JournalEntryPage> {
                   Text('Warning', style: CustomTextStyle.subtitlePrimary(context)),
                 ],
               ),
-              Text('Are you sure you want to delete this workout session?', style: CustomTextStyle.bodyTetriary(context)),
+              Text('Are you sure you want to delete this workout session?', style: CustomTextStyle.bodySecondary(context)),
               const SizedBox(height: 15),
               Row(
                 children: [

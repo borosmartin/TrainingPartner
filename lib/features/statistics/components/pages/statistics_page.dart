@@ -59,7 +59,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
               shape: defaultCornerShape,
               backgroundColor: accentColor,
               onPressed: () => _showChartCreatorBottomSheet(context),
-              elevation: 0,
+              elevation: 3,
               tooltip: 'Add new chart',
               child: const Icon(
                 Icons.add_rounded,
@@ -73,7 +73,6 @@ class _StatisticsPageState extends State<StatisticsPage> {
     );
   }
 
-  // todo Error states widget
   Widget _getBodyContent() {
     return BlocConsumer<StatisticsCubit, StatisticsState>(listener: (context, state) {
       if (state is ChartAddSuccess) {

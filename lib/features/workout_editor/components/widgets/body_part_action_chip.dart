@@ -44,14 +44,17 @@ class _BodyPartActionChipState extends State<BodyPartActionChip> {
         shape: RoundedRectangleBorder(
           borderRadius: defaultBorderRadius,
           side: BorderSide(
-            color: isSelected ? Theme.of(context).colorScheme.tertiary : Colors.transparent,
+            color: isSelected ? accentColor : Colors.transparent,
             width: 2,
           ),
         ),
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.primary,
         child: Padding(
           padding: const EdgeInsets.all(10),
-          child: Image.asset(widget.assetLocation, height: 50, width: 50),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Image.asset(widget.assetLocation, height: 50, width: 50),
+          ),
         ),
       ),
     );

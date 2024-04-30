@@ -121,7 +121,6 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
                   const SizedBox(height: 15),
                   const CustomDivider(color: Colors.white, thickness: 1.7),
                   const SizedBox(height: 15),
-                  // todo icons
                   Row(
                     children: [
                       const Icon(PhosphorIconsFill.personArmsSpread, size: 28, color: Colors.white),

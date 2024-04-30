@@ -70,6 +70,7 @@ flutter:
     - assets/images/workoutplan5.jpeg
     - lib/features/statistics/models/
     - lib/core/resources/widgets/
+    - lib/features/login/components/widgets/
 
   fonts:
     - family: Omnes

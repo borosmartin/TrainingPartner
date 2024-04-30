@@ -11,11 +11,6 @@ class DateTimeUtil {
     return '${date.year}.$month.$day';
   }
 
-  // todo remove
-  static DateTime TESTstringToDate(String stringDate) {
-    return DateTime.parse(stringDate.replaceAll('.', '-'));
-  }
-
   ///  example: 2024.12.02 16:01
   static String dateToStringWithHour(DateTime? date, bool is24HourFormat) {
     if (date == null) {

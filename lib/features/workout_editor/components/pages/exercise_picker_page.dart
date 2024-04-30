@@ -136,7 +136,6 @@ class _ExercisePickerPageState extends State<ExercisePickerPage> {
     );
   }
 
-  // todo a kiválaszott movements nem elől vannak
   Widget _getMovementList(MovementsLoaded state) {
     if (state.previousFilter != null && state.filteredMovements != null && state.filteredMovements!.isEmpty) {
       return Expanded(

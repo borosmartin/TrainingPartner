@@ -12,7 +12,6 @@ class CustomBottomNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // todo color not working
     TextStyle unselected = CustomTextStyle.getCustomTextStyle(
       fontSize: 14,
       fontWeight: FontWeight.w500,

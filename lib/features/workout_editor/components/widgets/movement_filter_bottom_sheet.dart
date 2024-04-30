@@ -68,13 +68,12 @@ class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
                     ),
                   ],
                 ),
-                DividerWithText(text: 'Equipment', textStyle: CustomTextStyle.bodySmallTetriary(context)),
+                DividerWithText(text: 'Equipment', textStyle: CustomTextStyle.bodySmallSecondary(context)),
                 const SizedBox(height: 10),
-                // todo mintha ez is néha beakadna?
                 EquipmentDropdown(
                   equipments: _getEquipments(),
                   initialItem: _movementFilter.equipment == null ? 'All' : TextUtil.firstLetterToUpperCase(_movementFilter.equipment!),
-                  backgroundColor: Colors.white,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                   iconColor: Colors.black,
                   onSelect: (value) {
                     _exerciseCubit.filterMovements(
@@ -237,7 +236,7 @@ class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
     return Column(
       children: [
         const SizedBox(height: 10),
-        DividerWithText(text: 'Body part', textStyle: CustomTextStyle.bodySmallTetriary(context)),
+        DividerWithText(text: 'Body part', textStyle: CustomTextStyle.bodySmallSecondary(context)),
         const SizedBox(height: 10),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
@@ -250,8 +249,6 @@ class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
     );
   }
 
-  // todo ha bodypartot deselectelem, akkor a target is ürüljön!!
-  // todo első megnyitásra nem nyílik meg a targetok listája csak újramegynitásra
   Widget _buildTargetRow() {
     List<Widget> result = [];
     List<String> targets = _movementFilter.targets ?? [];
@@ -293,7 +290,7 @@ class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
     } else {
       return Column(
         children: [
-          DividerWithText(text: 'Target', textStyle: CustomTextStyle.bodySmallTetriary(context)),
+          DividerWithText(text: 'Target', textStyle: CustomTextStyle.bodySmallSecondary(context)),
           const SizedBox(height: 10),
           SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: result)),
         ],

@@ -49,7 +49,6 @@ class _ChartCreatorOptionsBodyState extends State<ChartCreatorOptionsBody> {
     title = widget.muscle ?? '';
   }
 
-  // todo icons
   @override
   Widget build(BuildContext context) {
     return Column(

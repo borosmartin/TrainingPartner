@@ -53,8 +53,6 @@ class _ExerciseListPageState extends State<ExerciseListPage> {
     _filterMovements();
   }
 
-  // todo ha nincs filter találat valamit azért tegyünk ki
-  // todo cubit filter, plusz merge shared widgets
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

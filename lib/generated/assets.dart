@@ -115,6 +115,7 @@ class Assets {
   static const String widgetsEditorWheelDialog = 'lib/features/workout_editor/components/widgets/editor_wheel_dialog.dart';
   static const String widgetsEquipmentDropdown = 'lib/features/exercises/components/widgets/equipment_dropdown.dart';
   static const String widgetsExerciseGroupCard = 'lib/features/exercises/components/widgets/exercise_group_card.dart';
+  static const String widgetsGoogleLoginButton = 'lib/features/login/components/widgets/google_login_button.dart';
   static const String widgetsGptTipWidget = 'lib/features/workout_editor/components/widgets/gpt_tip_widget.dart';
   static const String widgetsHomePageNavigator = 'lib/core/resources/widgets/home_page_navigator.dart';
   static const String widgetsJournalExerciseCard = 'lib/features/journal/components/widgets/journal_exercise_card.dart';

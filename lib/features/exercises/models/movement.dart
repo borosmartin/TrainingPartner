@@ -105,32 +105,6 @@ class Movement extends Equatable {
     return json;
   }
 
-  // todo remove if not needed
-  factory Movement.fromCSV(Map<String, dynamic> csv) {
-    final List<String> secondaryMusclesList = [];
-    final List<String> instructionsList = [];
-
-    csv.forEach((key, value) {
-      if (key.contains('secondaryMuscles')) {
-        secondaryMusclesList.add(value);
-      }
-      if (key.contains('instructions')) {
-        instructionsList.add(value);
-      }
-    });
-
-    return Movement(
-      id: csv['id'] ?? '',
-      name: csv['name'] ?? '',
-      bodyPart: csv['bodyPart'] ?? '',
-      equipment: csv['equipment'] ?? '',
-      target: csv['target'] ?? '',
-      gifUrl: csv['gifUrl'] ?? '',
-      secondaryMuscles: secondaryMusclesList,
-      instructions: instructionsList,
-    );
-  }
-
   @override
   List<Object?> get props => [id, name, bodyPart, equipment, target, gifUrl, secondaryMuscles, instructions];
 }

@@ -66,7 +66,6 @@ class _PasswordResetDialogState extends State<PasswordResetDialog> {
                   focusNode: _focusNodeEmail,
                 ),
                 const SizedBox(height: 20),
-                // todo úgy néz ki, hogyha nincs bezárva a bill akkor nem érzékeli hogy van a controllerbe text
                 CustomTitleButton(
                   label: 'Request',
                   onTap: _controllerEmail.text.isEmpty

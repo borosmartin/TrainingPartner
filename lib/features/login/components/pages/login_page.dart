@@ -1,4 +1,3 @@
-import 'package:auth_buttons/auth_buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -9,7 +8,7 @@ import 'package:training_partner/core/resources/widgets/colored_safe_area_body.d
 import 'package:training_partner/core/resources/widgets/custom_input_field.dart';
 import 'package:training_partner/core/resources/widgets/custom_title_button.dart';
 import 'package:training_partner/core/resources/widgets/custom_toast.dart';
-import 'package:training_partner/core/resources/widgets/divider_with_text.dart';
+import 'package:training_partner/features/login/components/widgets/google_login_button.dart';
 import 'package:training_partner/features/login/components/widgets/password_reset_dialog.dart';
 import 'package:training_partner/features/login/logic/cubits/login_cubit.dart';
 import 'package:training_partner/features/login/logic/states/login_state.dart';
@@ -142,48 +141,7 @@ class _LoginPageState extends State<LoginPage> {
                   label: 'Sign in',
                   onTap: () => _signInWithEmailAndPassword(),
                 ),
-                const SizedBox(height: 50),
-                DividerWithText(text: 'Continue with', textStyle: CustomTextStyle.bodySmallSecondary(context)),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    GoogleAuthButton(
-                      onPressed: () async => context.read<LoginCubit>().signInWithGoogle(),
-                      style: const AuthButtonStyle(
-                        height: 70,
-                        width: 70,
-                        iconSize: 35,
-                        buttonType: AuthButtonType.icon,
-                        elevation: 0,
-                      ),
-                    ),
-                    const SizedBox(width: 20),
-                    FacebookAuthButton(
-                      // todo
-                      onPressed: () {},
-                      style: const AuthButtonStyle(
-                        height: 70,
-                        width: 70,
-                        iconSize: 35,
-                        buttonType: AuthButtonType.icon,
-                        elevation: 0,
-                      ),
-                    ),
-                    const SizedBox(width: 20),
-                    TwitterAuthButton(
-                      // todo
-                      onPressed: () {},
-                      style: const AuthButtonStyle(
-                        height: 70,
-                        width: 70,
-                        iconSize: 35,
-                        buttonType: AuthButtonType.icon,
-                        elevation: 0,
-                      ),
-                    ),
-                  ],
-                ),
+                const GoogleLoginButton(),
                 const Spacer(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

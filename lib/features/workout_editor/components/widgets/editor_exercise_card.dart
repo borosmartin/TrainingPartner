@@ -270,7 +270,7 @@ class _EditorExerciseCardState extends State<EditorExerciseCard> {
         ),
         QudsPopupMenuItem(
           leading: const Icon(FontAwesomeIcons.circleInfo),
-          title: Text('About exercise', style: CustomTextStyle.bodyTetriary(context)),
+          title: Text('About exercise', style: CustomTextStyle.bodyPrimary(context)),
           onPressed: () => Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => ExerciseDetailPage(movement: exercise.movement),

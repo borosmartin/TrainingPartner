@@ -9,6 +9,7 @@ import 'package:training_partner/core/resources/widgets/colored_safe_area_body.d
 import 'package:training_partner/core/resources/widgets/custom_input_field.dart';
 import 'package:training_partner/core/resources/widgets/custom_title_button.dart';
 import 'package:training_partner/core/resources/widgets/custom_toast.dart';
+import 'package:training_partner/features/login/components/widgets/google_login_button.dart';
 import 'package:training_partner/features/login/logic/cubits/login_cubit.dart';
 import 'package:training_partner/features/login/logic/states/login_state.dart';
 
@@ -151,6 +152,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   label: 'Sign up',
                   onTap: _createUserWithEmailAndPassword,
                 ),
+                const GoogleLoginButton(),
                 const Spacer(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -172,7 +174,6 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  // todo speciális karakterek jelszóhoz
   Future<void> _createUserWithEmailAndPassword() async {
     _focusNodeEmail.unfocus();
     _focusNodePassword.unfocus();

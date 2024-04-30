@@ -95,7 +95,6 @@ class ExerciseTypePage extends StatelessWidget {
               movements: _getCardioMovements(),
             ),
             const SizedBox(width: 10),
-            // TODO create all icon (combine all maybe?)
             ExerciseGroupCard(
               label: 'A L L',
               assetLocation: Assets.imagesChestIcon,

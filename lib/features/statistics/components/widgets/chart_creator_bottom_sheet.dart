@@ -227,12 +227,8 @@ class _ChartCreatorBottomSheetState extends State<ChartCreatorBottomSheet> {
     }
   }
 
-  // todo get loadedstate items.ids
   String _getRandomId() {
     List<String> existingIds = [];
-    // for (var i = 0; i < widget.workoutPlans.length; i++) {
-    //   ids.add(widget.workoutPlans[i].id);
-    // }
 
     return TextUtil.generateUniqueId(existingIds);
   }

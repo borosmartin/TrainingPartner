@@ -188,7 +188,6 @@ class JournalPage extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            // todo esetleg progress inkább?
                             Expanded(
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
