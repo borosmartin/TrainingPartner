@@ -101,7 +101,7 @@ class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
       BodyPartActionChip(
         label: 'chest',
         isSelected: bodyParts.contains('chest'),
-        assetLocation: Assets.imagesChestIcon,
+        assetLocation: Assets.iconsChestIcon,
         onTap: (isActive, label) {
           setBottomSheetState(() {
             if (!isActive) {
@@ -120,7 +120,7 @@ class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
       BodyPartActionChip(
         label: 'arms',
         isSelected: bodyParts.contains('arms'),
-        assetLocation: Assets.imagesArmsIcon,
+        assetLocation: Assets.iconsArmsIcon,
         onTap: (isActive, label) {
           setBottomSheetState(() {
             if (!isActive) {
@@ -139,7 +139,7 @@ class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
       BodyPartActionChip(
         label: 'shoulders',
         isSelected: bodyParts.contains('shoulders'),
-        assetLocation: Assets.imagesShoulderIcon,
+        assetLocation: Assets.iconsShoulderIcon,
         onTap: (isActive, label) {
           setBottomSheetState(() {
             if (!isActive) {
@@ -158,7 +158,7 @@ class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
       BodyPartActionChip(
         label: 'waist',
         isSelected: bodyParts.contains('waist'),
-        assetLocation: Assets.imagesCoreIcon,
+        assetLocation: Assets.iconsCoreIcon,
         onTap: (isActive, label) {
           setBottomSheetState(() {
             if (!isActive) {
@@ -177,7 +177,7 @@ class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
       BodyPartActionChip(
         label: 'back',
         isSelected: bodyParts.contains('back'),
-        assetLocation: Assets.imagesBackIcon,
+        assetLocation: Assets.iconsBackIcon,
         onTap: (isActive, label) {
           setBottomSheetState(() {
             if (!isActive) {
@@ -196,7 +196,7 @@ class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
       BodyPartActionChip(
         label: 'legs',
         isSelected: bodyParts.contains('legs'),
-        assetLocation: Assets.imagesLegsIcon,
+        assetLocation: Assets.iconsLegsIcon,
         onTap: (isActive, label) {
           setBottomSheetState(() {
             if (!isActive) {
@@ -215,7 +215,7 @@ class _MovementFilterBottomSheetState extends State<MovementFilterBottomSheet> {
       BodyPartActionChip(
         label: 'cardio',
         isSelected: bodyParts.contains('cardio'),
-        assetLocation: Assets.imagesCardioIcon,
+        assetLocation: Assets.iconsCardioIcon,
         onTap: (isActive, label) {
           setBottomSheetState(() {
             if (!isActive) {

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:training_partner/core/resources/open_ai/gpt_message.dart';
+import 'package:training_partner/core/resources/gpt/gpt_message.dart';
 
 class GptService {
   Future<GptMessage> getGptResponse(List<GptMessage> messages) async {

@@ -36,14 +36,14 @@ class ExerciseTypePage extends StatelessWidget {
           children: [
             ExerciseGroupCard(
               label: 'C H E S T',
-              assetLocation: Assets.imagesChestIcon,
+              assetLocation: Assets.iconsChestIcon,
               groupName: 'Chest',
               movements: _getChestMovements(),
             ),
             const SizedBox(width: 10),
             ExerciseGroupCard(
               label: 'A R M S',
-              assetLocation: Assets.imagesArmsIcon,
+              assetLocation: Assets.iconsArmsIcon,
               groupName: 'Arms',
               movements: _getArmsMovements(),
             ),
@@ -54,14 +54,14 @@ class ExerciseTypePage extends StatelessWidget {
           children: [
             ExerciseGroupCard(
               label: 'S H O U L D E R S',
-              assetLocation: Assets.imagesShoulderIcon,
+              assetLocation: Assets.iconsShoulderIcon,
               groupName: 'Shoulders',
               movements: _getShouldersMovements(),
             ),
             const SizedBox(width: 10),
             ExerciseGroupCard(
               label: 'B A C K',
-              assetLocation: Assets.imagesBackIcon,
+              assetLocation: Assets.iconsBackIcon,
               groupName: 'Back',
               movements: _getBackMovements(),
             ),
@@ -72,14 +72,14 @@ class ExerciseTypePage extends StatelessWidget {
           children: [
             ExerciseGroupCard(
               label: 'C O R E',
-              assetLocation: Assets.imagesCoreIcon,
+              assetLocation: Assets.iconsCoreIcon,
               groupName: 'Core',
               movements: _getCoreMovements(),
             ),
             const SizedBox(width: 10),
             ExerciseGroupCard(
               label: 'L E G S',
-              assetLocation: Assets.imagesLegsIcon,
+              assetLocation: Assets.iconsLegsIcon,
               groupName: 'Legs',
               movements: _getLegMovements(),
             ),
@@ -90,14 +90,14 @@ class ExerciseTypePage extends StatelessWidget {
           children: [
             ExerciseGroupCard(
               label: 'C A R D I O',
-              assetLocation: Assets.imagesCardioIcon,
+              assetLocation: Assets.iconsCardioIcon,
               groupName: 'Cardio',
               movements: _getCardioMovements(),
             ),
             const SizedBox(width: 10),
             ExerciseGroupCard(
               label: 'A L L',
-              assetLocation: Assets.imagesChestIcon,
+              assetLocation: Assets.iconsAllIcon,
               groupName: 'All',
               movements: movements,
             ),

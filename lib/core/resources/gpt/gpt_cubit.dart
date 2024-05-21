@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:training_partner/core/globals/globals.dart';
-import 'package:training_partner/core/resources/open_ai/gpt_message.dart';
-import 'package:training_partner/core/resources/open_ai/gpt_repository.dart';
-import 'package:training_partner/core/resources/open_ai/gpt_state.dart';
+import 'package:training_partner/core/resources/gpt/gpt_message.dart';
+import 'package:training_partner/core/resources/gpt/gpt_repository.dart';
+import 'package:training_partner/core/resources/gpt/gpt_state.dart';
 import 'package:training_partner/features/workout_editor/models/workout_plan.dart';
 
 class GptCubit extends Cubit<GptState> {

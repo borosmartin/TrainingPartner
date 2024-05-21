@@ -6,9 +6,10 @@ import 'package:provider/provider.dart';
 import 'package:training_partner/config/theme/theme.dart';
 import 'package:training_partner/config/theme/theme_provider.dart';
 import 'package:training_partner/core/resources/firebase/firebase_options.dart';
-import 'package:training_partner/core/resources/open_ai/gpt_cubit.dart';
-import 'package:training_partner/core/resources/open_ai/gpt_repository.dart';
-import 'package:training_partner/core/resources/open_ai/gpt_service.dart';
+import 'package:training_partner/core/resources/gpt/gpt_cubit.dart';
+import 'package:training_partner/core/resources/gpt/gpt_repository.dart';
+import 'package:training_partner/core/resources/gpt/gpt_service.dart';
+import 'package:training_partner/core/resources/gpt/gpt_service_local.dart';
 import 'package:training_partner/core/resources/widgets/home_page_navigator.dart';
 import 'package:training_partner/features/exercises/data/repository/exercise_repository.dart';
 import 'package:training_partner/features/exercises/data/service/exercise_local_service.dart';
@@ -29,8 +30,6 @@ import 'package:training_partner/features/workout/logic/cubits/workout_cubit.dar
 import 'package:training_partner/features/workout_editor/data/repository/workout_plan_repository.dart';
 import 'package:training_partner/features/workout_editor/data/service/workout_plan_local_service.dart';
 import 'package:training_partner/features/workout_editor/logic/cubits/workout_plan_cubit.dart';
-
-import 'core/resources/open_ai/gpt_service_local.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

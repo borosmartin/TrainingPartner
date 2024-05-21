@@ -1,6 +1,6 @@
-import 'package:training_partner/core/resources/open_ai/gpt_message.dart';
-import 'package:training_partner/core/resources/open_ai/gpt_service.dart';
-import 'package:training_partner/core/resources/open_ai/gpt_service_local.dart';
+import 'package:training_partner/core/resources/gpt/gpt_message.dart';
+import 'package:training_partner/core/resources/gpt/gpt_service.dart';
+import 'package:training_partner/core/resources/gpt/gpt_service_local.dart';
 import 'package:training_partner/features/workout_editor/models/workout_plan.dart';
 
 class GptRepository {

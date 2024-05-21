@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:training_partner/config/theme/custom_text_theme.dart';
 import 'package:training_partner/core/globals/component_functions.dart';
-import 'package:training_partner/core/resources/open_ai/gpt_cubit.dart';
-import 'package:training_partner/core/resources/open_ai/gpt_message.dart';
+import 'package:training_partner/core/resources/gpt/gpt_cubit.dart';
+import 'package:training_partner/core/resources/gpt/gpt_message.dart';
 import 'package:training_partner/core/resources/widgets/colored_safe_area_body.dart';
 import 'package:training_partner/core/resources/widgets/custom_toast.dart';
 import 'package:training_partner/core/utils/text_util.dart';
@@ -57,7 +57,7 @@ class _WorkoutEditorPageState extends State<WorkoutEditorPage> {
       workoutSessions = workoutPlan!.sessions;
       workoutPlaneNameController.text = workoutPlan!.name;
 
-      context.read<GptCubit>().getGptResponse(workoutPlan!, _getTipPromtString());
+      context.read<GptCubit>().getGptResponse(workoutPlan!, _getTipPromptString());
     } else {
       workoutPlaneNameController.text = 'New workout';
     }
@@ -308,21 +308,21 @@ class _WorkoutEditorPageState extends State<WorkoutEditorPage> {
     });
   }
 
-  List<GptMessage> _getTipPromtString() {
+  List<GptMessage> _getTipPromptString() {
     List<GptMessage> messages = [];
 
-    String tipPromt =
+    String tipPrompt =
         "This prompt is designed to analyze the provided workout routine and generate specific tips for improvement. Keep responses concise and focused on potential mistakes in the routine. Ensure each tip addresses specific aspects of the workout, such as muscle targeting, rep and set counts, and weekly volume. Ensure each exercise adequately targets specific muscle groups; for instance, check if any major muscle group is overlooked in the routine. Avoid generic advice and prioritize insights tailored to the given routine. Give at most 3 tips. Here is the workout routine to base your analysis on:";
 
     for (var session in workoutSessions) {
       String sessionName = session.name;
-      tipPromt += "\nWorkout name: $sessionName\nExerices:\n";
+      tipPrompt += "\nWorkout name: $sessionName\nExerices:\n";
       for (var exercise in session.exercises) {
-        tipPromt += "${exercise.movement.name}: ${exercise.workoutSets.length} sets of ${exercise.workoutSets[0].repetitions} reps\n";
+        tipPrompt += "${exercise.movement.name}: ${exercise.workoutSets.length} sets of ${exercise.workoutSets[0].repetitions} reps\n";
       }
     }
 
-    messages.add(GptMessage(role: 'user', content: tipPromt));
+    messages.add(GptMessage(role: 'user', content: tipPrompt));
 
     return messages;
   }

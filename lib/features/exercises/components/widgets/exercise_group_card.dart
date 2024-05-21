@@ -45,8 +45,8 @@ class ExerciseGroupCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                   child: Image.asset(
                     assetLocation,
-                    height: 75,
-                    width: 75,
+                    height: 85,
+                    width: 85,
                   ),
                 ),
                 const SizedBox(height: 15),

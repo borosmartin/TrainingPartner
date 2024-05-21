@@ -44,12 +44,20 @@ dependencies:
   provider: ^6.0.0
   wakelock: ^0.6.2
   phosphor_flutter: ^2.0.1
+  timezone: ^0.7.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
   flutter_lints: ^2.0.0
+  flutter_launcher_icons: ^0.13.1
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/app_logo.png"
+  adaptive_icon_foreground: "assets/images/app_logo.png"
+  adaptive_icon_background: "assets/images/app_logo.png"
 
 flutter:
   assets:
@@ -68,9 +76,18 @@ flutter:
     - assets/images/workoutplan3.jpg
     - assets/images/workoutplan4.jpg
     - assets/images/workoutplan5.jpeg
+    - assets/images/app_logo.png
     - lib/features/statistics/models/
     - lib/core/resources/widgets/
     - lib/features/login/components/widgets/
+    - assets/icons/all_icon.png
+    - assets/icons/arms_icon.png
+    - assets/icons/back_icon.png
+    - assets/icons/cardio_icon.png
+    - assets/icons/chest_icon.png
+    - assets/icons/core_icon.png
+    - assets/icons/legs_icon.png
+    - assets/icons/shoulder_icon.png
 
   fonts:
     - family: Omnes

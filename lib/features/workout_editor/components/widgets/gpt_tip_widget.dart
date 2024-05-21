@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:marquee/marquee.dart';
 import 'package:training_partner/config/theme/custom_text_theme.dart';
-import 'package:training_partner/core/resources/open_ai/gpt_cubit.dart';
-import 'package:training_partner/core/resources/open_ai/gpt_state.dart';
+import 'package:training_partner/core/resources/gpt/gpt_cubit.dart';
+import 'package:training_partner/core/resources/gpt/gpt_state.dart';
 import 'package:training_partner/generated/assets.dart';
 
 class GptTipWidget extends StatefulWidget {

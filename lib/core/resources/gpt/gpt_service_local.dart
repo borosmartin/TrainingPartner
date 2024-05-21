@@ -1,5 +1,5 @@
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:training_partner/core/resources/open_ai/gpt_message.dart';
+import 'package:training_partner/core/resources/gpt/gpt_message.dart';
 import 'package:training_partner/features/workout_editor/models/workout_plan.dart';
 
 class GptServiceLocal {

@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:training_partner/core/globals/globals.dart';
 import 'package:training_partner/core/resources/firebase/auth_service.dart';
-import 'package:training_partner/core/resources/open_ai/gpt_repository.dart';
+import 'package:training_partner/core/resources/gpt/gpt_repository.dart';
 import 'package:training_partner/features/settings/data/repository/settings_repository.dart';
 import 'package:training_partner/features/settings/logic/cubits/user_delete_state.dart';
 import 'package:training_partner/features/statistics/data/repository/statistics_repository.dart';

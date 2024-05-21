@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:training_partner/core/resources/open_ai/gpt_message.dart';
+import 'package:training_partner/core/resources/gpt/gpt_message.dart';
 
 class GptState extends Equatable {
   const GptState();

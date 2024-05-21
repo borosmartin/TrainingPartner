@@ -1,3 +1,4 @@
+import 'package:timezone/timezone.dart' as timezone;
 import 'package:training_partner/features/exercises/data/service/exercise_local_service.dart';
 import 'package:training_partner/features/exercises/data/service/exercise_service.dart';
 import 'package:training_partner/features/exercises/models/movement.dart';
@@ -13,11 +14,15 @@ class ExerciseRepository {
       MovementData? hiveData = await _exerciseServiceLocal.getMovementDataFromHive();
 
       if (hiveData != null) {
-        DateTime now = DateTime.now();
-        DateTime todayRefreshTime = DateTime(now.year, now.month, now.day, 19, 0);
+        // API GIF url refresh time: 12:00pm US Central Time
+        DateTime centralTimezoneRefreshTime = timezone.TZDateTime.from(
+          DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, 12, 0),
+          timezone.getLocation('America/Chicago'),
+        );
 
+        DateTime now = DateTime.now();
         var difference = now.difference(hiveData.lastUpdated).inHours;
-        if (now.isBefore(todayRefreshTime) && difference < 12) {
+        if (now.isBefore(centralTimezoneRefreshTime.toLocal()) && difference < 12) {
           return hiveData;
         }
       }
