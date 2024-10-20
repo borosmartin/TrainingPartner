@@ -3,6 +3,14 @@
 Szakdolgozat 2024
 Boros Martin - EMPLG0
 
+Made in/with:
+- Flutter
+- Firebase Auth for authentication
+- Firestore for remote DB
+- Bloc for state management
+- Hive for local DB
+- Rapid APIs for data
+
 ![image](https://github.com/user-attachments/assets/6dba3a7a-05d2-49ef-b929-c6262e1818e1)
 
 ![image](https://github.com/user-attachments/assets/2a0a3bf9-eb23-4bc4-95d9-47561a021f93)
